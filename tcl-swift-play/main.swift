@@ -18,6 +18,10 @@ class TclInterp {
         Tcl_Init(interp)
     }
     
+    deinit {
+        Tcl_DeleteInterp (interp)
+    }
+    
     func eval(code: String) {
         let ret = Tcl_Eval(interp, code.cStringUsingEncoding(NSUTF8StringEncoding)!)
         
