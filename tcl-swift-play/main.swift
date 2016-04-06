@@ -11,7 +11,7 @@ import Foundation
 print("Hello, World!")
 
 class TclInterp {
-    var interp: UnsafeMutablePointer<Tcl_Interp>;
+    var interp: UnsafeMutablePointer<Tcl_Interp>
     
     init() {
         interp = Tcl_CreateInterp()
@@ -33,9 +33,39 @@ class TclInterp {
     }
 }
 
+class TclObj {
+    var obj: UnsafeMutablePointer<Tcl_Obj>
+    
+    init() {
+        obj = Tcl_NewObj()
+    }
+    
+    init(val: Int) {
+        obj = Tcl_NewLongObj(val)
+    }
+    
+    init(val: String) {
+        obj = Tcl_NewStringObj (val.cStringUsingEncoding(NSUTF8StringEncoding)!, -1)
+    }
+    
+    init(val: Double) {
+        obj = Tcl_NewDoubleObj (val)
+    }
+    
+    deinit {
+        Tcl_DecrRefCount(obj)
+    }
+}
 
 let interp = TclInterp()
 
 interp.eval("puts {Hey stikny}; return hijinks")
 
 print(interp.resultString())
+
+var xo = TclObj(val: 5)
+    var xy = TclObj(val: "hi mom")
+    var xz = TclObj(val: 5.5)
+    
+    
+
