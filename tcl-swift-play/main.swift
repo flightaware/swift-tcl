@@ -1,4 +1,4 @@
-//
+    //
 //  main.swift
 //  tcl-swift-play
 //
@@ -23,10 +23,15 @@ class TclInterp {
         
         print("eval return code is \(ret)")
     }
+    
+    func resultString() -> String {
+        return(String.fromCString(Tcl_GetString(Tcl_GetObjResult(interp))))!
+    }
 }
 
 
 let interp = TclInterp()
 
-interp.eval("puts {Hey stikny}")
+interp.eval("puts {Hey stikny}; return hijinks")
 
+print(interp.resultString())
