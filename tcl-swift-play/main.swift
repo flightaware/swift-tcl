@@ -55,6 +55,19 @@ class TclObj {
     deinit {
         Tcl_DecrRefCount(obj)
     }
+    
+    func string() -> String {
+        return(String.fromCString(Tcl_GetString(obj)))!
+    }
+    
+    func int() -> Int? {
+        var longVal: CLong = 0
+        let result = Tcl_GetLongFromObj (nil, obj, &longVal)
+        if (result == TCL_ERROR) {
+            return nil
+        }
+        return longVal
+    }
 }
 
 let interp = TclInterp()
