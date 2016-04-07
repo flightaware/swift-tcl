@@ -63,6 +63,19 @@ class TclObj {
         DecrRefCount(obj)
     }
     
+    func set(val: String) {
+        Tcl_SetStringObj (obj, val.cStringUsingEncoding(NSUTF8StringEncoding)!, -1)
+    }
+    
+    func set(val: Int) {
+        Tcl_SetLongObj (obj, val)
+    }
+    
+    func set(val: Double) {
+        Tcl_SetDoubleObj (obj, val)
+    }
+
+
     func string() -> String {
         return(String.fromCString(Tcl_GetString(obj)))!
     }
