@@ -6,11 +6,17 @@ It defines a TclInterp class in Swift that provides methods for eval'ing Tcl cod
 
 It also defines a TclObj class that can convert between Swift data types such as Int, Double, String and Tcl object representations of equivalent types.
 
-## Finding Tcl on your Mac
+## Building
 
-Right now this is on the Mac and the Xcode project looks to Tcl as installed by macports (https://www.macports.org/) with the include file in /opt/local/include and the tcl dylib in /opt/local/lib.
+Right now this is on the Mac and requires Xcode and the included Xcode project looks to Tcl as installed by macports (https://www.macports.org/) with the include file in /opt/local/include and the tcl dylib in /opt/local/lib.
 
-It can also be built against the Tcl that gets installed in /usr/include, /usr/lib, etc, as installed by the Xcode command line tools if you change the targets in the project.
+To go this way make sure Xcode and macports are installed and install Tcl with "sudo port install tcl".
+
+The code can also be built against the Tcl that gets installed in /usr/include, /usr/lib, etc, as installed by the Xcode command line tools if you change the targets in the project.
+
+## Running it
+
+I'm currently just running it from within Xcode.  The TclInterp and TclObj classes are defined in tcl.swift while main.swift defines a TclInterp and messes around with it a bit.
 
 ## Stuff it needs
 
