@@ -50,6 +50,11 @@ class TclObj {
         obj = Tcl_NewDoubleObj (val)
     }
     
+    init(val: UnsafeMutablePointer<Tcl_Obj>) {
+        obj = val
+        IncrRefCount(val)
+    }
+    
     deinit {
         DecrRefCount(obj)
     }

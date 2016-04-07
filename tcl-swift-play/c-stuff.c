@@ -13,3 +13,7 @@ void DecrRefCount(Tcl_Obj *obj) {
         TclFreeObj(obj);
     }
 }
+
+void IncrRefCount(Tcl_Obj *obj) {
+    ++obj->refCount;
+}

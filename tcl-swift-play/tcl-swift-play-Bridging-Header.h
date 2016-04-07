@@ -5,3 +5,5 @@
 #import "/opt/local/include/tcl.h"
 
 void DecrRefCount(Tcl_Obj *obj);
+
+void IncrRefCount(Tcl_Obj *obj);
