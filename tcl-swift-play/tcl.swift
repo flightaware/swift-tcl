@@ -88,4 +88,14 @@ class TclObj {
         }
         return longVal
     }
+    
+    func double() -> Double? {
+        var doubleVal: CDouble = 0
+        let result = Tcl_GetDoubleFromObj (nil, obj, &doubleVal)
+        if (result == TCL_ERROR) {
+            return nil
+        }
+        return doubleVal
+    }
+
 }
