@@ -13,14 +13,30 @@ print("Hello, World!")
 
 let interp = TclInterp()
 
-interp.eval("puts {Hey stikny}; return hijinks")
+    do {
+        try interp.eval("puts {Hey stikny}; return hijinks")
+    }
+    catch(TclInterp.InterpErrors.NotString(let str)) {
+        print("This isn't a C string \(str)")
+    }
 
-print(interp.resultString())
+    do {
+        try interp.eval("invalid command")
+    }
+    catch(TclInterp.InterpErrors.EvalError(let ret)) {
+        print("Invalid command, error code \(ret)")
+    }
+
+print(interp.result)
 
 var xo = TclObj(val: 5)
-    var xy = TclObj(val: "hi mom")
-    var xz = TclObj(val: 5.5)
-    var xz2: Int? = xz.getInt();
-    print(xz2)
-    var x5 = TclObj(val: 5)
+    let xy = TclObj(val: "hi mom")
+    print(xy.stringValue)
+    xy.stringValue = "hi dad"
+    print(xy.stringValue)
+    let xz = TclObj(val: 5.5)
+    if let xz2 = xz.getInt() {
+        print(xz2)
+    }
+    let x5 = TclObj(val: 5)
     print(x5.getDouble())

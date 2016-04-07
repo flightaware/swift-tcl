@@ -26,23 +26,43 @@ class TclInterp {
     deinit {
         Tcl_DeleteInterp (interp)
     }
+
+    enum InterpErrors: ErrorType {
+        case NotString(String)
+        case EvalError(Int)
+    }
     
     // eval - evaluate a string with the Tcl interpreter
     //
     // the Tcl result code (1 == error is the big one) is returned
     // this should probably be mapped to an enum in Swift
-    func eval(code: String) -> Int {
-        let ret = Tcl_Eval(interp, code.cStringUsingEncoding(NSUTF8StringEncoding)!)
-        
-        print("eval return code is \(ret)")
+    func eval(code: String) throws -> Int {
+        guard let cCode = code.cStringUsingEncoding(NSUTF8StringEncoding) else {
+            throw InterpErrors.NotString(code)
+        }
+        let ret = Tcl_Eval(interp, cCode)
+        defer {
+            print("eval return code is \(ret)")
+        }
+        if ret != 0 {
+            throw InterpErrors.EvalError(Int(ret))
+        }
+
         return Int(ret)
     }
     
     // resultString - grab the interpreter result as a string
-    func resultString() -> String {
-        return(String.fromCString(Tcl_GetString(Tcl_GetObjResult(interp))))!
+    var result: String {
+        get {
+            return (String.fromCString(Tcl_GetString(Tcl_GetObjResult(interp)))) ?? ""
+        }
+        set {
+            guard let cCode = newValue.cStringUsingEncoding(NSUTF8StringEncoding) else {return}
+            let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_NewStringObj(cCode, -1)
+            Tcl_SetObjResult(interp, obj)
+        }
     }
-    
+
     // resultObj - return a new TclObj object containing the interpreter result
     func resultObj() -> TclObj {
         return TclObj(val: Tcl_GetObjResult(interp))
@@ -66,7 +86,8 @@ class TclObj {
     }
     
     init(val: String) {
-        obj = Tcl_NewStringObj (val.cStringUsingEncoding(NSUTF8StringEncoding)!, -1)
+        let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+        obj = Tcl_NewStringObj (string, -1)
     }
     
     init(val: Double) {
@@ -86,10 +107,15 @@ class TclObj {
     }
     
     // various set functions to set the Tcl object from a string, Int, Double, etc
-    func set(val: String) {
-        Tcl_SetStringObj (obj, val.cStringUsingEncoding(NSUTF8StringEncoding)!, -1)
+    var stringValue: String {
+        get {
+            return String.fromCString(Tcl_GetString(obj)) ?? ""
+        }
+        set {
+            Tcl_SetStringObj (obj, newValue.cStringUsingEncoding(NSUTF8StringEncoding) ?? [], -1)
+        }
     }
-    
+
     func set(val: Int) {
         Tcl_SetLongObj (obj, val)
     }
@@ -98,11 +124,6 @@ class TclObj {
         Tcl_SetDoubleObj (obj, val)
     }
 
-    // getString - return the Tcl object as a Swift String
-    func getString() -> String {
-        return(String.fromCString(Tcl_GetString(obj)))!
-    }
-    
     // getInt - return the Tcl object as an Int or nil
     // if in-object Tcl type conversion fails
     func getInt() -> Int? {
