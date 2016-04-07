@@ -29,6 +29,10 @@ class TclInterp {
     func resultString() -> String {
         return(String.fromCString(Tcl_GetString(Tcl_GetObjResult(interp))))!
     }
+    
+    func resultObj() -> TclObj {
+        return TclObj(val: Tcl_GetObjResult(interp))
+    }
 }
 
 class TclObj {
