@@ -75,12 +75,11 @@ class TclObj {
         Tcl_SetDoubleObj (obj, val)
     }
 
-
-    func string() -> String {
+    func getString() -> String {
         return(String.fromCString(Tcl_GetString(obj)))!
     }
     
-    func int() -> Int? {
+    func getInt() -> Int? {
         var longVal: CLong = 0
         let result = Tcl_GetLongFromObj (nil, obj, &longVal)
         if (result == TCL_ERROR) {
@@ -89,7 +88,7 @@ class TclObj {
         return longVal
     }
     
-    func double() -> Double? {
+    func getDouble() -> Double? {
         var doubleVal: CDouble = 0
         let result = Tcl_GetDoubleFromObj (nil, obj, &doubleVal)
         if (result == TCL_ERROR) {
