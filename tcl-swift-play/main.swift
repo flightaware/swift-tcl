@@ -53,7 +53,7 @@ class TclObj {
     }
     
     deinit {
-        Tcl_DecrRefCount(obj)
+        DecrRefCount(obj)
     }
     
     func string() -> String {

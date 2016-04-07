@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		CB30DB911CB5898400F53FF5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB30DB901CB5898400F53FF5 /* main.swift */; };
 		CB30DB9A1CB5899500F53FF5 /* c-stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = CB30DB981CB5899500F53FF5 /* c-stuff.c */; };
-		CB30DB9C1CB58B5D00F53FF5 /* libtcl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CB30DB9B1CB58B5D00F53FF5 /* libtcl.tbd */; };
+		CB574D671CB5FBF300B90411 /* libtcl8.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,7 +30,7 @@
 		CB30DB971CB5899500F53FF5 /* tcl-swift-play-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tcl-swift-play-Bridging-Header.h"; sourceTree = "<group>"; };
 		CB30DB981CB5899500F53FF5 /* c-stuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "c-stuff.c"; sourceTree = "<group>"; };
 		CB30DB991CB5899500F53FF5 /* c-stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "c-stuff.h"; sourceTree = "<group>"; };
-		CB30DB9B1CB58B5D00F53FF5 /* libtcl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libtcl.tbd; path = usr/lib/libtcl.tbd; sourceTree = SDKROOT; };
+		CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtcl8.6.dylib; path = ../../../../opt/local/lib/libtcl8.6.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB30DB9C1CB58B5D00F53FF5 /* libtcl.tbd in Frameworks */,
+				CB574D671CB5FBF300B90411 /* libtcl8.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,7 +48,7 @@
 		CB30DB841CB5898400F53FF5 = {
 			isa = PBXGroup;
 			children = (
-				CB30DB9B1CB58B5D00F53FF5 /* libtcl.tbd */,
+				CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */,
 				CB30DB8F1CB5898400F53FF5 /* tcl-swift-play */,
 				CB30DB8E1CB5898400F53FF5 /* Products */,
 			);
@@ -225,6 +225,10 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -236,6 +240,10 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
 			};
@@ -260,6 +268,7 @@
 				CB30DB961CB5898400F53FF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

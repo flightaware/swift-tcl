@@ -10,5 +10,6 @@
 #define c_stuff_h
 
 #include <stdio.h>
+#include "/opt/local/include/tcl.h"
 
 #endif /* c_stuff_h */

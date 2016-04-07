@@ -7,3 +7,9 @@
 //
 
 #include "c-stuff.h"
+
+void DecrRefCount(Tcl_Obj *obj) {
+    if (--(obj)->refCount <= 0) {
+        TclFreeObj(obj);
+    }
+}
