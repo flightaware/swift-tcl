@@ -10,6 +10,7 @@
 		CB30DB911CB5898400F53FF5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB30DB901CB5898400F53FF5 /* main.swift */; };
 		CB30DB9A1CB5899500F53FF5 /* c-stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = CB30DB981CB5899500F53FF5 /* c-stuff.c */; };
 		CB574D671CB5FBF300B90411 /* libtcl8.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */; };
+		CB574D691CB600FD00B90411 /* tcl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB574D681CB600FD00B90411 /* tcl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,7 @@
 		CB30DB981CB5899500F53FF5 /* c-stuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "c-stuff.c"; sourceTree = "<group>"; };
 		CB30DB991CB5899500F53FF5 /* c-stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "c-stuff.h"; sourceTree = "<group>"; };
 		CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtcl8.6.dylib; path = ../../../../opt/local/lib/libtcl8.6.dylib; sourceTree = "<group>"; };
+		CB574D681CB600FD00B90411 /* tcl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tcl.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 				CB30DB981CB5899500F53FF5 /* c-stuff.c */,
 				CB30DB991CB5899500F53FF5 /* c-stuff.h */,
 				CB30DB901CB5898400F53FF5 /* main.swift */,
+				CB574D681CB600FD00B90411 /* tcl.swift */,
 				CB30DB971CB5899500F53FF5 /* tcl-swift-play-Bridging-Header.h */,
 			);
 			path = "tcl-swift-play";
@@ -132,6 +135,7 @@
 			files = (
 				CB30DB9A1CB5899500F53FF5 /* c-stuff.c in Sources */,
 				CB30DB911CB5898400F53FF5 /* main.swift in Sources */,
+				CB574D691CB600FD00B90411 /* tcl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
