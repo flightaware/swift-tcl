@@ -10,6 +10,13 @@
 
 import Foundation
 
+func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>>) -> Int32 {
+    // here should go the code to call a Swift function
+    // with an argument being the TclInterp object and
+    // a variadic argument containing TclObj objects
+    return 0
+}
+
 // TclInterp - Tcl Interpreter class
 
 class TclInterp {
@@ -47,7 +54,14 @@ class TclInterp {
     func resultObj() -> TclObj {
         return TclObj(val: Tcl_GetObjResult(interp))
     }
+    
+    func create_command(name: String, SwiftTclFunction:(UnsafeMutablePointer<Tcl_Interp>, TclObj...) -> Int) {
+        let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
+        
+        Tcl_CreateObjCommand(interp, cname, CFunctionPointer<swift_tcl_bridger>, <#T##clientData: ClientData##ClientData#>, <#T##deleteProc: ((ClientData) -> Void)!##((ClientData) -> Void)!##(ClientData) -> Void#>)
+    }
 }
+
 
 // TclObj - Tcl object class
 
