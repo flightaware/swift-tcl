@@ -21,8 +21,7 @@ I'm currently just running it from within Xcode.  The TclInterp and TclObj class
 ## Stuff it needs
 
 * Someone who really understands Swift to bring it in line with best practices, etc
-* A way to create new Tcl commands that invoke Swift functions
-** I envision the Swift function that is directly invoked from Tcl will receive an array of TclObj objects that it can dig its arguments out of
+* A way to create new Tcl commands that invoke Swift functions (I envision the Swift function that is directly invoked from Tcl will receive an array of TclObj objects that it can dig its arguments out of)
 * Methods to convert between Swift Lists, Sets and Dictionaries and Tcl lists, arrays and dicts
 * Additional methods of the TclInterp class to get and set Tcl variables (including array elements) and additional ways to interact with the Tcl interpreter that are useful
 
@@ -30,6 +29,10 @@ I'm currently just running it from within Xcode.  The TclInterp and TclObj class
 
 * Support for safe interpreters
 * Support for setting resource limits on interpreters using Tcl_Limit*
+
+## Stuff that would be cool if it's even possible
+
+* The ability to introspect Swift from Tcl to find objects and invoke methods on them (Swift seems to be moving away from even providing a way to do that.  I still think bridging is useful even if it can't do this.)
 
 ## Stuff that might be interesting to try
 
