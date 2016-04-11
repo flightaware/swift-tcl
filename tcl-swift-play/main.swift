@@ -41,7 +41,7 @@ var xo = TclObj(val: 5)
     let x5 = TclObj(val: 5)
     print(x5.getDouble())
     
-    func foo (interp: Tcl_Interp, objv: TclObj...) -> Int {
+    func foo (interp: TclInterp, objv: [TclObj]) -> Int {
         print("foo baby foo baby foo baby foo")
         return 0
     }
