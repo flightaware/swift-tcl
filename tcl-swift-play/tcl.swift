@@ -33,19 +33,16 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     print("swift_tcl_bridger called")
     
     
-    let cps = COpaquePointer(clientData)
-    
-    let utcb: Unmanaged<TclCommandBlock> = Unmanaged.fromOpaque(cps)
-    
-    let tcb: TclCommandBlock = utcb.takeUnretainedValue()
+    let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData)
+    let tcc = tcb.memory
     
     var objvec = [TclObj]()
 
-    for i in 0...Int(objc) {
+    for i in 0..<Int(objc) {
         objvec[i] = TclObj(val: objv[i])
     }
     
-    tcb.invoke(objvec)
+    tcc.invoke(objvec)
     
     return 0
 }
@@ -194,8 +191,11 @@ class TclInterp {
         
         let cmdBlock = TclCommandBlock(myInterp: self, function: SwiftTclFunction)
         var unmanaged = Unmanaged.passRetained(cmdBlock)
+        // let ptr = unmanaged.toOpaque()
+        let ptr = UnsafeMutablePointer<TclCommandBlock>.alloc(1)
+        ptr.memory = cmdBlock
         
-        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, &unmanaged, nil)
+        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
     }
 }
 
