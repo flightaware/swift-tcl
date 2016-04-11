@@ -12,6 +12,14 @@ import Foundation
 
 typealias SwiftTclFuncType = (Tcl_Interp, TclObj...) -> Int
 
+class TclCommandBlock {
+    var swiftTclFunc: SwiftTclFuncType
+    
+    init(function: SwiftTclFuncType) {
+        swiftTclFunc = function
+    }
+}
+
 func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>>) -> Int32 {
     // here should go the code to call a Swift function
     // with an argument being the TclInterp object and
@@ -19,21 +27,12 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     print("swift_tcl_bridger called")
     
     
-    
-    var tcb: TclCommandBlock = ClientData
+    let cps = COpaquePointer(clientData)
+    let tcb: Unmanaged<TclCommandBlock> = Unmanaged.fromOpaque(cps)
     
     return 0
 }
 
-class TclCommandBlock {
-    var swiftTclFunc: SwiftTclFuncType
-    
-    init(function: SwiftTclFuncType) {
-        swiftTclFunc = function
-    }
-    
-
-}
 
 // TclInterp - Tcl Interpreter class
 
@@ -93,12 +92,14 @@ class TclInterp {
         return TclObj(val: Tcl_GetObjResult(interp))
     }
     
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
     func create_command(name: String, SwiftTclFunction:(Tcl_Interp, TclObj...) -> Int) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
         
-        var cmdBlock = TclCommandBlock(function: SwiftTclFunction)
+        let cmdBlock = TclCommandBlock(function: SwiftTclFunction)
+        var unmanaged = Unmanaged.passRetained(cmdBlock)
         
-        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, &cmdBlock, nil)
+        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, &unmanaged, nil)
     }
 }
 
