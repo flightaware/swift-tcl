@@ -124,6 +124,10 @@ class TclObj {
         return doubleVal
     }
     
+    func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
+        return obj
+    }
+    
 }
 
 
@@ -179,11 +183,24 @@ class TclInterp {
             Tcl_SetObjResult(interp, obj)
         }
     }
-
-    // resultObj - return a new TclObj object containing the interpreter result
-    func resultObj() -> TclObj {
-        return TclObj(val: Tcl_GetObjResult(interp))
+    
+    var resultObj: TclObj {
+        get {
+            return TclObj(val: Tcl_GetObjResult(interp))
+        }
+        set {
+            Tcl_SetObjResult(interp,resultObj.getObj())
+        }
     }
+    
+    func setResult(val: Double) {
+        Tcl_SetDoubleObj (Tcl_GetObjResult(interp), val)
+    }
+    
+    func setResult(val: Int) {
+        Tcl_SetLongObj (Tcl_GetObjResult(interp), val)
+    }
+
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     func create_command(name: String, SwiftTclFunction:(TclInterp, [TclObj]) -> Int) {

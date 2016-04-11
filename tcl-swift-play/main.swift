@@ -46,9 +46,24 @@ var xo = TclObj(val: 5)
         return 0
     }
     
+    func avg (interp: TclInterp, objv: [TclObj]) -> Int {
+        var sum = 0.0
+        for i in 1..<objv.count {
+            sum += objv[i].getDouble()!
+        }
+        interp.setResult(sum / Double(objv.count))
+        return 0
+    }
+    
     interp.create_command("foo", SwiftTclFunction: foo)
     do {
         try interp.eval("foo")
     }
+    
+    interp.create_command("avg", SwiftTclFunction: avg)
+    do {
+        try interp.eval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
+    }
+
 
     
