@@ -14,6 +14,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     // here should go the code to call a Swift function
     // with an argument being the TclInterp object and
     // a variadic argument containing TclObj objects
+    print("swift_tcl_bridger called")
     return 0
 }
 
@@ -75,10 +76,10 @@ class TclInterp {
         return TclObj(val: Tcl_GetObjResult(interp))
     }
     
-    func create_command(name: String, SwiftTclFunction:(UnsafeMutablePointer<Tcl_Interp>, TclObj...) -> Int) {
+    func create_command(name: String, SwiftTclFunction:(Tcl_Interp, TclObj...) -> Int) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
         
-        Tcl_CreateObjCommand(interp, cname, CFunctionPointer<swift_tcl_bridger>, <#T##clientData: ClientData##ClientData#>, <#T##deleteProc: ((ClientData) -> Void)!##((ClientData) -> Void)!##(ClientData) -> Void#>)
+        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, nil, nil)
     }
 }
 

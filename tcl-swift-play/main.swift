@@ -40,3 +40,14 @@ var xo = TclObj(val: 5)
     }
     let x5 = TclObj(val: 5)
     print(x5.getDouble())
+    
+    func foo (interp: Tcl_Interp, objv: TclObj...) -> Int {
+        return 0
+    }
+    
+    interp.create_command("foo", SwiftTclFunction: foo)
+    do {
+        try interp.eval("foo")
+    }
+
+    
