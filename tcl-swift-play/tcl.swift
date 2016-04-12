@@ -280,8 +280,31 @@ class TclObj {
         return obj
     }
     
-
+    // lappend - append a Tcl_Obj * to the Tcl object list
+    func lappend (value: UnsafeMutablePointer<Tcl_Obj>) -> Bool {
+        return Tcl_ListObjAppendElement (nil, obj, value) != TCL_ERROR
+    }
     
+    // lappend - append an Int to the Tcl object list
+    func lappend (value: Int) -> Bool {
+        return self.lappend (Tcl_NewLongObj (value))
+    }
+    
+    // lappend - append a Double to the Tcl object list
+    func lappend (value: Double) -> Bool {
+        return self.lappend (Tcl_NewDoubleObj (value))
+    }
+    
+    // lappend - append a String to the Tcl object list
+    func lappend (value: String) -> Bool {
+        let cString = value.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+        return self.lappend(Tcl_NewStringObj (cString, -1))
+    }
+    
+    // lappend - append a tclObj to the Tcl object list
+    func lappend (value: TclObj) -> Bool {
+        return self.lappend(value)
+    }
 
 }
 
