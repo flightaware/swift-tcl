@@ -90,6 +90,13 @@ Return the number of elements in the list contained in the TclObj or nil if the 
 
 Return the number of elements 
 
+* var array: [Double] = obj.toArray()
+* var array: [Int] = obj.toArray()
+* var array: [String] = obj.toArray()
+* var array: [TclObj] = obj.toArray()
+
+Treating TclObj obj as a Tcl list, if it is a valid list and the data types are OK the elements are imported into an array of the corresponding type.
+
 * var dictionary: [String:String]? = obj.toDictionary()
 * var dictionary: [String:Int]? = obj.toDictionary()
 * var dictionary: [String:Double]? = obj.toDictionary()
@@ -101,46 +108,76 @@ Import a Tcl list of key-value pairs contained in a TclObj to a dictionary havin
 
 * var interp = TclInterp()
 
+Create a new Tcl interpreter.  You can create as many as you like.
+
 * var result: String = interp.eval(code: String)
+
+Evaluate Tcl code in the Tcl interpreter and return the interpreter result as a string.
 
 * var result: String = interp.result
 
+Obtain the interpreter result as a string.
+
 * var resultObj: TclObj = interp.resultObj
+
+Obtain the interpreter result as a TclObj object.
 
 * interp.result = String
 
+Obtain the interpreter result as a string.
+
 * interp.resultObj = TclObj
+
+Set the interpreter result to the specified TclObj object.
 
 * interp.setResult(Double)
 
+Set the interpreter result to the specified Double.
+
 * interp.setResult(Int)
+
+Set the interpreter result to the specified Int.
 
 * interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)
 
+Create a new Tcl command that will invoke the corresponding Swift function when the command is invoked within the Tcl interpreter.
 
 * var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
 
+Get a variable or array element out of the Tcl interpreter and return it as a Tcl_Obj *.
+
 * var val: TclObj? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+Get a variable or array element out of the Tcl interpreter and return it as an optional string.
 
 * var val: Int? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
 
+Get a variable or array element out of the Tcl interpreter and return it as an optional Int.  nil is returned if the object's contents aren't a valid list or if the element can't be converted to an Int.
+
 * var val: Double? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+Get a variable or array element out of the Tcl interpeter and return it as an optional Double.
 
 * var val: String? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
 
+Get a variable or array element out of the Tcl interpeter and return it as an optional String.
+
 * var success: Bool = interp.setVar(varName: String, elementName: String?, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0)
 
+Set a variable or array element in the Tcl interpreter to be the Tcl_Obj * that was passed.
+
 * var success: Bool = interp.setVar(varName: String, elementName: String?, value: String, flags: Int = 0)
-
 * var success: Bool = interp.setVar(varName: String, elementName: String?, value: Int, flags: Int = 0)
-
 * var success: Bool = interp.setVar(varName: String, elementName: String?, value: Double, flags: Int = 0)
-
 * var success: Bool = interp.setVar(varName: String, elementName: String?, value: TclObj, flags: Int = 0)
+
+Set a variable or array element in the Tcl interpeter to be the String, Int, Double, or TclObj that was passed.
 
 * interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0)
 * interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0)
 * interp.dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: Int = 0)
+
+Import a Swift Dictionary into a Tcl array.
 
 ## Building
 
