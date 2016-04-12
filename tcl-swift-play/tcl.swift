@@ -331,6 +331,13 @@ class TclInterp {
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Int
+    func setVar(varName: String, elementName: String?, value: String, flags: Int = 0) -> Bool {
+        guard let cString = value.cStringUsingEncoding(NSUTF8StringEncoding) else {return false}
+        let obj = Tcl_NewStringObj(cString, -1)
+        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+    }
+    
+    // setVar - set a variable or array element in the Tcl interpreter to the specified Int
     func setVar(varName: String, elementName: String?, value: Int, flags: Int = 0) -> Bool {
         let obj = Tcl_NewIntObj(Int32(value))
         return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
@@ -345,6 +352,27 @@ class TclInterp {
     // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
     func setVar(varName: String, elementName: String?, obj: TclObj, flags: Int = 0) -> Bool {
         return self.setVar(varName, elementName: elementName, value: obj.getObj(), flags: flags)
+    }
+    
+    // dictionaryToArray - set a String/String dictionary into a Tcl array
+    func dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0) {
+        for (key, value) in dictionary {
+            setVar(arrayName, elementName: key, value: value, flags: flags)
+        }
+    }
+
+    // dictionaryToArray - set a String/Int dictionary into a Tcl array
+    func dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0) {
+        for (key, value) in dictionary {
+            setVar(arrayName, elementName: key, value: value, flags: flags)
+        }
+    }
+
+    // dictionaryToArray - set a String/Double dictionary into a Tcl array
+    func dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: Int = 0) {
+        for (key, value) in dictionary {
+            setVar(arrayName, elementName: key, value: value, flags: flags)
+        }
     }
 
     // create_command - create a new Tcl command that will be handled by the specified Swift function
