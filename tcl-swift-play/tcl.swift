@@ -34,23 +34,19 @@ class TclCommandBlock {
     }
 }
 
+// swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>>) -> Int32 {
-    // here should go the code to call a Swift function
-    // with an argument being the TclInterp object and
-    // a variadic argument containing TclObj objects
-    print("swift_tcl_bridger called")
+    let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData).memory
+    // let tcc = tcb.memory
     
-    
-    let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData)
-    let tcc = tcb.memory
-    
+    // construct an array containing the arguments
     var objvec = [TclObj]()
-
     for i in 1..<Int(objc) {
         objvec.append(TclObj(val: objv[i]))
     }
     
-    return tcc.invoke(objvec).rawValue
+    // invoke the Swift implementation of the Tcl command and return the value it returns
+    return tcb.invoke(objvec).rawValue
 }
 
 // TclObj - Tcl object class
