@@ -18,10 +18,15 @@ The code can also be built against the Tcl that gets installed in /usr/include, 
 
 I'm currently just running it from within Xcode.  The TclInterp and TclObj classes are defined in tcl.swift while main.swift defines a TclInterp and messes around with it a bit.
 
+## Stuff it has
+
+* A Swift TclInterp that wraps Tcl interpreters and provides methods to do stuff with them such as evaluate Tcl code, get and set the Interpreter result, etc.
+* A way to create new Tcl commands that invoke Swift functions
+* A Swift TclObj that wraps TclObj's and provides methods to do stuff with them
+
 ## Stuff it needs
 
 * Someone who really understands Swift to bring it in line with best practices, etc
-* A way to create new Tcl commands that invoke Swift functions (I envision the Swift function that is directly invoked from Tcl will receive an array of TclObj objects that it can dig its arguments out of)
 * Methods to convert between Swift Lists, Sets and Dictionaries and Tcl lists, arrays and dicts
 * Additional methods of the TclInterp class to get and set Tcl variables (including array elements) and additional ways to interact with the Tcl interpreter that are useful
 
