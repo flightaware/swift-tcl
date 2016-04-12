@@ -317,7 +317,27 @@ class TclObj {
         return true
     }
     
-
+    // lappend - append an array of Int to the Tcl object list
+    // (flattens them out)
+    func lappend (array: [Double]) -> Bool {
+        for element in array {
+            if (!self.lappend(element)) {
+                return false
+            }
+        }
+        return true
+    }
+    
+    // lappend - append an array of Int to the Tcl object list
+    // (flattens them out)
+    func lappend (array: [String]) -> Bool {
+        for element in array {
+            if (!self.lappend(element)) {
+                return false
+            }
+        }
+        return true
+    }
     
     // llength - return the number of elements in the list if the contents of our obj can be interpreted as a list
     func llength () -> Int? {
@@ -327,6 +347,27 @@ class TclObj {
         }
         return Int(count)
     }
+    
+    // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
+    func toDictionary () -> [String: TclObj]? {
+        var dictionary: [String: TclObj] = [:]
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        
+        var i = 0
+        while (i < objc - 1) {
+            
+            let keyString = String.fromCString(Tcl_GetString (objv[i]))
+            dictionary[keyString ?? ""] = TclObj(objv[i+1])
+            i += 2
+        }
+        return dictionary
+    }
+    
+
     
     // toDictionary - copy the tcl object as a list into a String/String dictionary
     func toDictionary () -> [String: String]? {
