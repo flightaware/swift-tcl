@@ -156,22 +156,21 @@ class TclObj {
     // Init from an Array of Double to a Tcl list
     init (_ array: [Double]) {
         obj = Tcl_NewObj()
-        
-        for element in array {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj(element))
+
+        array.forEach {
+            Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
         }
     }
 
     // init from a String/String dictionary to a list
     init (_ dictionary: [String: String]) {
         obj = Tcl_NewObj()
-        
-        for (key, value) in dictionary {
-            let keyString = key.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+
+        dictionary.forEach {
+            let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
-            let valueString = value.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            let valueString = $0.1.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (valueString, -1))
-            
         }
     }
     
@@ -179,10 +178,10 @@ class TclObj {
     init (_ dictionary: [String: Int]) {
         obj = Tcl_NewObj()
         
-        for (key, value) in dictionary {
-            let keyString = key.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+        dictionary.forEach {
+            let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj (value))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj ($0.1))
         }
     }
    
@@ -190,10 +189,10 @@ class TclObj {
     init (_ dictionary: [String: Double]) {
         obj = Tcl_NewObj()
         
-        for (key, value) in dictionary {
-            let keyString = key.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+        dictionary.forEach {
+            let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (value))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj ($0.1))
         }
     }
     
@@ -213,37 +212,41 @@ class TclObj {
             Tcl_SetStringObj (obj, newValue.cStringUsingEncoding(NSUTF8StringEncoding) ?? [], -1)
         }
     }
-    
-    func set(val: Int) {
-        Tcl_SetLongObj (obj, val)
-    }
-    
-    func set(val: Double) {
-        Tcl_SetDoubleObj (obj, val)
-    }
-    
+
     // getInt - return the Tcl object as an Int or nil
     // if in-object Tcl type conversion fails
-    func getInt() -> Int? {
-        var longVal: CLong = 0
-        let result = Tcl_GetLongFromObj (nil, obj, &longVal)
-        if (result == TCL_ERROR) {
-            return nil
+    var intValue: Int? {
+        get {
+            var longVal: CLong = 0
+            let result = Tcl_GetLongFromObj (nil, obj, &longVal)
+            if (result == TCL_ERROR) {
+                return nil
+            }
+            return longVal
         }
-        return longVal
+        set {
+            guard let val = newValue else {return}
+            Tcl_SetLongObj (obj, val)
+        }
     }
     
     // getDouble - return the Tcl object as a Double or nil
     // if in-object Tcl type conversion fails
-    func getDouble() -> Double? {
-        var doubleVal: CDouble = 0
-        let result = Tcl_GetDoubleFromObj (nil, obj, &doubleVal)
-        if (result == TCL_ERROR) {
-            return nil
+    var doubleValue: Double? {
+        get {
+            var doubleVal: CDouble = 0
+            let result = Tcl_GetDoubleFromObj (nil, obj, &doubleVal)
+            if (result == TCL_ERROR) {
+                return nil
+            }
+            return doubleVal
         }
-        return doubleVal
+        set {
+            guard let val = newValue else {return}
+            Tcl_SetDoubleObj (obj, val)
+        }
     }
-    
+
     // getInt - version of getInt that throws an error if object isn't an int
     // if interp is specified then a Tcl-generated message will be used
     func getInt(interp: TclInterp?) throws ->  Int {
@@ -356,13 +359,10 @@ class TclObj {
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
-        
-        var i = 0
-        while (i < objc - 1) {
-            
+
+        for i in 0.stride(to: objc-1, by: 2) {
             let keyString = String.fromCString(Tcl_GetString (objv[i]))
             dictionary[keyString ?? ""] = TclObj(objv[i+1])
-            i += 2
         }
         return dictionary
     }
@@ -376,9 +376,9 @@ class TclObj {
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
-        for i: Int in 0..<Int(objc) {
+        for i in 0..<Int(objc) {
             let string = String.fromCString(Tcl_GetString (objv[i]))
-            array.append(string!)
+            array.append(string ?? "")
         }
         
         return array
@@ -393,7 +393,7 @@ class TclObj {
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
-        for i: Int in 0..<Int(objc) {
+        for i in 0..<Int(objc) {
             var longVal: CLong = 0
             let result = Tcl_GetLongFromObj (nil, objv[i], &longVal)
             if (result == TCL_ERROR) {
@@ -415,7 +415,7 @@ class TclObj {
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
-        for i: Int in 0..<Int(objc) {
+        for i in 0..<Int(objc) {
             var doubleVal: CDouble = 0
             let result = Tcl_GetDoubleFromObj (nil, objv[i], &doubleVal)
             if (result == TCL_ERROR) {
@@ -439,7 +439,7 @@ class TclObj {
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
-        for i: Int in 0..<Int(objc) {
+        for i in 0..<Int(objc) {
             array.append(TclObj(objv[i]))
         }
         
@@ -454,15 +454,12 @@ class TclObj {
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
-        
-        var i = 0
-        while (i < objc - 1) {
-            
+
+        for i in 0.stride(to: Int(objc-1), by: 2) {
             let keyString = String.fromCString(Tcl_GetString (objv[i]))
             let valueString = String.fromCString(Tcl_GetString(objv[i+1]))
 
             dictionary[keyString ?? ""] = valueString ?? ""
-            i += 2
         }
         return dictionary
     }
@@ -476,15 +473,12 @@ class TclObj {
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
-        var i = 0
-        while (i < objc - 1) {
-            
+        for i in 0.stride(to: Int(objc-1), by: 2) {
             let keyString = String.fromCString(Tcl_GetString (objv[i]))
             var val: Int32 = 0
             Tcl_GetIntFromObj (nil, objv[i+1], &val)
             
             dictionary[keyString ?? ""] = Int(val)
-            i += 2
         }
         return dictionary
     }
@@ -498,15 +492,12 @@ class TclObj {
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
-        var i = 0
-        while (i < objc - 1) {
-            
+        for i in 0.stride(to: Int(objc-1), by: 2) {
             let keyString = String.fromCString(Tcl_GetString (objv[i]))
             var val = 0.0
             Tcl_GetDoubleFromObj (nil, objv[i+1], &val)
             
             dictionary[keyString ?? ""] = val
-            i += 2
         }
         return dictionary
     }
@@ -692,22 +683,22 @@ class TclInterp {
     
     // dictionaryToArray - set a String/String dictionary into a Tcl array
     func dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0) {
-        for (key, value) in dictionary {
-            setVar(arrayName, elementName: key, value: value, flags: flags)
+        dictionary.forEach {
+            setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
         }
     }
 
     // dictionaryToArray - set a String/Int dictionary into a Tcl array
     func dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0) {
-        for (key, value) in dictionary {
-            setVar(arrayName, elementName: key, value: value, flags: flags)
+        dictionary.forEach {
+            setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
         }
     }
 
     // dictionaryToArray - set a String/Double dictionary into a Tcl array
     func dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: Int = 0) {
-        for (key, value) in dictionary {
-            setVar(arrayName, elementName: key, value: value, flags: flags)
+        dictionary.forEach {
+            setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
         }
     }
 

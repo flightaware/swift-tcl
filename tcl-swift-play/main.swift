@@ -35,11 +35,11 @@ var xo = TclObj(5)
     xy.stringValue = "hi dad"
     print(xy.stringValue)
     let xz = TclObj(5.5)
-    if let xz2 = xz.getInt() {
+    if let xz2 = xz.intValue {
         print(xz2)
     }
     let x5 = TclObj(5)
-    print(x5.getDouble())
+    print(x5.doubleValue)
     
     func foo (interp: TclInterp, objv: [TclObj]) -> TclReturn {
         print("foo baby foo baby foo baby foo")
@@ -49,7 +49,7 @@ var xo = TclObj(5)
     func avg (interp: TclInterp, objv: [TclObj]) -> TclReturn {
         var sum = 0.0
         for obj in objv {
-            sum += obj.getDouble()!
+            sum += obj.doubleValue!
         }
         interp.setResult(sum / Double(objv.count))
         return TclReturn.OK
