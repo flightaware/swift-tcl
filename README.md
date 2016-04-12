@@ -6,6 +6,142 @@ It defines a TclInterp class in Swift that provides methods for eval'ing Tcl cod
 
 It also defines a TclObj class that can convert between Swift data types such as Int, Double, String and Tcl object representations of equivalent types.
 
+## Methods of the TclObj class
+
+* var obj = TclObj()
+* var obj = TclObj(String)
+* var obj = TclObj(Int)
+* var obj = TclObj(Double)
+
+Create a TclObj object that's empty, contains a String, an Int, or a Double
+
+* var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)
+
+Create a TclObj object encapsulating a <UnsafeMutablePointer<Tcl_Obj> aka a Tcl_Obj *_
+
+* obj.set(Set<String>)
+* obj.set(Set<Int>)
+* obj.set(Set<Double>)
+
+Set a TclObj object to contain a String, Int or Double
+
+* obj.set([String])
+* obj.set([Int])
+* obj.set([Double])
+
+Set a TclObj object to be a Tcl list containing a Swift array of either String, Int or Double
+
+* obj.set([String:String])
+* obj.set([String:Int])
+* obj.set([String:Double])
+
+Set a TclObj object to contain a Tcl list of key-value pairs from the contents of a Swift Dictionary having names of String and values of String, Int or Double
+
+* obj = String
+* obj = Int
+* obj = Double
+
+Assign TclObj to contain a String, Int or Double
+
+* var val: String = obj
+
+Set String to contain the String representation of whatever TclObj has in it
+
+* var val: Int? = obj.getInt()
+
+Set Int to contain the Int representation of the TclObj, or nil if it cannot be represented as an Int.
+
+* var val: Double? = obj.getDouble()
+
+Same as the above but for Double.
+
+*  do {var val: Int = obj.getInt()}
+
+Return the TclObj's value as an Int or throw an error if it cannot be represented as one.
+
+*  do {var val: Int = obj.getDouble()}
+
+Same as the above but for Double.
+
+* var nativeObj: UnsafeMutablePointer<Tcl_Obj> = obj.getObj()
+
+Obtain a pointer to the native C Tcl object from a TclObj
+
+* var status: Bool = obj.lappend(value: UnsafeMootablePointer<Tcl_Obj>)
+
+Append a Tcl_Obj * to a list contained in a TclObj
+
+* var status: Bool = obj.lappend(value: Int)
+* var status: Bool = obj.lappend(value: Double)
+* var status: Bool = obj.lappend(value: String)
+* var status: Bool = obj.lappend(value: TclObj)
+
+Append an Int, Double, String or TclObj to a list contained in a TclObj
+
+* var status: Bool = obj.lappend(array: [Int])
+* var status: Bool = obj.lappend(array: [Double])
+* var status: Bool = obj.lappend(array: [String])
+
+Append an array of Int, Double, or String to a list contained in a TclObj.  Each element is appended.
+
+* var count: Int? = obj.llength()
+
+Return the number of elements in the list contained in the TclObj or nil if the value in the TclObj cannot be represented as a list
+
+Return the number of elements 
+
+* var dictionary: [String:String]? = obj.toDictionary()
+* var dictionary: [String:Int]? = obj.toDictionary()
+* var dictionary: [String:Double]? = obj.toDictionary()
+* var dictionary: [String:TclObj]? = obj.toDictionary()
+
+Import a Tcl list of key-value pairs contained in a TclObj to a dictionary having a key of a String type and values of String, Int, Double or TclObjs.
+
+## Methods of the TclInterp class
+
+* var interp = TclInterp()
+
+* var result: String = interp.eval(code: String)
+
+* var result: String = interp.result
+
+* var resultObj: TclObj = interp.resultObj
+
+* interp.result = String
+
+* interp.resultObj = TclObj
+
+* interp.setResult(Double)
+
+* interp.setResult(Int)
+
+* interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)
+
+
+* var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+* var val: TclObj? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+* var val: Int? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+* var val: Double? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+* var val: String? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)
+
+* var success: Bool = interp.setVar(varName: String, elementName: String?, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0)
+
+* var success: Bool = interp.setVar(varName: String, elementName: String?, value: String, flags: Int = 0)
+
+* var success: Bool = interp.setVar(varName: String, elementName: String?, value: Int, flags: Int = 0)
+
+* var success: Bool = interp.setVar(varName: String, elementName: String?, value: Double, flags: Int = 0)
+
+* var success: Bool = interp.setVar(varName: String, elementName: String?, value: TclObj, flags: Int = 0)
+
+* interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0)
+* interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0)
+* interp.dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: Int = 0)
+
 ## Building
 
 Right now this is on the Mac and requires Xcode and the included Xcode project looks to Tcl as installed by macports (https://www.macports.org/) with the include file in /opt/local/include and the tcl dylib in /opt/local/lib.
