@@ -64,6 +64,13 @@ var xo = TclObj(val: 5)
     do {
         try interp.eval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
+    
+    func latlongs_to_distance (interp: TclInterp, objv: [TclObj]) -> TclReturn {
+        if (objv.count != 4) {
+            
+        }
+        return TclReturn.OK
+    }
 
 
     

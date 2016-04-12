@@ -10,8 +10,12 @@
 
 import Foundation
 
-enum TclReturn {
-    case OK, ERROR, RETURN, BREAK, CONTINUE
+enum TclReturn: Int32 {
+    case OK = 0
+    case ERROR = 1
+    case RETURN = 2
+    case BREAK = 3
+    case CONTINUE = 4
 }
 
 typealias SwiftTclFuncType = (TclInterp, [TclObj]) -> TclReturn
@@ -25,8 +29,8 @@ class TclCommandBlock {
         interp = myInterp
     }
     
-    func invoke(objv: [TclObj]) {
-        swiftTclFunc(interp, objv)
+    func invoke(objv: [TclObj]) -> TclReturn {
+        return swiftTclFunc(interp, objv)
     }
 }
 
@@ -46,9 +50,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         objvec.append(TclObj(val: objv[i]))
     }
     
-    tcc.invoke(objvec)
-    
-    return 0
+    return tcc.invoke(objvec).rawValue
 }
 
 // TclObj - Tcl object class
@@ -203,7 +205,6 @@ class TclInterp {
     func setResult(val: Int) {
         Tcl_SetLongObj (Tcl_GetObjResult(interp), val)
     }
-
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     func create_command(name: String, SwiftTclFunction:SwiftTclFuncType) {
