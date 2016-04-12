@@ -18,8 +18,15 @@ enum TclReturn: Int32 {
     case CONTINUE = 4
 }
 
-typealias SwiftTclFuncType = (TclInterp, [TclObj]) -> TclReturn
+typealias SwiftTclFuncType = (TclInterp, [TclObj]) throws -> TclReturn
 
+enum TclError: ErrorType {
+    case WrongNumArgs(nLeadingArguments: Int, message: String)
+    case ErrorMessage(message: String) // set error message in interpreter result
+    case Error // error already set in interpreter result
+}
+
+// TclCommandBlock - when creating a Tcl command -> Swift
 class TclCommandBlock {
     let swiftTclFunc: SwiftTclFuncType
     let interp: TclInterp
@@ -29,24 +36,42 @@ class TclCommandBlock {
         interp = myInterp
     }
     
-    func invoke(objv: [TclObj]) -> TclReturn {
-        return swiftTclFunc(interp, objv)
+    func invoke(objv: [TclObj]) throws -> TclReturn {
+        do {
+            let ret = try swiftTclFunc(interp, objv)
+            return ret
+        }
     }
 }
 
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
+//   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
 func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>>) -> Int32 {
     let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData).memory
-    // let tcc = tcb.memory
     
     // construct an array containing the arguments
+    // (go from 1 not 0 because we don't include the obj containing the command name)
     var objvec = [TclObj]()
     for i in 1..<Int(objc) {
         objvec.append(TclObj(val: objv[i]))
     }
     
     // invoke the Swift implementation of the Tcl command and return the value it returns
-    return tcb.invoke(objvec).rawValue
+    do {
+        let ret = try tcb.invoke(objvec).rawValue
+        return ret
+    } catch TclError.Error {
+        return TCL_ERROR
+    } catch TclError.ErrorMessage(let message) {
+        tcb.interp.result = message
+        return TCL_ERROR
+    } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
+        Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
+    } catch (let error) {
+        tcb.interp.result = "unknown error type \(error)"
+        return TCL_ERROR
+    }
+    return TCL_ERROR
 }
 
 // TclObj - Tcl object class
@@ -126,10 +151,37 @@ class TclObj {
         return doubleVal
     }
     
+    func getInt(interp: TclInterp?) throws ->  Int {
+        var longVal: CLong = 0
+        let result = Tcl_GetLongFromObj (nil, obj, &longVal)
+        if (result == TCL_ERROR) {
+            if (interp == nil) {
+                throw TclError.ErrorMessage(message: "conversion error")
+            } else {
+                throw TclError.Error
+            }
+        }
+        return longVal
+    }
+    
+    func getDouble(interp: TclInterp?) throws -> Double {
+        var doubleVal: CDouble = 0
+        let result = Tcl_GetDoubleFromObj (interp!.interp, obj, &doubleVal)
+        if (result == TCL_ERROR) {
+            if (interp == nil) {
+                throw TclError.ErrorMessage(message: "conversion error")
+            } else {
+                throw TclError.Error
+            }
+        }
+        return doubleVal
+    }
+    
+
+    
     func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
         return obj
     }
-    
 }
 
 // TclInterp - Tcl Interpreter class
