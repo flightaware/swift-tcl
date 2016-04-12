@@ -82,6 +82,7 @@ class TclObj {
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
     
+    // init - initialize from nothing, get an empty Tcl object
     init() {
         obj = Tcl_NewObj()
     }
@@ -99,9 +100,73 @@ class TclObj {
         obj = Tcl_NewDoubleObj (val)
     }
     
+    // init - Initialize from a Tcl_Obj *
     init(_ val: UnsafeMutablePointer<Tcl_Obj>) {
         obj = val
         IncrRefCount(val)
+    }
+    
+    // init - init from a set of Strings to a list
+    init(_ set: Set<String>) {
+        obj = Tcl_NewObj()
+
+        for element in set {
+            let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (string, -1))
+        }
+    }
+    
+    // init from a set of Ints to a list
+    init(_ set: Set<Int>) {
+        obj = Tcl_NewObj()
+        
+        for element in set {
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj (element))
+        }
+    }
+    
+    // init from a Set of doubles to a list
+    init(_ set: Set<Double>) {
+        obj = Tcl_NewObj()
+        
+        for element in set {
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
+        }
+    }
+
+    // init from a String/String dictionary to a list
+    init (_ dictionary: [String: String]) {
+        obj = Tcl_NewObj()
+        
+        for (key, value) in dictionary {
+            let keyString = key.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
+            let valueString = value.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (valueString, -1))
+            
+        }
+    }
+    
+    // init from a String/Int dictionary to a list
+    init (_ dictionary: [String: Int]) {
+        obj = Tcl_NewObj()
+        
+        for (key, value) in dictionary {
+            let keyString = key.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj (value))
+        }
+    }
+   
+    // init from a String/Double dictionary to a list
+    init (_ dictionary: [String: Double]) {
+        obj = Tcl_NewObj()
+        
+        for (key, value) in dictionary {
+            let keyString = key.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (value))
+        }
     }
     
     // deinit - decrement the object's reference count.  if it goes below one
@@ -187,6 +252,10 @@ class TclObj {
     func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
         return obj
     }
+    
+
+    
+
 }
 
 // TclInterp - Tcl Interpreter class
