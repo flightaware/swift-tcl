@@ -367,8 +367,85 @@ class TclObj {
         return dictionary
     }
     
-
+    // toArray - create a String array from the tcl object as a list
+    func toArray () -> [String]? {
+        var array: [String] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        
+        for i: Int in 0..<Int(objc) {
+            let string = String.fromCString(Tcl_GetString (objv[i]))
+            array.append(string!)
+        }
+        
+        return array
+    }
     
+    // toArray - create an Int array from the tcl object as a list
+    func toArray () -> [Int]? {
+        var array: [Int] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        
+        for i: Int in 0..<Int(objc) {
+            var longVal: CLong = 0
+            let result = Tcl_GetLongFromObj (nil, objv[i], &longVal)
+            if (result == TCL_ERROR) {
+                return nil
+            }
+            array.append(longVal)
+
+        }
+        
+        return array
+    }
+    
+    // toArray - create a Double array from the tcl object as a list
+    func toArray () -> [Double]? {
+        var array: [Double] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        
+        for i: Int in 0..<Int(objc) {
+            var doubleVal: CDouble = 0
+            let result = Tcl_GetDoubleFromObj (nil, objv[i], &doubleVal)
+            if (result == TCL_ERROR) {
+                return nil
+            }
+            array.append(doubleVal)
+            
+        }
+        
+        return array
+    }
+    
+    // toArray - create a TclObj array from the tcl object as a list,
+    // each element becomes its own TclObj
+    
+    func toArray () -> [TclObj]? {
+        var array: [TclObj] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        
+        for i: Int in 0..<Int(objc) {
+            array.append(TclObj(objv[i]))
+        }
+        
+        return array
+    }
+
     // toDictionary - copy the tcl object as a list into a String/String dictionary
     func toDictionary () -> [String: String]? {
         var dictionary: [String: String] = [:]
