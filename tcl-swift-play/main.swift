@@ -41,18 +41,18 @@ var xo = TclObj(val: 5)
     let x5 = TclObj(val: 5)
     print(x5.getDouble())
     
-    func foo (interp: TclInterp, objv: [TclObj]) -> Int {
+    func foo (interp: TclInterp, objv: [TclObj]) -> TclReturn {
         print("foo baby foo baby foo baby foo")
-        return 0
+        return TclReturn.OK
     }
     
-    func avg (interp: TclInterp, objv: [TclObj]) -> Int {
+    func avg (interp: TclInterp, objv: [TclObj]) -> TclReturn {
         var sum = 0.0
         for obj in objv {
             sum += obj.getDouble()!
         }
         interp.setResult(sum / Double(objv.count))
-        return 0
+        return TclReturn.OK
     }
     
     interp.create_command("foo", SwiftTclFunction: foo)

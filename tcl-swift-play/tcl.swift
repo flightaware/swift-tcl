@@ -10,7 +10,11 @@
 
 import Foundation
 
-typealias SwiftTclFuncType = (TclInterp, [TclObj]) -> Int
+enum TclReturn {
+    case OK, ERROR, RETURN, BREAK, CONTINUE
+}
+
+typealias SwiftTclFuncType = (TclInterp, [TclObj]) -> TclReturn
 
 class TclCommandBlock {
     var swiftTclFunc: SwiftTclFuncType
@@ -203,7 +207,7 @@ class TclInterp {
 
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
-    func create_command(name: String, SwiftTclFunction:(TclInterp, [TclObj]) -> Int) {
+    func create_command(name: String, SwiftTclFunction:SwiftTclFuncType) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
         
         let cmdBlock = TclCommandBlock(myInterp: self, function: SwiftTclFunction)
