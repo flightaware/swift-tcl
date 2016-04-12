@@ -318,6 +318,35 @@ class TclInterp {
         return doubleVal
     }
     
+    // setVar - set a variable or array element in the Tcl interpreter
+    // from an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *)
+    // returns true or false based on whether it succeeded or not
+    func setVar(varName: String, elementName: String?, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0) -> Bool {
+        guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return false}
+        let cElementName = elementName!.cStringUsingEncoding(NSUTF8StringEncoding)
+        
+        let ret = Tcl_SetVar2Ex(interp, cVarName, cElementName!, value, Int32(flags))
+        
+        return (ret != nil)
+    }
+    
+    // setVar - set a variable or array element in the Tcl interpreter to the specified Int
+    func setVar(varName: String, elementName: String?, value: Int, flags: Int = 0) -> Bool {
+        let obj = Tcl_NewIntObj(Int32(value))
+        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+    }
+    
+    // setVar - set a variable or array element in the Tcl interpreter to the specified Double
+    func setVar(varName: String, elementName: String?, value: Double, flags: Int = 0) -> Bool {
+        let obj = Tcl_NewDoubleObj(value)
+        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+    }
+    
+    // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
+    func setVar(varName: String, elementName: String?, obj: TclObj, flags: Int = 0) -> Bool {
+        return self.setVar(varName, elementName: elementName, value: obj.getObj(), flags: flags)
+    }
+
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     func create_command(name: String, SwiftTclFunction:SwiftTclFuncType) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
