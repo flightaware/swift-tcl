@@ -17,8 +17,8 @@ enum TclReturn {
 typealias SwiftTclFuncType = (TclInterp, [TclObj]) -> TclReturn
 
 class TclCommandBlock {
-    var swiftTclFunc: SwiftTclFuncType
-    var interp: TclInterp
+    let swiftTclFunc: SwiftTclFuncType
+    let interp: TclInterp
     
     init(myInterp: TclInterp, function: SwiftTclFuncType) {
         swiftTclFunc = function
@@ -54,7 +54,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 // TclObj - Tcl object class
 
 class TclObj {
-    var obj: UnsafeMutablePointer<Tcl_Obj>
+    let obj: UnsafeMutablePointer<Tcl_Obj>
     
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
@@ -134,11 +134,10 @@ class TclObj {
     
 }
 
-
 // TclInterp - Tcl Interpreter class
 
 class TclInterp {
-    var interp: UnsafeMutablePointer<Tcl_Interp>
+    let interp: UnsafeMutablePointer<Tcl_Interp>
     
     // init - create and initialize a full Tcl interpreter
     init() {
@@ -211,7 +210,7 @@ class TclInterp {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
         
         let cmdBlock = TclCommandBlock(myInterp: self, function: SwiftTclFunction)
-        var unmanaged = Unmanaged.passRetained(cmdBlock)
+        let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
         // let ptr = unmanaged.toOpaque()
         let ptr = UnsafeMutablePointer<TclCommandBlock>.alloc(1)
         ptr.memory = cmdBlock
