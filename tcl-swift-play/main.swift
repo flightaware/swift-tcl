@@ -134,4 +134,10 @@ var xo = TclObj(5)
         try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")
     }
     
+    print("importing a swift array")
+    var ints: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 10]
+    var intListObj = TclObj(ints)
+    print(ints)
+    print(intListObj.stringValue)
+    
     
