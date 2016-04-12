@@ -38,7 +38,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     
     var objvec = [TclObj]()
 
-    for i in 0..<Int(objc) {
+    for i in 1..<Int(objc) {
         objvec.append(TclObj(val: objv[i]))
     }
     

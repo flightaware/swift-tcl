@@ -48,8 +48,8 @@ var xo = TclObj(val: 5)
     
     func avg (interp: TclInterp, objv: [TclObj]) -> Int {
         var sum = 0.0
-        for i in 1..<objv.count {
-            sum += objv[i].getDouble()!
+        for obj in objv {
+            sum += obj.getDouble()!
         }
         interp.setResult(sum / Double(objv.count))
         return 0
