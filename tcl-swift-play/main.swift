@@ -29,16 +29,16 @@ let interp = TclInterp()
 
 print(interp.result)
 
-var xo = TclObj(val: 5)
-    let xy = TclObj(val: "hi mom")
+var xo = TclObj(5)
+    let xy = TclObj("hi mom")
     print(xy.stringValue)
     xy.stringValue = "hi dad"
     print(xy.stringValue)
-    let xz = TclObj(val: 5.5)
+    let xz = TclObj(5.5)
     if let xz2 = xz.getInt() {
         print(xz2)
     }
-    let x5 = TclObj(val: 5)
+    let x5 = TclObj(5)
     print(x5.getDouble())
     
     func foo (interp: TclInterp, objv: [TclObj]) -> TclReturn {

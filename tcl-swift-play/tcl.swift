@@ -53,7 +53,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     // (go from 1 not 0 because we don't include the obj containing the command name)
     var objvec = [TclObj]()
     for i in 1..<Int(objc) {
-        objvec.append(TclObj(val: objv[i]))
+        objvec.append(TclObj(objv[i]))
     }
     
     // invoke the Swift implementation of the Tcl command and return the value it returns
@@ -86,20 +86,20 @@ class TclObj {
         obj = Tcl_NewObj()
     }
     
-    init(val: Int) {
+    init(_ val: Int) {
         obj = Tcl_NewLongObj(val)
     }
     
-    init(val: String) {
+    init(_ val: String) {
         let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
         obj = Tcl_NewStringObj (string, -1)
     }
     
-    init(val: Double) {
+    init(_ val: Double) {
         obj = Tcl_NewDoubleObj (val)
     }
     
-    init(val: UnsafeMutablePointer<Tcl_Obj>) {
+    init(_ val: UnsafeMutablePointer<Tcl_Obj>) {
         obj = val
         IncrRefCount(val)
     }
@@ -239,7 +239,7 @@ class TclInterp {
     
     var resultObj: TclObj {
         get {
-            return TclObj(val: Tcl_GetObjResult(interp))
+            return TclObj(Tcl_GetObjResult(interp))
         }
         set {
             Tcl_SetObjResult(interp,resultObj.getObj())
@@ -252,6 +252,31 @@ class TclInterp {
     
     func setResult(val: Int) {
         Tcl_SetLongObj (Tcl_GetObjResult(interp), val)
+    }
+    
+    // getVar - return a TclObj containing var, or nil
+    func getVar(varName: String) -> TclObj? {
+        guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+        let obj = Tcl_GetVar2Ex(interp, cVarName, UnsafeMutablePointer<Int8>(nil), 0)
+        
+        if (obj == UnsafeMutablePointer<Tcl_Obj>(nil)) {
+            return nil
+        }
+        
+        return TclObj(obj)
+    }
+    
+    // getArrayElement - return a TclObj containing var, or nil
+    func getArrayElement(arrayName: String, elementName: String) -> TclObj? {
+        guard let cArrayName = arrayName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+        guard let cElementName = elementName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+        let obj = Tcl_GetVar2Ex(interp, cArrayName, cElementName, 0)
+        
+        if (obj == UnsafeMutablePointer<Tcl_Obj>(nil)) {
+            return nil
+        }
+        
+        return TclObj(obj)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
