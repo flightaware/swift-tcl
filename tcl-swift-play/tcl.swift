@@ -262,58 +262,20 @@ class TclInterp {
         Tcl_SetLongObj (Tcl_GetObjResult(interp), val)
     }
     
-    // getvar - return an UnsafeMUtablePointer<Tcl_Obj> (i.e. a Tcl_Obj *) containing a Tcl var, or nil
+    // getVar - return var as an UnsafeMUtablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil
+    // if elementName is specified, var is an array, otherwise var is a variable
+    // NB still need to handle FLAGS
     
-    func getVar(varName: String) -> UnsafeMutablePointer<Tcl_Obj> {
+    func getVar(varName: String, elementName: String?, flags: Int = 0) -> UnsafeMutablePointer<Tcl_Obj> {
         guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+        let cElementName = elementName!.cStringUsingEncoding(NSUTF8StringEncoding)
         
-        return Tcl_GetVar2Ex(interp, cVarName, nil, 0)
+        return Tcl_GetVar2Ex(interp, cVarName, cElementName!, Int32(flags))
     }
     
-    
-    // getArrayElement - return an UnsafeMUtablePointer<Tcl_Obj> (i.e. a Tcl_Obj *) containing var, or nil
-    
-    func getArrayElement(arrayName: String, elementName: String) -> UnsafeMutablePointer<Tcl_Obj> {
-        guard let cArrayName = arrayName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
-        guard let cElementName = elementName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
-        
-        return Tcl_GetVar2Ex(interp, cArrayName, cElementName, 0)
-    }
-    
-    // getVar - return a TclObj object containing var from interpreter, or nil
-    func getVar(varName: String) -> TclObj? {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName)
-        
-        if (obj == UnsafeMutablePointer<Tcl_Obj>(nil)) {
-            return nil
-        }
-        
-        return TclObj(obj)
-    }
-    
-    // getVar - return an Int object containing var from interpreter, or nil
-    func getVar(varName: String) -> Int? {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName)
-        
-        if (obj == UnsafeMutablePointer<Tcl_Obj>(nil)) {
-            return nil
-        }
-        
-        var longVal: CLong = 0
-        let result = Tcl_GetLongFromObj (nil, obj, &longVal)
-        
-        if result == TCL_ERROR {
-            return nil
-        }
-        
-        return longVal
-    }
-    
-
-
-    // getArrayElement - return a TclObj containing var, or nil
-    func getArrayElement(arrayName: String, elementName: String) -> TclObj? {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getArrayElement(arrayName, elementName: elementName)
+    // getVar - return a TclObj containing var in a TclObj object, or nil
+    func getVar(varName: String, elementName: String?, flags: Int = 0) -> TclObj? {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
         if (obj == nil) {
             return nil
@@ -321,7 +283,41 @@ class TclInterp {
         
         return TclObj(obj)
     }
-
+    
+    // getVar - return a TclObj containing var as an Int, or nil
+    func getVar(varName: String, elementName: String?, flags: Int = 0) -> Int? {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
+        
+        if (obj == nil) {
+            return nil
+        }
+        
+        var longVal: CLong = 0
+        let result = Tcl_GetLongFromObj (nil, obj, &longVal)
+        if (result == TCL_ERROR) {
+            return nil
+        }
+        
+        return longVal
+    }
+    
+    // getVar - return a TclObj containing var as a Double, or nil
+    func getVar(arrayName: String, elementName: String?) -> Double? {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+        
+        if (obj == nil) {
+            return nil
+        }
+        
+        var doubleVal: CDouble = 0
+        let result = Tcl_GetDoubleFromObj (nil, obj, &doubleVal)
+        if (result == TCL_ERROR) {
+            return nil
+        }
+        
+        return doubleVal
+    }
+    
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     func create_command(name: String, SwiftTclFunction:SwiftTclFuncType) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
