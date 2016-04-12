@@ -1,10 +1,18 @@
 ## Overview
 
-This is an experiment in creating a bridge between Tcl and Swift
+This is the tcl-swift-bridge, a bridge between Tcl and Swift
 
-It defines a TclInterp class in Swift that provides methods for eval'ing Tcl code from Swift and for digging results out of the interpreter.
+It defines a TclInterp class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.
 
-It also defines a TclObj class that can convert between Swift data types such as Int, Double, String and Tcl object representations of equivalent types.
+It also defines a TclObj class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
+
+Real work can be done with the Tcl interpeter without using TclObj objects at all.
+
+```swift
+let interp = TclInterp()
+
+interp.eval("puts {Hello, World.}")
+```
 
 ## Methods of the TclObj class
 
