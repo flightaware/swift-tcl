@@ -133,6 +133,34 @@ class TclObj {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
         }
     }
+    
+    // init from an Array of Strings to a Tcl list
+    init(_ array: [String]) {
+        obj = Tcl_NewObj()
+        
+        for element in array {
+            let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (string, -1))
+        }
+    }
+    
+    // Init from an Array of Int to a Tcl list
+    init (_ array: [Int]) {
+        obj = Tcl_NewObj()
+        
+        for element in array {
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj(element))
+        }
+    }
+    
+    // Init from an Array of Double to a Tcl list
+    init (_ array: [Double]) {
+        obj = Tcl_NewObj()
+        
+        for element in array {
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj(element))
+        }
+    }
 
     // init from a String/String dictionary to a list
     init (_ dictionary: [String: String]) {
@@ -246,7 +274,6 @@ class TclObj {
         }
         return doubleVal
     }
-    
 
     // getObj - return the Tcl object pointer (Tcl_Obj *)
     func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
