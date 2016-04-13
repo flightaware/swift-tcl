@@ -140,4 +140,6 @@ var xo = TclObj(5)
     print(ints)
     print(intListObj.stringValue)
     
+    var autoPath: String? = interp.getVar("auto_path")
+    print("auto_path is '\(autoPath)")
     
