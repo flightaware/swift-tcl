@@ -51,7 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */,
-				CB30DB8F1CB5898400F53FF5 /* tcl-swift-play */,
+				CB30DB8F1CB5898400F53FF5 /* tcl-swift-bridge */,
 				CB30DB8E1CB5898400F53FF5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,7 +64,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CB30DB8F1CB5898400F53FF5 /* tcl-swift-play */ = {
+		CB30DB8F1CB5898400F53FF5 /* tcl-swift-bridge */ = {
 			isa = PBXGroup;
 			children = (
 				CB30DB981CB5899500F53FF5 /* c-stuff.c */,
@@ -73,6 +73,7 @@
 				CB574D681CB600FD00B90411 /* tcl.swift */,
 				CB30DB971CB5899500F53FF5 /* tcl-swift-play-Bridging-Header.h */,
 			);
+			name = "tcl-swift-bridge";
 			path = "tcl-swift-play";
 			sourceTree = "<group>";
 		};
