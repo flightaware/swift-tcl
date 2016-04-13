@@ -26,7 +26,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		CB30DB8D1CB5898400F53FF5 /* tcl-swift-play */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tcl-swift-play"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB30DB8D1CB5898400F53FF5 /* tcl-swift-bridge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tcl-swift-bridge"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB30DB901CB5898400F53FF5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CB30DB971CB5899500F53FF5 /* tcl-swift-play-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tcl-swift-play-Bridging-Header.h"; sourceTree = "<group>"; };
 		CB30DB981CB5899500F53FF5 /* c-stuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "c-stuff.c"; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 		CB30DB8E1CB5898400F53FF5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CB30DB8D1CB5898400F53FF5 /* tcl-swift-play */,
+				CB30DB8D1CB5898400F53FF5 /* tcl-swift-bridge */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,9 +79,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CB30DB8C1CB5898400F53FF5 /* tcl-swift-play */ = {
+		CB30DB8C1CB5898400F53FF5 /* tcl-swift-bridge */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CB30DB941CB5898400F53FF5 /* Build configuration list for PBXNativeTarget "tcl-swift-play" */;
+			buildConfigurationList = CB30DB941CB5898400F53FF5 /* Build configuration list for PBXNativeTarget "tcl-swift-bridge" */;
 			buildPhases = (
 				CB30DB891CB5898400F53FF5 /* Sources */,
 				CB30DB8A1CB5898400F53FF5 /* Frameworks */,
@@ -91,9 +91,9 @@
 			);
 			dependencies = (
 			);
-			name = "tcl-swift-play";
+			name = "tcl-swift-bridge";
 			productName = "tcl-swift-play";
-			productReference = CB30DB8D1CB5898400F53FF5 /* tcl-swift-play */;
+			productReference = CB30DB8D1CB5898400F53FF5 /* tcl-swift-bridge */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -111,7 +111,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CB30DB881CB5898400F53FF5 /* Build configuration list for PBXProject "tcl-swift-play" */;
+			buildConfigurationList = CB30DB881CB5898400F53FF5 /* Build configuration list for PBXProject "tcl-swift-bridge" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -123,7 +123,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CB30DB8C1CB5898400F53FF5 /* tcl-swift-play */,
+				CB30DB8C1CB5898400F53FF5 /* tcl-swift-bridge */,
 			);
 		};
 /* End PBXProject section */
@@ -233,7 +233,7 @@
 					"$(inherited)",
 					/opt/local/lib,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -248,7 +248,7 @@
 					"$(inherited)",
 					/opt/local/lib,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
 			};
 			name = Release;
@@ -256,7 +256,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CB30DB881CB5898400F53FF5 /* Build configuration list for PBXProject "tcl-swift-play" */ = {
+		CB30DB881CB5898400F53FF5 /* Build configuration list for PBXProject "tcl-swift-bridge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CB30DB921CB5898400F53FF5 /* Debug */,
@@ -265,7 +265,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CB30DB941CB5898400F53FF5 /* Build configuration list for PBXNativeTarget "tcl-swift-play" */ = {
+		CB30DB941CB5898400F53FF5 /* Build configuration list for PBXNativeTarget "tcl-swift-bridge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CB30DB951CB5898400F53FF5 /* Debug */,
