@@ -140,11 +140,11 @@ var xo = TclObj(5)
     print(ints)
     print(intListObj.stringValue)
     
-    var autoPath: String? = interp.getVar("auto_path")
-    print("auto_path is '\(autoPath!)'")
+    var autoPath: String = interp.getVar("auto_path")!
+    print("auto_path is '\(autoPath)'")
     
-    var tclVersion: Double? = interp.getVar("tcl_version")
-    print("Tcl version is \(tclVersion!)")
+    var tclVersion: Double = interp.getVar("tcl_version")!
+    print("Tcl version is \(tclVersion)")
     
     do {try interp.eval("array get tcl_platform")}
     var dict: [String:String]? = interp.resultObj.toDictionary()
