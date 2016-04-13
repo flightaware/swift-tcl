@@ -595,10 +595,16 @@ class TclInterp {
     // NB still need to handle FLAGS
     
     func getVar(varName: String, elementName: String? = nil, flags: Int = 0) -> UnsafeMutablePointer<Tcl_Obj> {
+        
         guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+        
         let cElementName = elementName?.cStringUsingEncoding(NSUTF8StringEncoding)
         
-        return Tcl_GetVar2Ex(interp, cVarName, cElementName!, Int32(flags))
+        if (cElementName == nil) {
+            return Tcl_GetVar2Ex(interp, cVarName, nil, Int32(flags))
+        } else {
+            return Tcl_GetVar2Ex(interp, cVarName, cElementName!, Int32(flags))
+        }
     }
     
     // getVar - return a TclObj containing var in a TclObj object, or nil
