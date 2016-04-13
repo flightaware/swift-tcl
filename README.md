@@ -17,11 +17,11 @@ interp.eval("puts {Hello, World.}")
 The TclInterp object has methods for accessing and manipulating variables, arrays, evaluating code, etc.  In the exsamples below a String and a Double are obtained from variables in the Tcl interpreter:
 
 ```swift
-var autoPath: String? = interp.getVar("auto_path")
-print("auto_path is '\(autoPath!)'")
+var autoPath: String = interp.getVar("auto_path")!
+print("auto_path is '\(autoPath)'")
 
-var tclVersion: Double? = interp.getVar("tcl_version")
-print("Tcl version is \(tclVersion!)")
+var tclVersion: Double = interp.getVar("tcl_version")!
+print("Tcl version is \(tclVersion)")
 ```
 
 In this example we import an "array get" of Tcl's global _tcl_platform_ array into a Swift dictionary:
