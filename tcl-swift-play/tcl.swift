@@ -410,6 +410,12 @@ class TclObj {
         return tclobjp_to_Int(tmpObj)
     }
     
+    func lindex (index: Int) -> Double? {
+        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        
+        return tclobjp_to_Double(tmpObj)
+    }
+    
     // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
     func toDictionary () -> [String: TclObj]? {
         var dictionary: [String: TclObj] = [:]
