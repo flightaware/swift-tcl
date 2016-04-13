@@ -85,19 +85,23 @@ class TclObj {
     // init - initialize from nothing, get an empty Tcl object
     init() {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
     }
     
     init(_ val: Int) {
         obj = Tcl_NewLongObj(val)
+		IncrRefCount(obj)
     }
     
     init(_ val: String) {
         let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
         obj = Tcl_NewStringObj (string, -1)
+		IncrRefCount(obj)
     }
     
     init(_ val: Double) {
         obj = Tcl_NewDoubleObj (val)
+		IncrRefCount(obj)
     }
     
     // init - Initialize from a Tcl_Obj *
@@ -109,6 +113,7 @@ class TclObj {
     // init - init from a set of Strings to a list
     init(_ set: Set<String>) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
 
         for element in set {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
@@ -119,6 +124,7 @@ class TclObj {
     // init from a set of Ints to a list
     init(_ set: Set<Int>) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
         
         for element in set {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj (element))
@@ -128,6 +134,7 @@ class TclObj {
     // init from a Set of doubles to a list
     init(_ set: Set<Double>) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
         
         for element in set {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
@@ -137,6 +144,7 @@ class TclObj {
     // init from an Array of Strings to a Tcl list
     init(_ array: [String]) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
         
         for element in array {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
@@ -147,6 +155,7 @@ class TclObj {
     // Init from an Array of Int to a Tcl list
     init (_ array: [Int]) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
         
         for element in array {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj(element))
@@ -156,6 +165,7 @@ class TclObj {
     // Init from an Array of Double to a Tcl list
     init (_ array: [Double]) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
 
         array.forEach {
             Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
@@ -165,6 +175,7 @@ class TclObj {
     // init from a String/String dictionary to a list
     init (_ dictionary: [String: String]) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
 
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
@@ -177,6 +188,7 @@ class TclObj {
     // init from a String/Int dictionary to a list
     init (_ dictionary: [String: Int]) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
         
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
@@ -188,6 +200,7 @@ class TclObj {
     // init from a String/Double dictionary to a list
     init (_ dictionary: [String: Double]) {
         obj = Tcl_NewObj()
+		IncrRefCount(obj)
         
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
