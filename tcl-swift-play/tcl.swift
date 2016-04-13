@@ -594,7 +594,7 @@ class TclInterp {
     // if elementName is specified, var is an array, otherwise var is a variable
     // NB still need to handle FLAGS
     
-    func getVar(varName: String, elementName: String? = nil, flags: Int = 0) -> UnsafeMutablePointer<Tcl_Obj> {
+    func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> UnsafeMutablePointer<Tcl_Obj> {
         
         guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
         
@@ -608,7 +608,7 @@ class TclInterp {
     }
     
     // getVar - return a TclObj containing var in a TclObj object, or nil
-    func getVar(varName: String, elementName: String? = nil, flags: Int = 0) -> TclObj? {
+    func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> TclObj? {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
         if (obj == nil) {
@@ -619,7 +619,7 @@ class TclInterp {
     }
     
     // getVar - return a TclObj containing var as an Int, or nil
-    func getVar(varName: String, elementName: String? = nil, flags: Int = 0) -> Int? {
+    func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> Int? {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
         if (obj == nil) {
