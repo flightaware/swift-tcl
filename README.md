@@ -118,6 +118,13 @@ Set a variable or array element in the Tcl interpeter to be the String, Int, Dou
 
 Import a Swift Dictionary into a Tcl array.
 
+* `interp.subst (substIn: String, flags: Int32 = TCL_SUBST_ALL) -> String
+* `interp.subst (substIn: String, flags: Int32 = TCL_SUBST_ALL) -> TclObj
+
+Perform substitution on String in the fashion of the Tcl *subst* command, performing variable substitution, evaluating square-bracketed stuff as embedded Tcl commands and substituting their result, and performing backslash substitution and return the result.
+
+Flags can be a logical OR of any of the following: TCL_SUBST_COMMANDS, TCL_SUBST_VARIABLES, TCL_SUBST_BACKSLASHES, TCL_SUBST_ALL.  TCL_SUBST_ALL is the default.
+
 
 ## The TclObj class
 

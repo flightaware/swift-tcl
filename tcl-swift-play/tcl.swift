@@ -95,6 +95,13 @@ func tclobjp_to_Bool (tclObjP: Tcl_ObjPtr?) -> Bool? {
     return boolVal == 0 ? true : false
 }
 
+// string_to_tclobjp - create a Tcl_Obj * from a Swift String
+
+func string_to_tclobjp (string: String) -> Tcl_ObjPtr {
+    let cString = string.cStringUsingEncoding(NSUTF8StringEncoding)
+    if (cString == nil) {return nil}
+    return Tcl_NewStringObj (cString!, -1)
+}
 
 
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
@@ -474,7 +481,7 @@ class TclObj {
         
         return tclobjp_to_Bool(tmpObj)
     }
-
+    
     // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
     func toDictionary () -> [String: TclObj]? {
         var dictionary: [String: TclObj] = [:]
@@ -830,6 +837,32 @@ class TclInterp {
         ptr.memory = cmdBlock
         
         Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
+    }
+
+    func subst (substInObj: Tcl_ObjPtr, flags: Int32 = TCL_SUBST_ALL) -> Tcl_ObjPtr? {
+        let substOutObj: Tcl_ObjPtr = Tcl_SubstObj (interp, substInObj, flags)
+        if substOutObj == nil {return nil}
+        return substOutObj
+    }
+    
+    func subst (substInObj: Tcl_ObjPtr, flags: Int32 = TCL_SUBST_ALL) -> TclObj? {
+        let substOutObj: Tcl_ObjPtr? = self.subst(substInObj, flags: flags)
+        if substOutObj == nil {return nil}
+        return TclObj(substOutObj!)
+    }
+    
+    func subst (substIn: String, flags: Int32 = TCL_SUBST_ALL) -> Tcl_ObjPtr? {
+        return self.subst (string_to_tclobjp(substIn), flags: flags)
+    }
+
+    func subst (substInObj: TclObj, flags: Int32 = TCL_SUBST_ALL) -> Tcl_ObjPtr? {
+        return self.subst (substInObj.getObj(), flags: flags)
+    }
+    
+    func subst (substIn: String, flags: Int32 = TCL_SUBST_ALL) -> String? {
+        let substOutObj: Tcl_ObjPtr? = self.subst(substIn, flags: flags)
+        if substOutObj == nil {return nil}
+        return tclobjp_to_String (substOutObj)
     }
 }
 
