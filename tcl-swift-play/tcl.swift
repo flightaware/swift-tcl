@@ -19,6 +19,7 @@ enum TclReturn: Int32 {
 }
 
 typealias SwiftTclFuncType = (TclInterp, [TclObj]) throws -> TclReturn
+typealias Tcl_ObjPtr = UnsafeMutablePointer<Tcl_Obj>
 
 enum TclError: ErrorType {
     case WrongNumArgs(nLeadingArguments: Int, message: String)
@@ -46,7 +47,7 @@ class TclCommandBlock {
 
 // tclobjp_to_String - return the value of a Tcl_Obj * as a String or nil
 
-func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> String? {
+func tclobjp_to_String (tclObjP: Tcl_ObjPtr?) -> String? {
     if (tclObjP == nil) {return nil}
     
     return String.fromCString(Tcl_GetString(tclObjP!))
@@ -54,7 +55,7 @@ func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> String? {
 
 // tclobjp_to_Int - return the value of a Tcl_Obj * as an Int or nil
 
-func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Int? {
+func tclobjp_to_Int (tclObjP: Tcl_ObjPtr?) -> Int? {
     var longVal: CLong = 0
     
     if (tclObjP == nil) {return nil}
@@ -68,7 +69,7 @@ func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Int? {
 
 // tclobjp_to_Double - return the value of a Tcl_Obj * as a Double or nil
 
-func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Double? {
+func tclobjp_to_Double (tclObjP: Tcl_ObjPtr?) -> Double? {
     var doubleVal: Double = 0
     
     if tclObjP == nil {return nil}
@@ -83,7 +84,7 @@ func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Double? {
 
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 //   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
-func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>>) -> Int32 {
+func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<Tcl_ObjPtr>) -> Int32 {
     let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData).memory
     
     // construct an array containing the arguments
@@ -115,7 +116,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 // TclObj - Tcl object class
 
 class TclObj {
-    let obj: UnsafeMutablePointer<Tcl_Obj>
+    let obj: Tcl_ObjPtr
     
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
@@ -143,7 +144,7 @@ class TclObj {
     }
     
     // init - Initialize from a Tcl_Obj *
-    init(_ val: UnsafeMutablePointer<Tcl_Obj>) {
+    init(_ val: Tcl_ObjPtr) {
         obj = val
         IncrRefCount(val)
     }
@@ -320,12 +321,12 @@ class TclObj {
     }
 
     // getObj - return the Tcl object pointer (Tcl_Obj *)
-    func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
+    func getObj() -> Tcl_ObjPtr {
         return obj
     }
     
     // lappend - append a Tcl_Obj * to the Tcl object list
-    func lappend (value: UnsafeMutablePointer<Tcl_Obj>) -> Bool {
+    func lappend (value: Tcl_ObjPtr) -> Bool {
         return Tcl_ListObjAppendElement (nil, obj, value) != TCL_ERROR
     }
     
@@ -392,26 +393,26 @@ class TclObj {
         return Int(count)
     }
     
-    func lindex (index: Int) -> UnsafeMutablePointer<Tcl_Obj>? {
-        var tmpObj: UnsafeMutablePointer<Tcl_Obj> = nil
+    func lindex (index: Int) -> Tcl_ObjPtr? {
+        var tmpObj: Tcl_ObjPtr = nil
         if Tcl_ListObjIndex(nil, obj, Int32(index), &tmpObj) == TCL_ERROR {return nil}
         return tmpObj
     }
     
     func lindex (index: Int) -> TclObj? {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: Tcl_ObjPtr? = self.lindex(index)
         
         return tmpObj == nil ? nil : TclObj(tmpObj!)
     }
     
     func lindex (index: Int) -> Int? {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: Tcl_ObjPtr? = self.lindex(index)
         
         return tclobjp_to_Int(tmpObj)
     }
     
     func lindex (index: Int) -> Double? {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: Tcl_ObjPtr? = self.lindex(index)
         
         return tclobjp_to_Double(tmpObj)
     }
@@ -421,7 +422,7 @@ class TclObj {
         var dictionary: [String: TclObj] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
 
@@ -437,7 +438,7 @@ class TclObj {
         var array: [String] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
@@ -454,7 +455,7 @@ class TclObj {
         var array: [Int] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
@@ -476,7 +477,7 @@ class TclObj {
         var array: [Double] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
@@ -500,7 +501,7 @@ class TclObj {
         var array: [TclObj] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
@@ -516,7 +517,7 @@ class TclObj {
         var dictionary: [String: String] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
 
@@ -534,7 +535,7 @@ class TclObj {
         var dictionary: [String: Int] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
@@ -553,7 +554,7 @@ class TclObj {
         var dictionary: [String: Double] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<Tcl_ObjPtr> = nil
         
         if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
         
@@ -617,7 +618,7 @@ class TclInterp {
         }
         set {
             guard let cCode = newValue.cStringUsingEncoding(NSUTF8StringEncoding) else {return}
-            let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_NewStringObj(cCode, -1)
+            let obj: Tcl_ObjPtr = Tcl_NewStringObj(cCode, -1)
             Tcl_SetObjResult(interp, obj)
         }
     }
@@ -642,11 +643,11 @@ class TclInterp {
         Tcl_SetLongObj (Tcl_GetObjResult(interp), val)
     }
     
-    // getVar - return var as an UnsafeMUtablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil
+    // getVar - return var as an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil
     // if elementName is specified, var is an array, otherwise var is a variable
     // NB still need to handle FLAGS
     
-    func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> UnsafeMutablePointer<Tcl_Obj> {
+    func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> Tcl_ObjPtr {
         
         guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
         
@@ -661,7 +662,7 @@ class TclInterp {
     
     // getVar - return a TclObj containing var in a TclObj object, or nil
     func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> TclObj? {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
+        let obj: Tcl_ObjPtr = self.getVar(varName, elementName: elementName, flags: flags)
         
         if (obj == nil) {
             return nil
@@ -672,7 +673,7 @@ class TclInterp {
     
     // getVar - return a TclObj containing var as an Int, or nil
     func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> Int? {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
+        let obj: Tcl_ObjPtr = self.getVar(varName, elementName: elementName, flags: flags)
         
         if (obj == nil) {
             return nil
@@ -689,7 +690,7 @@ class TclInterp {
     
     // getVar - return a TclObj containing var as a Double, or nil
     func getVar(arrayName: String, elementName: String? = nil) -> Double? {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+        let objp: Tcl_ObjPtr = self.getVar(arrayName, elementName: elementName)
         
         if (objp == nil) {
             return nil
@@ -700,7 +701,7 @@ class TclInterp {
     
     // getVar - return a TclObj containing var as a String, or nil
     func getVar(arrayName: String, elementName: String? = nil) -> String? {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+        let objp: Tcl_ObjPtr = self.getVar(arrayName, elementName: elementName)
         
         return tclobjp_to_String(objp)
     }
@@ -709,7 +710,7 @@ class TclInterp {
     // setVar - set a variable or array element in the Tcl interpreter
     // from an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *)
     // returns true or false based on whether it succeeded or not
-    func setVar(varName: String, elementName: String? = nil, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0) -> Bool {
+    func setVar(varName: String, elementName: String? = nil, value: Tcl_ObjPtr, flags: Int = 0) -> Bool {
         guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return false}
         let cElementName = elementName!.cStringUsingEncoding(NSUTF8StringEncoding)
         
