@@ -103,6 +103,47 @@ func string_to_tclobjp (string: String) -> Tcl_ObjPtr {
     return Tcl_NewStringObj (cString!, -1)
 }
 
+extension String {
+    func toTclObj() -> TclObj? {
+        return TclObj(self)
+    }
+    
+    func toTcl_ObjPtr() -> Tcl_ObjPtr? {
+        return string_to_tclobjp(self)
+    }
+}
+
+extension Int {
+    func toTclObj() -> TclObj {
+        return TclObj(self)
+    }
+    
+    func toTcl_ObjPtr() -> Tcl_ObjPtr {
+        return Tcl_NewIntObj(Int32(self))
+    }
+}
+
+extension Double {
+    func toTclObj() -> TclObj {
+        return TclObj(self)
+    }
+    
+    func toTcl_ObjPtr() -> Tcl_ObjPtr {
+        return Tcl_NewDoubleObj(self)
+    }
+
+}
+
+extension Bool {
+    func toTclObj() -> TclObj {
+        return TclObj(self)
+    }
+    
+    func toTcl_ObjPtr() -> Tcl_ObjPtr {
+        return Tcl_NewBooleanObj(self ? 1 : 0)
+    }
+}
+
 
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 //   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
@@ -137,7 +178,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 
 // TclObj - Tcl object class
 
-class TclObj {
+public class TclObj {
     let obj: Tcl_ObjPtr
     
     // various initializers to create a Tcl object from nothing, an int,
@@ -152,6 +193,7 @@ class TclObj {
     // init - initialize from a Swift Int
     init(_ val: Int) {
         obj = Tcl_NewLongObj(val)
+        // obj = val.toTcl_ObjPtr()
 		IncrRefCount(obj)
     }
     
