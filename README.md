@@ -264,7 +264,8 @@ I'm currently just running it from within Xcode.  The TclInterp and TclObj class
 
 ## Stuff it needs
 
-* Stuff
+* proc aliasing (generated scaffolding makes procs indistinguishable from other Swift functions)
+* tcl object system class aliasing
 
 ## Stuff that would be nice eventually
 

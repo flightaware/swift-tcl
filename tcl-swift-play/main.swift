@@ -104,25 +104,12 @@ var xo = TclObj(5)
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
         
-        let lat1, lon1, lat2, lon2: Double
-        
-        do {
-            lat1 = try objv[0].getDouble(interp)
-        }
-        
-        do {
-            lon1 = try objv[1].getDouble(interp)
-        }
-        
-        do {
-            lat2 = try objv[2].getDouble(interp)
-        }
-        
-        do {
-            lon2 = try objv[3].getDouble(interp)
-        }
-        
-        let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
+        let lat1 = Double(objv[0])
+        let lon1 = Double(objv[1])
+        let lat2 = Double(objv[2])
+        let lon2 = Double(objv[3])
+
+        let distance = fa_latlongs_to_distance(lat1!, lon1: lon1!, lat2: lat2!, lon2: lon2!)
         interp.setResult(distance)
         return TclReturn.OK
     }

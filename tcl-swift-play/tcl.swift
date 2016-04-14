@@ -108,7 +108,7 @@ func string_to_tclobjp (string: String) -> UnsafeMutablePointer<Tcl_Obj> {
 
 extension String {
     // initialize string straight from a TclObj!
-    public init (obj: TclObj) {
+    public init (_ obj: TclObj) {
         self.init(obj.stringValue)
     }
     
@@ -123,7 +123,7 @@ extension String {
 
 extension Int {
     // var foo: Int = someTclObj; failable initializer
-    public init? (obj: TclObj) {
+    public init? (_ obj: TclObj) {
         if obj.intValue == nil {
             return nil
         }
@@ -140,7 +140,7 @@ extension Int {
 }
 
 extension Double {
-    public init? (obj: TclObj) {
+    public init? (_ obj: TclObj) {
         if obj.doubleValue == nil {
             return nil
         }
@@ -157,7 +157,7 @@ extension Double {
 }
 
 extension Bool {
-    public init? (obj: TclObj) {
+    public init? (_ obj: TclObj) {
         if obj.boolValue == nil {
             return nil
         }
