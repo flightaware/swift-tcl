@@ -108,6 +108,10 @@ extension String {
         return TclObj(self)
     }
     
+    mutating func fromTclObj(obj: TclObj) {
+        self = obj.stringValue
+    }
+    
     func toTcl_ObjPtr() -> Tcl_ObjPtr? {
         return string_to_tclobjp(self)
     }
@@ -116,6 +120,10 @@ extension String {
 extension Int {
     func toTclObj() -> TclObj {
         return TclObj(self)
+    }
+    
+    mutating func fromTclObj(obj: TclObj) {
+        self = obj.intValue!
     }
     
     func toTcl_ObjPtr() -> Tcl_ObjPtr {
@@ -128,6 +136,10 @@ extension Double {
         return TclObj(self)
     }
     
+    mutating func fromTclObj(obj: TclObj) {
+        self = obj.doubleValue!
+    }
+    
     func toTcl_ObjPtr() -> Tcl_ObjPtr {
         return Tcl_NewDoubleObj(self)
     }
@@ -137,6 +149,10 @@ extension Double {
 extension Bool {
     func toTclObj() -> TclObj {
         return TclObj(self)
+    }
+    
+    mutating func fromTclObj(obj: TclObj) {
+        self = obj.boolValue!
     }
     
     func toTcl_ObjPtr() -> Tcl_ObjPtr {
@@ -375,7 +391,7 @@ public class TclObj {
 
     // getInt - version of getInt that throws an error if object isn't an int
     // if interp is specified then a Tcl-generated message will be used
-    func getInt(interp: TclInterp?) throws ->  Int {
+    func getInt(interp: TclInterp? = nil) throws ->  Int {
         var longVal: CLong = 0
         let result = Tcl_GetLongFromObj (nil, obj, &longVal)
         if (result == TCL_ERROR) {
@@ -391,7 +407,7 @@ public class TclObj {
     // getDouble - version of getDouble that throws an error if object can't
     // be read as a double.  if interp is specified then a Tcl-generated
     // message will be used
-    func getDouble(interp: TclInterp?) throws -> Double {
+    func getDouble(interp: TclInterp? = nil) throws -> Double {
         var doubleVal: CDouble = 0
         let result = Tcl_GetDoubleFromObj (interp!.interp, obj, &doubleVal)
         if (result == TCL_ERROR) {
