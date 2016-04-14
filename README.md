@@ -69,12 +69,10 @@ Set the interpreter result to be the specified string.
 Set the interpreter result to the specified TclObj object.
 
 * `interp.setResult(Double)`
-
-Set the interpreter result to the specified Double.
-
 * `interp.setResult(Int)`
+* `interp.setResult(Bool)`
 
-Set the interpreter result to the specified Int.
+Set the interpreter result to the specified Double, Int, or Bool, respectively.
 
 * interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
 
@@ -97,12 +95,10 @@ Get a variable or array element out of the Tcl interpreter and return it as an o
 Get a variable or array element out of the Tcl interpreter and return it as an optional Int.  nil is returned if the object's contents aren't a valid list or if the element can't be converted to an Int.
 
 * `var val: Double? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
-
-Get a variable or array element out of the Tcl interpeter and return it as an optional Double.
-
 * `var val: String? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
+* `var val: Bool? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
-Get a variable or array element out of the Tcl interpeter and return it as an optional String.
+Get a variable or array element out of the Tcl interpeter and return it as an optional Double, String or Bool.
 
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0)`
 
@@ -111,9 +107,10 @@ Set a variable or array element in the Tcl interpreter to be the Tcl\_Obj \* tha
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: String, flags: Int = 0)`
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Int, flags: Int = 0)`
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Double, flags: Int = 0)`
+* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Bool, flags: Int = 0)`
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: TclObj, flags: Int = 0)`
 
-Set a variable or array element in the Tcl interpeter to be the String, Int, Double, or TclObj that was passed.
+Set a variable or array element in the Tcl interpeter to be the String, Int, Double, Bool or TclObj that was passed.
 
 * `interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0)`
 * `interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0)`
@@ -134,8 +131,9 @@ The TclObj object manages Tcl reference counts so that all this will work.  For 
 * `var obj = TclObj(String)`
 * `var obj = TclObj(Int)`
 * `var obj = TclObj(Double)`
+* `var obj = TclObj(Bool)`
 
-Create a Swift TclObj object that's empty, contains a String, an Int, or a Double.
+Create a Swift TclObj object that's empty, contains a String, an Int, Double or Bool.
 
 * `var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)`
 
@@ -162,8 +160,9 @@ Set a TclObj object to contain a Tcl list of key-value pairs from the contents o
 * `obj = String`
 * `obj = Int`
 * `obj = Double`
+* `obj = Bool`
 
-Assign TclObj to contain a String, Int or Double
+Assign TclObj to contain a String, Int, Double or Bool.
 
 * `var val: String = obj`
 
@@ -174,8 +173,9 @@ Set String to contain the String representation of whatever TclObj has in it
 Set Int to contain the Int representation of the TclObj, or nil if it cannot be represented as an Int.
 
 * `var val: Double? = obj.getDouble()`
+* `var valBool Double? = obj.getBool()`
 
-Same as the above but for Double.
+Same as the above but for Double and Bool.
 
 *  `do {var val: Int = obj.getInt()}`
 
@@ -196,15 +196,24 @@ Append a Tcl\_Obj \* to a list contained in a TclObj
 * `var status: Bool = obj.lappend(value: Int)`
 * `var status: Bool = obj.lappend(value: Double)`
 * `var status: Bool = obj.lappend(value: String)`
+* `var status: Bool = obj.lappend(value: Bool)`
 * `var status: Bool = obj.lappend(value: TclObj)`
 
-Append an Int, Double, String or TclObj to a list contained in a TclObj
+Append an Int, Double, String, Bool or TclObj to a list contained in a TclObj
 
 * `var status: Bool = obj.lappend(array: [Int])`
 * `var status: Bool = obj.lappend(array: [Double])`
 * `var status: Bool = obj.lappend(array: [String])`
 
 Append an array of Int, Double, or String to a list contained in a TclObj.  Each element is appended.
+
+* `var val: Int? = obj.lindex(index)
+* `var val: Double? = obj.lindex(index)
+* `var val: String? = obj.lindex(index)
+* `var val: Bool? = obj.lindex(index)
+* `var val: TclObj? = obj.lindex(index)
+
+Return the nth element of the obj as a list, if possible, according to the specified data type, else nil.
 
 * `var count: Int? = obj.llength()`
 

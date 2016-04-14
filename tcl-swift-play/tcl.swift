@@ -81,6 +81,21 @@ func tclobjp_to_Double (tclObjP: Tcl_ObjPtr?) -> Double? {
     return doubleVal
 }
 
+// tclobjp_to_Bool - return the value of a Tcl_Obj * as a Bool or nil
+
+func tclobjp_to_Bool (tclObjP: Tcl_ObjPtr?) -> Bool? {
+    var boolVal: Int32 = 0
+    
+    if tclObjP == nil {return nil}
+    
+    let result = Tcl_GetBooleanFromObj (nil, tclObjP!, &boolVal)
+    if (result == TCL_ERROR) {
+        return nil
+    }
+    return boolVal == 0 ? true : false
+}
+
+
 
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 //   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
@@ -127,20 +142,29 @@ class TclObj {
 		IncrRefCount(obj)
     }
     
+    // init - initialize from a Swift Int
     init(_ val: Int) {
         obj = Tcl_NewLongObj(val)
 		IncrRefCount(obj)
     }
     
+    // init - initialize from a Swift String
     init(_ val: String) {
         let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
         obj = Tcl_NewStringObj (string, -1)
 		IncrRefCount(obj)
     }
     
+    // init - initialize from a Swift Double
     init(_ val: Double) {
         obj = Tcl_NewDoubleObj (val)
 		IncrRefCount(obj)
+    }
+    
+    // init - initialize from a Swift Bool
+    init(_ val: Bool) {
+        obj = Tcl_NewBooleanObj(val ? 1 : 0)
+        IncrRefCount(obj)
     }
     
     // init - Initialize from a Tcl_Obj *
@@ -288,6 +312,17 @@ class TclObj {
             Tcl_SetDoubleObj (obj, val)
         }
     }
+    
+    // getBool - return the Tcl object as a Bool or nil
+    var boolValue: Bool? {
+        get {
+            return tclobjp_to_Bool(obj)
+        }
+        set {
+            guard let val = newValue else {return}
+            Tcl_SetBooleanObj (obj, val ? 1 : 0)
+        }
+    }
 
     // getInt - version of getInt that throws an error if object isn't an int
     // if interp is specified then a Tcl-generated message will be used
@@ -346,6 +381,11 @@ class TclObj {
         return self.lappend(Tcl_NewStringObj (cString, -1))
     }
     
+    // lappend - append a Bool to the Tcl object list
+    func lappend (value: Bool) -> Bool {
+        return self.lappend (Tcl_NewBooleanObj (value ? 1 : 0))
+    }
+    
     // lappend - append a tclObj to the Tcl object list
     func lappend (value: TclObj) -> Bool {
         return self.lappend(value)
@@ -362,7 +402,7 @@ class TclObj {
         return true
     }
     
-    // lappend - append an array of Int to the Tcl object list
+    // lappend - append an array of Double to the Tcl object list
     // (flattens them out)
     func lappend (array: [Double]) -> Bool {
         for element in array {
@@ -373,7 +413,7 @@ class TclObj {
         return true
     }
     
-    // lappend - append an array of Int to the Tcl object list
+    // lappend - append an array of String to the Tcl object list
     // (flattens them out)
     func lappend (array: [String]) -> Bool {
         for element in array {
@@ -393,30 +433,48 @@ class TclObj {
         return Int(count)
     }
     
+    // lindex - return the nth element treating obj as a list, if possible, and return a Tcl_Obj *
     func lindex (index: Int) -> Tcl_ObjPtr? {
         var tmpObj: Tcl_ObjPtr = nil
         if Tcl_ListObjIndex(nil, obj, Int32(index), &tmpObj) == TCL_ERROR {return nil}
         return tmpObj
     }
     
+    // lindex returning a TclObj object or nil
     func lindex (index: Int) -> TclObj? {
         let tmpObj: Tcl_ObjPtr? = self.lindex(index)
         
         return tmpObj == nil ? nil : TclObj(tmpObj!)
     }
     
+    // lindex returning an Int or nil
     func lindex (index: Int) -> Int? {
         let tmpObj: Tcl_ObjPtr? = self.lindex(index)
         
         return tclobjp_to_Int(tmpObj)
     }
     
+    // lindex returning a Double or nil
     func lindex (index: Int) -> Double? {
         let tmpObj: Tcl_ObjPtr? = self.lindex(index)
         
         return tclobjp_to_Double(tmpObj)
     }
     
+    // lindex returning a String or nil
+    func lindex (index: Int) -> String? {
+        let tmpObj: Tcl_ObjPtr? = self.lindex(index)
+        
+        return tclobjp_to_String(tmpObj)
+    }
+    
+    // lindex returning a Bool or nil
+    func lindex (index: Int) -> Bool? {
+        let tmpObj: Tcl_ObjPtr? = self.lindex(index)
+        
+        return tclobjp_to_Bool(tmpObj)
+    }
+
     // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
     func toDictionary () -> [String: TclObj]? {
         var dictionary: [String: TclObj] = [:]
@@ -643,6 +701,11 @@ class TclInterp {
         Tcl_SetLongObj (Tcl_GetObjResult(interp), val)
     }
     
+    // setResult - set the interpreter result from a Bool
+    func setResult(val: Bool) {
+        Tcl_SetBooleanObj (Tcl_GetObjResult(interp), val ? 1 : 0)
+    }
+    
     // getVar - return var as an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil
     // if elementName is specified, var is an array, otherwise var is a variable
     // NB still need to handle FLAGS
@@ -675,26 +738,12 @@ class TclInterp {
     func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> Int? {
         let obj: Tcl_ObjPtr = self.getVar(varName, elementName: elementName, flags: flags)
         
-        if (obj == nil) {
-            return nil
-        }
-        
-        var longVal: CLong = 0
-        let result = Tcl_GetLongFromObj (nil, obj, &longVal)
-        if (result == TCL_ERROR) {
-            return nil
-        }
-        
-        return longVal
+        return tclobjp_to_Int(obj)
     }
     
     // getVar - return a TclObj containing var as a Double, or nil
     func getVar(arrayName: String, elementName: String? = nil) -> Double? {
         let objp: Tcl_ObjPtr = self.getVar(arrayName, elementName: elementName)
-        
-        if (objp == nil) {
-            return nil
-        }
         
         return tclobjp_to_Double(objp)
     }
@@ -729,6 +778,12 @@ class TclInterp {
     // setVar - set a variable or array element in the Tcl interpreter to the specified Int
     func setVar(varName: String, elementName: String? = nil, value: Int, flags: Int = 0) -> Bool {
         let obj = Tcl_NewIntObj(Int32(value))
+        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+    }
+    
+    // setVar - set a variable or array element in the Tcl interpreter to the specified Bool
+    func setVar(varName: String, elementName: String? = nil, value: Bool, flags: Int = 0) -> Bool {
+        let obj = Tcl_NewBooleanObj(value ? 1 : 0)
         return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
     }
     
