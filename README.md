@@ -23,6 +23,11 @@ print("auto_path is '\(autoPath)'")
 var tclVersion: Double = interp.getVar("tcl_version")!
 print("Tcl version is \(tclVersion)")
 ```
+Likewise TclInterp's getVar can fetch elements out of an array:
+
+```swift
+var machine: String = interp.getVar("tcl_platform", elementName: "machine")!
+```
 
 In this example we import an "array get" of Tcl's global _tcl_platform_ array into a Swift dictionary:
 
@@ -31,11 +36,10 @@ do {try interp.eval("array get tcl_platform")}
 var dict: [String:String]? = interp.resultObj.toDictionary()
 ```
 
-We can then obtain and print the contents of one of the elements of the array:
+We can then access the array we've imported into a Swift dictionary in the usual Swift way:
 
 ```swift
-var version: String = dict!["osVersion"]!
-print("Your OS version is \(version)")
+print("Your OS is \(dict["os"]!), running version \(dict["osVersion"]!)")
 ```
 
 ## Methods of the TclInterp class
@@ -82,7 +86,7 @@ Evaluate code in the Tcl interpreter and return the interpreter result as a stri
 
 * `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
-Get a variable or array element out of the Tcl interpreter and return it as a Tcl_Obj *.
+Get a variable or array element out of the Tcl interpreter and return it as a Tcl\_Obj \*.
 
 * `var val: TclObj? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
@@ -102,7 +106,7 @@ Get a variable or array element out of the Tcl interpeter and return it as an op
 
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0)`
 
-Set a variable or array element in the Tcl interpreter to be the Tcl_Obj * that was passed.
+Set a variable or array element in the Tcl interpreter to be the Tcl\_Obj \* that was passed.
 
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: String, flags: Int = 0)`
 * `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Int, flags: Int = 0)`
@@ -120,9 +124,9 @@ Import a Swift Dictionary into a Tcl array.
 
 ## The TclObj class
 
-The TclObj class gives Swift access to Tcl objects.  A TclObj can be wrapped around any C-level Tcl Object (Tcl_Obj *) and its methods use to access and manipulate the object.
+The TclObj class gives Swift access to Tcl objects.  A TclObj can be wrapped around any C-level Tcl Object (Tcl\_Obj \*) and its methods use to access and manipulate the object.
 
-The object can be new or existing.  For example `var obj = TclObj(5)` creates a new Tcl object with an integer representation and a value of 5 while `var obj = interp.resultObj` wraps an existing Tcl_Obj object as a Swift TclObj.
+The object can be new or existing.  For example `var obj = TclObj(5)` creates a new Tcl object with an integer representation and a value of 5 while `var obj = interp.resultObj` wraps an existing Tcl\_Obj object as a Swift TclObj.
 
 The TclObj object manages Tcl reference counts so that all this will work.  For example, setting a Tcl array element to a TclObj using `interp.setVar(arrayName, elementName: element, value: obj)`, the element will continue to hold the object even if the TclObj is deleted on the Swift side.
 
@@ -135,7 +139,7 @@ Create a Swift TclObj object that's empty, contains a String, an Int, or a Doubl
 
 * `var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)`
 
-Create a TclObj object encapsulating a <UnsafeMutablePointer<Tcl_Obj> aka a Tcl_Obj *.
+Create a TclObj object encapsulating a <UnsafeMutablePointer<Tcl_Obj> aka a Tcl\_Obj \*.
 
 * `obj.set(Set<String>)`
 * `obj.set(Set<Int>)`
@@ -187,7 +191,7 @@ Obtain a pointer to the native C Tcl object from a TclObj
 
 * `var status: Bool = obj.lappend(value: UnsafeMootablePointer<Tcl_Obj>)`
 
-Append a Tcl_Obj * to a list contained in a TclObj
+Append a Tcl\_Obj \* to a list contained in a TclObj
 
 * `var status: Bool = obj.lappend(value: Int)`
 * `var status: Bool = obj.lappend(value: Double)`
@@ -239,17 +243,17 @@ I'm currently just running it from within Xcode.  The TclInterp and TclObj class
 * A Swift TclInterp that wraps Tcl interpreters and provides methods to do stuff with them such as evaluate Tcl code, get and set the Interpreter result, etc.
 * A way to create new Tcl commands that invoke Swift functions
 * A Swift TclObj that wraps TclObj's and provides methods to do stuff with them
+* Methods to convert between Swift Lists, Sets and Dictionaries and Tcl lists, arrays and dicts
+* Additional methods of the TclInterp class to get and set Tcl variables (including array elements) and additional ways to interact with the Tcl interpreter that are useful
 
 ## Stuff it needs
 
-* Someone who really understands Swift to bring it in line with best practices, etc
-* Methods to convert between Swift Lists, Sets and Dictionaries and Tcl lists, arrays and dicts
-* Additional methods of the TclInterp class to get and set Tcl variables (including array elements) and additional ways to interact with the Tcl interpreter that are useful
+* Stuff
 
 ## Stuff that would be nice eventually
 
 * Support for safe interpreters
-* Support for setting resource limits on interpreters using Tcl_Limit*
+* Support for setting resource limits on interpreters using Tcl\_Limit\*
 
 ## Stuff that would be cool if it's even possible
 
@@ -257,6 +261,8 @@ I'm currently just running it from within Xcode.  The TclInterp and TclObj class
 
 ## Stuff that might be interesting to try
 
-* linking Tcl variables to Swift variables using Tcl_LinkVar
-
+* linking Tcl variables to Swift variables using Tcl\_LinkVar
+* Shadowing Tcl arrays in Swift
+* Tcl dictionary interface
+* lrange and stuff
 
