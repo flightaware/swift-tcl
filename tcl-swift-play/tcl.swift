@@ -18,6 +18,8 @@ public enum TclReturn: Int32 {
     case CONTINUE = 4
 }
 
+// Tcl commands functions written in Swift can return Int, Double, String, Bool, TclObj or a TCL_RETURN-type code
+
 public typealias SwiftTclFuncReturningTclReturn = (TclInterp, [TclObj]) throws -> TclReturn
 public typealias SwiftTclFuncReturningInt = (TclInterp, [TclObj]) throws -> Int
 public typealias SwiftTclFuncReturningDouble = (TclInterp, [TclObj]) throws -> Double
