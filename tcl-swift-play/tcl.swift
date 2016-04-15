@@ -280,19 +280,25 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
             return ret.rawValue
             
         case .String:
-            let ret: String = try tcb.invoke(objvec)
+            let result: String = try tcb.invoke(objvec)
+            tcb.interp.result = result
+            
             
         case .Double:
-            let ret: Double = try tcb.invoke(objvec)
+            let result: Double = try tcb.invoke(objvec)
+            tcb.interp.setResult(result)
             
         case .Int:
-            let ret: Int = try tcb.invoke(objvec)
+            let result: Int = try tcb.invoke(objvec)
+            tcb.interp.setResult(result)
             
         case .Bool:
-            let ret: Bool = try tcb.invoke(objvec)
+            let result: Bool = try tcb.invoke(objvec)
+            tcb.interp.setResult(result)
             
         case .TclObj:
-            let ret: TclObj = try tcb.invoke(objvec)
+            let result: TclObj = try tcb.invoke(objvec)
+            tcb.interp.resultObj = result
 
         }
     } catch TclError.Error {
@@ -306,7 +312,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         tcb.interp.result = "unknown error type \(error)"
         return TCL_ERROR
     }
-    return TCL_ERROR
+    return TCL_OK
 }
 
 
