@@ -93,6 +93,15 @@ class TclCommandBlock {
         }
     }
     
+    func invoke(objv: [TclObj]) throws -> Double {
+        switch swiftTclCallFunction {
+        case .Double(let function):
+            return try function(interp, objv)
+        default:
+            abort()
+        }
+    }
+    
     func invoke(objv: [TclObj]) throws -> String {
         switch swiftTclCallFunction {
         case .String(let function):
@@ -265,8 +274,27 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     
     // invoke the Swift implementation of the Tcl command and return the value it returns
     do {
-        let ret = try tcb.invoke(objvec).rawValue
-        return ret
+        switch tcb.swiftTclCallFunction {
+        case .TclReturn:
+            let ret: TclReturn = try tcb.invoke(objvec)
+            return ret.rawValue
+            
+        case .String:
+            let ret: String = try tcb.invoke(objvec)
+            
+        case .Double:
+            let ret: Double = try tcb.invoke(objvec)
+            
+        case .Int:
+            let ret: Int = try tcb.invoke(objvec)
+            
+        case .Bool:
+            let ret: Bool = try tcb.invoke(objvec)
+            
+        case .TclObj:
+            let ret: TclObj = try tcb.invoke(objvec)
+
+        }
     } catch TclError.Error {
         return TCL_ERROR
     } catch TclError.ErrorMessage(let message) {
@@ -782,7 +810,9 @@ public class TclObj {
 
 }
 
+
 // TclInterp - Tcl Interpreter class
+
 
 public class TclInterp {
     let interp: UnsafeMutablePointer<Tcl_Interp>
@@ -802,6 +832,11 @@ public class TclInterp {
     enum InterpErrors: ErrorType {
         case NotString(String)
         case EvalError(Int)
+    }
+    
+    // getRawInterpPtr - return Tcl_Interp *
+    func getRawInterpPtr() -> UnsafeMutablePointer<Tcl_Interp> {
+        return interp
     }
     
     // eval - evaluate a string with the Tcl interpreter
