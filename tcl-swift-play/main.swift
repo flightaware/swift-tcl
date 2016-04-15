@@ -103,12 +103,12 @@ var xo = TclObj(5)
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
         
-        let lat1 = Double(objv[0])
-        let lon1 = Double(objv[1])
-        let lat2 = Double(objv[2])
-        let lon2 = Double(objv[3])
+        guard let lat1 = Double(objv[0]) else {throw TclError.ErrorMessage(message: "lat1 NaN")}
+        guard let lon1 = Double(objv[1]) else {throw TclError.ErrorMessage(message:"lon1 NaN")}
+        guard let lat2 = Double(objv[2]) else {throw TclError.ErrorMessage(message: "lat2 NaN")}
+        guard let lon2 = Double(objv[3]) else {throw TclError.ErrorMessage(message: "lon2 NaN")}
 
-        let distance = fa_latlongs_to_distance(lat1!, lon1: lon1!, lat2: lat2!, lon2: lon2!)
+        let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
         return distance
     }
     
@@ -140,4 +140,8 @@ var xo = TclObj(5)
     var machine: String = interp.getVar("tcl_platform", elementName: "machine")!
     var byteOrder: String = interp.getVar("tcl_platform", elementName: "byteOrder")!
     print("Your machine is \(machine) and your byte order is \(byteOrder)")
+    
+    do {
+        try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+    }
     

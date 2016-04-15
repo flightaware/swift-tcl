@@ -183,9 +183,8 @@ func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Bool? {
 // string_to_tclobjp - create a Tcl_Obj * from a Swift String
 
 func string_to_tclobjp (string: String) -> UnsafeMutablePointer<Tcl_Obj> {
-    let cString = string.cStringUsingEncoding(NSUTF8StringEncoding)
-    if (cString == nil) {return nil}
-    return Tcl_NewStringObj (cString!, -1)
+    guard let cString = string.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+    return Tcl_NewStringObj (cString, -1)
 }
 
 // omg this is so cool
@@ -1040,14 +1039,12 @@ public class TclInterp {
 
     
     func subst (substInObj: UnsafeMutablePointer<Tcl_Obj>, flags: Int32 = TCL_SUBST_ALL) -> UnsafeMutablePointer<Tcl_Obj>? {
-        let substOutObj: UnsafeMutablePointer<Tcl_Obj> = Tcl_SubstObj (interp, substInObj, flags)
-        if substOutObj == nil {return nil}
+        guard let substOutObj: UnsafeMutablePointer<Tcl_Obj> = Tcl_SubstObj (interp, substInObj, flags) else {return nil}
         return substOutObj
     }
     
     func subst (substInObj: UnsafeMutablePointer<Tcl_Obj>, flags: Int32 = TCL_SUBST_ALL) -> TclObj? {
-        let substOutObj: UnsafeMutablePointer<Tcl_Obj>? = self.subst(substInObj, flags: flags)
-        if substOutObj == nil {return nil}
+        guard let substOutObj: UnsafeMutablePointer<Tcl_Obj>? = self.subst(substInObj, flags: flags) else {return nil}
         return TclObj(substOutObj!)
     }
     
@@ -1060,8 +1057,7 @@ public class TclInterp {
     }
     
     public func subst (substIn: String, flags: Int32 = TCL_SUBST_ALL) -> String? {
-        let substOutObj: UnsafeMutablePointer<Tcl_Obj>? = self.subst(substIn, flags: flags)
-        if substOutObj == nil {return nil}
+        guard let substOutObj: UnsafeMutablePointer<Tcl_Obj>? = self.subst(substIn, flags: flags) else {return nil}
         return tclobjp_to_String (substOutObj)
     }
 }
