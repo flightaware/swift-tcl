@@ -821,6 +821,8 @@ public class TclObj {
 
 public class TclInterp {
     let interp: UnsafeMutablePointer<Tcl_Interp>
+    public var throwErrors = false
+    public var printErrors = true
     
     // init - create and initialize a full Tcl interpreter
     public init() {
@@ -848,16 +850,24 @@ public class TclInterp {
     //
     // the Tcl result code (1 == error is the big one) is returned
     // this should probably be mapped to an enum in Swift
+    //
     public func eval(code: String) throws -> Int {
         guard let cCode = code.cStringUsingEncoding(NSUTF8StringEncoding) else {
             throw InterpErrors.NotString(code)
         }
         let ret = Tcl_Eval(interp, cCode)
-        defer {
-            print("eval return code is \(ret)")
-        }
-        if ret != 0 {
-            throw InterpErrors.EvalError(Int(ret))
+        
+        if ret == TCL_ERROR {
+            if printErrors {
+                print("Error: \(self.result)")
+                let errorInfo: String? = self.getVar("errorInfo")
+                if (errorInfo != nil) {
+                    print(errorInfo!)
+                }
+            }
+            if throwErrors {
+                throw TclError.ErrorMessage(message: self.result)
+            }
         }
 
         return Int(ret)

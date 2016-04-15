@@ -145,3 +145,5 @@ var xo = TclObj(5)
         try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
     }
     
+    interp.throwErrors = true
+    
