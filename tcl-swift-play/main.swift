@@ -46,21 +46,20 @@ var xo = TclObj(5)
         return TclReturn.OK
     }
     
-    func avg (interp: TclInterp, objv: [TclObj]) -> TclReturn {
+    func avg (interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
         for obj in objv {
             sum += obj.doubleValue!
         }
-        interp.setResult(sum / Double(objv.count))
-        return TclReturn.OK
+        return(sum / Double(objv.count))
     }
     
-    interp.create_command("foo", SwiftTclFunction: foo)
+    interp.create_command("foo", foo)
     do {
         try interp.eval("foo")
     }
     
-    interp.create_command("avg", SwiftTclFunction: avg)
+    interp.create_command("avg", avg)
     do {
         try interp.eval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
@@ -98,7 +97,7 @@ var xo = TclObj(5)
         return distance
     }
     
-    func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> TclReturn {
+    func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
         
         if (objv.count != 4) {
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
@@ -110,11 +109,10 @@ var xo = TclObj(5)
         let lon2 = Double(objv[3])
 
         let distance = fa_latlongs_to_distance(lat1!, lon1: lon1!, lat2: lat2!, lon2: lon2!)
-        interp.setResult(distance)
-        return TclReturn.OK
+        return distance
     }
     
-    interp.create_command("fa_latlongs_to_distance", SwiftTclFunction: fa_latlongs_to_distance_cmd)
+    interp.create_command("fa_latlongs_to_distance", fa_latlongs_to_distance_cmd)
 
     
     do {

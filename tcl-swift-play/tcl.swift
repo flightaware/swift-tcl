@@ -18,7 +18,21 @@ public enum TclReturn: Int32 {
     case CONTINUE = 4
 }
 
-public typealias SwiftTclFuncType = (TclInterp, [TclObj]) throws -> TclReturn
+public typealias SwiftTclFuncReturningTclReturn = (TclInterp, [TclObj]) throws -> TclReturn
+public typealias SwiftTclFuncReturningInt = (TclInterp, [TclObj]) throws -> Int
+public typealias SwiftTclFuncReturningDouble = (TclInterp, [TclObj]) throws -> Double
+public typealias SwiftTclFuncReturningString = (TclInterp, [TclObj]) throws -> String
+public typealias SwiftTclFuncReturningBool = (TclInterp, [TclObj]) throws -> Bool
+public typealias SwiftTclFuncReturningTclObj = (TclInterp, [TclObj]) throws -> TclObj
+
+public enum SwiftTclFunctionType {
+    case TclReturn(SwiftTclFuncReturningTclReturn)
+    case Int(SwiftTclFuncReturningInt)
+    case Double(SwiftTclFuncReturningDouble)
+    case String(SwiftTclFuncReturningString)
+    case Bool(SwiftTclFuncReturningBool)
+    case TclObj(SwiftTclFuncReturningTclObj)
+}
 
 enum TclError: ErrorType {
     case WrongNumArgs(nLeadingArguments: Int, message: String)
@@ -28,18 +42,81 @@ enum TclError: ErrorType {
 
 // TclCommandBlock - when creating a Tcl command -> Swift
 class TclCommandBlock {
-    let swiftTclFunc: SwiftTclFuncType
+    let swiftTclCallFunction: SwiftTclFunctionType
     let interp: TclInterp
     
-    init(myInterp: TclInterp, function: SwiftTclFuncType) {
-        swiftTclFunc = function
+    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclReturn) {
         interp = myInterp
+        swiftTclCallFunction = .TclReturn(function)
     }
     
+    init(myInterp: TclInterp, function: SwiftTclFuncReturningInt) {
+        interp = myInterp
+        swiftTclCallFunction = .Int(function)
+    }
+
+    init(myInterp: TclInterp, function: SwiftTclFuncReturningDouble) {
+        interp = myInterp
+        swiftTclCallFunction = .Double(function)
+    }
+
+    init(myInterp: TclInterp, function: SwiftTclFuncReturningString) {
+        interp = myInterp
+        swiftTclCallFunction = .String(function)
+    }
+
+    init(myInterp: TclInterp, function: SwiftTclFuncReturningBool) {
+        interp = myInterp
+        swiftTclCallFunction = .Bool(function)
+    }
+    
+    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclObj) {
+        interp = myInterp
+        swiftTclCallFunction = .TclObj(function)
+    }
+
     func invoke(objv: [TclObj]) throws -> TclReturn {
-        do {
-            let ret = try swiftTclFunc(interp, objv)
-            return ret
+        switch swiftTclCallFunction {
+        case .TclReturn(let function):
+            return try function(interp, objv)
+        default:
+            abort()
+        }
+    }
+    
+    func invoke(objv: [TclObj]) throws -> Int {
+        switch swiftTclCallFunction {
+        case .Int(let function):
+            return try function(interp, objv)
+        default:
+            abort()
+        }
+    }
+    
+    func invoke(objv: [TclObj]) throws -> String {
+        switch swiftTclCallFunction {
+        case .String(let function):
+            return try function(interp, objv)
+        default:
+            abort()
+        }
+    }
+    
+    func invoke(objv: [TclObj]) throws -> Bool {
+        switch swiftTclCallFunction {
+        case .Bool(let function):
+            return try function(interp, objv)
+        default:
+            abort()
+        }
+    }
+    
+    func invoke(objv: [TclObj]) throws -> TclObj {
+        switch swiftTclCallFunction {
+        case .TclObj(let function):
+            return try function(interp, objv)
+        default:
+            abort()
         }
     }
 }
@@ -897,18 +974,30 @@ public class TclInterp {
     }
 
     // create_command - create a new Tcl command that will be handled by the specified Swift function
-    public func create_command(name: String, SwiftTclFunction:SwiftTclFuncType) {
+    public func create_command(name: String, _ swiftTclFunction:SwiftTclFuncReturningTclReturn) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
         
-        let cmdBlock = TclCommandBlock(myInterp: self, function: SwiftTclFunction)
+        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
         let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
-        // let ptr = unmanaged.toOpaque()
         let ptr = UnsafeMutablePointer<TclCommandBlock>.alloc(1)
         ptr.memory = cmdBlock
         
         Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
     }
 
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func create_command(name: String, _ swiftTclFunction:SwiftTclFuncReturningDouble) {
+        let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
+        
+        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
+        let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
+        let ptr = UnsafeMutablePointer<TclCommandBlock>.alloc(1)
+        ptr.memory = cmdBlock
+        
+        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
+    }
+
+    
     func subst (substInObj: UnsafeMutablePointer<Tcl_Obj>, flags: Int32 = TCL_SUBST_ALL) -> UnsafeMutablePointer<Tcl_Obj>? {
         let substOutObj: UnsafeMutablePointer<Tcl_Obj> = Tcl_SubstObj (interp, substInObj, flags)
         if substOutObj == nil {return nil}
