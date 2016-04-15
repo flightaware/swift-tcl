@@ -43,42 +43,42 @@ enum TclError: ErrorType {
 // TclCommandBlock - when creating a Tcl command -> Swift
 class TclCommandBlock {
     let swiftTclCallFunction: SwiftTclFunctionType
-    let interp: TclInterp
+    let Interp: TclInterp
     
     init(myInterp: TclInterp, function: SwiftTclFuncReturningTclReturn) {
-        interp = myInterp
+        Interp = myInterp
         swiftTclCallFunction = .TclReturn(function)
     }
     
     init(myInterp: TclInterp, function: SwiftTclFuncReturningInt) {
-        interp = myInterp
+        Interp = myInterp
         swiftTclCallFunction = .Int(function)
     }
 
     init(myInterp: TclInterp, function: SwiftTclFuncReturningDouble) {
-        interp = myInterp
+        Interp = myInterp
         swiftTclCallFunction = .Double(function)
     }
 
     init(myInterp: TclInterp, function: SwiftTclFuncReturningString) {
-        interp = myInterp
+        Interp = myInterp
         swiftTclCallFunction = .String(function)
     }
 
     init(myInterp: TclInterp, function: SwiftTclFuncReturningBool) {
-        interp = myInterp
+        Interp = myInterp
         swiftTclCallFunction = .Bool(function)
     }
     
     init(myInterp: TclInterp, function: SwiftTclFuncReturningTclObj) {
-        interp = myInterp
+        Interp = myInterp
         swiftTclCallFunction = .TclObj(function)
     }
 
     func invoke(objv: [TclObj]) throws -> TclReturn {
         switch swiftTclCallFunction {
         case .TclReturn(let function):
-            return try function(interp, objv)
+            return try function(Interp, objv)
         default:
             abort()
         }
@@ -87,7 +87,7 @@ class TclCommandBlock {
     func invoke(objv: [TclObj]) throws -> Int {
         switch swiftTclCallFunction {
         case .Int(let function):
-            return try function(interp, objv)
+            return try function(Interp, objv)
         default:
             abort()
         }
@@ -96,7 +96,7 @@ class TclCommandBlock {
     func invoke(objv: [TclObj]) throws -> Double {
         switch swiftTclCallFunction {
         case .Double(let function):
-            return try function(interp, objv)
+            return try function(Interp, objv)
         default:
             abort()
         }
@@ -105,7 +105,7 @@ class TclCommandBlock {
     func invoke(objv: [TclObj]) throws -> String {
         switch swiftTclCallFunction {
         case .String(let function):
-            return try function(interp, objv)
+            return try function(Interp, objv)
         default:
             abort()
         }
@@ -114,7 +114,7 @@ class TclCommandBlock {
     func invoke(objv: [TclObj]) throws -> Bool {
         switch swiftTclCallFunction {
         case .Bool(let function):
-            return try function(interp, objv)
+            return try function(Interp, objv)
         default:
             abort()
         }
@@ -123,7 +123,7 @@ class TclCommandBlock {
     func invoke(objv: [TclObj]) throws -> TclObj {
         switch swiftTclCallFunction {
         case .TclObj(let function):
-            return try function(interp, objv)
+            return try function(Interp, objv)
         default:
             abort()
         }
@@ -280,35 +280,35 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
             
         case .String:
             let result: String = try tcb.invoke(objvec)
-            tcb.interp.result = result
+            tcb.Interp.result = result
             
             
         case .Double:
             let result: Double = try tcb.invoke(objvec)
-            tcb.interp.setResult(result)
+            tcb.Interp.setResult(result)
             
         case .Int:
             let result: Int = try tcb.invoke(objvec)
-            tcb.interp.setResult(result)
+            tcb.Interp.setResult(result)
             
         case .Bool:
             let result: Bool = try tcb.invoke(objvec)
-            tcb.interp.setResult(result)
+            tcb.Interp.setResult(result)
             
         case .TclObj:
             let result: TclObj = try tcb.invoke(objvec)
-            tcb.interp.resultObj = result
+            tcb.Interp.resultObj = result
 
         }
     } catch TclError.Error {
         return TCL_ERROR
     } catch TclError.ErrorMessage(let message) {
-        tcb.interp.result = message
+        tcb.Interp.result = message
         return TCL_ERROR
     } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
     } catch (let error) {
-        tcb.interp.result = "unknown error type \(error)"
+        tcb.Interp.result = "unknown error type \(error)"
         return TCL_ERROR
     }
     return TCL_OK
