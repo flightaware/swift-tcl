@@ -4,7 +4,7 @@ This is Swift Tcl, a bridge between Swift and Tcl, providing deep integration be
 
 Developers can extend Tcl by writing new commands in Swift and extend Swift by writing new commands in Tcl.  Tcl commands written in Swift are smaller and cleaner and require far less scaffolding, argument handling and code interpreter result management than those written in C.  They are a joy.
 
-Likewise through introspection, automation and a bit of hinting, Tcl procedures appear as native Swift functions, with argument names, default values and "normal" native Swift argument and return data types.
+Likewise through introspection, automation and a bit of static hinting, Tcl procedures appear as native Swift functions, with argument names, default values and "normal" native Swift argument and return data types.
 
 Users of either language invoke functions written in the other indistinguishably from those written in the one they're using.
 
@@ -309,8 +309,8 @@ I'm currently just running it from within Xcode.  The TclInterp and TclObj class
 
 ## Stuff that might be interesting to try
 
-* linking Tcl variables to Swift variables using Tcl\_LinkVar
+* linking Tcl variables to Swift variables using Tcl_LinkVar
 * Shadowing Tcl arrays in Swift
 * Tcl dictionary interface
 * lrange and stuff
-
+* automatically generating interfaces between The [TclObj] call trampoline and functions with native types
