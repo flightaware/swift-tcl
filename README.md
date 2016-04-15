@@ -50,7 +50,22 @@ You can create new commands in Tcl that are implemented as Swift functions.
 
 Swift functions implementing Tcl commands are invoked with a TclInterp object and an array of TclObj objects corresponding to the arguments to the function, although unlike with C objv[0] is the first argument to the function, not the function itself.
 
-To report errors, functions throw them and because of this and due to included support can directly return a String, Int, Double, Bool, TclObj or TclReturn without all that tedious mucking about with the interpreter result.
+Below is a function that will average all of its arguments that are numbers and return the result:
+
+To report errors, functions throw them and because of this and due to included support can directly return a String, Int, Double, Bool, TclObj or TclReturn without all that tedious mucking about with the interpreter result and distinct explicit return of a Tcl return code (ok, error, break, continue, return).
+
+```swift
+func avg (interp: TclInterp, objv: [TclObj]) -> Double {
+	var sum = 0.0
+	for obj in objv {
+		guard let val = obj.doubleValue else {continue}
+		sum += val
+	}
+	return(sum / Double(objv.count))
+}
+
+interp.create_command("avg", avg)
+```
 
 ## Methods of the TclInterp class
 
@@ -58,9 +73,13 @@ To report errors, functions throw them and because of this and due to included s
 
 Create a new Tcl interpreter.  You can create as many as you like.
 
-* `var result: String = interp.eval(code: String)`
+* `var result: Int = interp.eval(code: String)`
 
-Evaluate Tcl code in the Tcl interpreter and return the interpreter result as a string.
+Evaluate Tcl code in the Tcl interpreter and return the interpreter result as an Int.
+
+You can control whether or not errors resulting from invoking eval throw Swift errors by setting the *throwErrors* boolean to true.  Otherwise Tcl errors are not thrown and it is up to the caller to examine the return code if they want to see if there was an error.  It currently defaults to false.
+
+You can control whether or not errors are printed by manipulating the *printErrors* variable, which currently defaults to true and will include the traceback.
 
 * `var result: String = interp.result`
 
@@ -87,10 +106,6 @@ Set the interpreter result to the specified Double, Int, or Bool, respectively.
 * interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
 
 Create a new command in Tcl of the specified name that when the name is invoked from Tcl the corresponding Swift function will be invoked to perform the command.
-
-* `var result: String = interp.eval(code: String)`
-
-Evaluate code in the Tcl interpreter and return the interpreter result as a string.
 
 * `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 

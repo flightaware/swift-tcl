@@ -49,7 +49,8 @@ var xo = TclObj(5)
     func avg (interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
         for obj in objv {
-            sum += obj.doubleValue!
+            guard let val = obj.doubleValue else {continue}
+            sum += val
         }
         return(sum / Double(objv.count))
     }
