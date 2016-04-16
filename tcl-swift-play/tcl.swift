@@ -142,12 +142,12 @@ func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> String? {
 
 // tclobjp_to_Int - return the value of a Tcl_Obj * as an Int or nil
 
-func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Int? {
+func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) -> Int? {
     var longVal: CLong = 0
     
-    if (tclObjP == nil) {return nil}
+    guard tclObjP != nil else {return nil}
     
-    let result = Tcl_GetLongFromObj (nil, tclObjP!, &longVal)
+    let result = Tcl_GetLongFromObj (interp, tclObjP!, &longVal)
     if (result == TCL_ERROR) {
         return nil
     }
@@ -156,12 +156,12 @@ func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Int? {
 
 // tclobjp_to_Double - return the value of a Tcl_Obj * as a Double or nil
 
-func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Double? {
+func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) -> Double? {
     var doubleVal: Double = 0
     
     if tclObjP == nil {return nil}
     
-    let result = Tcl_GetDoubleFromObj (nil, tclObjP!, &doubleVal)
+    let result = Tcl_GetDoubleFromObj (interp, tclObjP!, &doubleVal)
     if (result == TCL_ERROR) {
         return nil
     }
@@ -170,12 +170,12 @@ func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Double? {
 
 // tclobjp_to_Bool - return the value of a Tcl_Obj * as a Bool or nil
 
-func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) -> Bool? {
+func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) -> Bool? {
     var boolVal: Int32 = 0
     
     if tclObjP == nil {return nil}
     
-    let result = Tcl_GetBooleanFromObj (nil, tclObjP!, &boolVal)
+    let result = Tcl_GetBooleanFromObj (interp, tclObjP!, &boolVal)
     if (result == TCL_ERROR) {
         return nil
     }
@@ -321,49 +321,57 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 
 public class TclObj {
     let obj: UnsafeMutablePointer<Tcl_Obj>
+    let Interp: TclInterp?
     
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
     
     // init - initialize from nothing, get an empty Tcl object
-    public init() {
+    public init(Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift Int
-    public init(_ val: Int) {
+    public init(_ val: Int, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewLongObj(val)
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift String
-    public init(_ val: String) {
+    public init(_ val: String, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
         obj = Tcl_NewStringObj (string, -1)
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift Double
-    public init(_ val: Double) {
+    public init(_ val: Double, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewDoubleObj (val)
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift Bool
-    public init(_ val: Bool) {
+    public init(_ val: Bool, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewBooleanObj(val ? 1 : 0)
         IncrRefCount(obj)
     }
     
     // init - Initialize from a Tcl_Obj *
-    init(_ val: UnsafeMutablePointer<Tcl_Obj>) {
+    init(_ val: UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = val
         IncrRefCount(val)
     }
     
     // init - init from a set of Strings to a list
-    public init(_ set: Set<String>) {
+    public init(_ set: Set<String>, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
@@ -374,7 +382,8 @@ public class TclObj {
     }
     
     // init from a set of Ints to a list
-    public init(_ set: Set<Int>) {
+    public init(_ set: Set<Int>, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -384,7 +393,8 @@ public class TclObj {
     }
     
     // init from a Set of doubles to a list
-    public init(_ set: Set<Double>) {
+    public init(_ set: Set<Double>, Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -394,7 +404,8 @@ public class TclObj {
     }
     
     // init from an Array of Strings to a Tcl list
-    public init(_ array: [String]) {
+    public init(_ array: [String], Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -405,7 +416,8 @@ public class TclObj {
     }
     
     // Init from an Array of Int to a Tcl list
-    public init (_ array: [Int]) {
+    public init (_ array: [Int], Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -415,7 +427,8 @@ public class TclObj {
     }
     
     // Init from an Array of Double to a Tcl list
-    public init (_ array: [Double]) {
+    public init (_ array: [Double], Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
@@ -425,7 +438,8 @@ public class TclObj {
     }
 
     // init from a String/String dictionary to a list
-    public init (_ dictionary: [String: String]) {
+    public init (_ dictionary: [String: String], Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
@@ -438,7 +452,8 @@ public class TclObj {
     }
     
     // init from a String/Int dictionary to a list
-    public init (_ dictionary: [String: Int]) {
+    public init (_ dictionary: [String: Int], Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -450,7 +465,8 @@ public class TclObj {
     }
    
     // init from a String/Double dictionary to a list
-    public init (_ dictionary: [String: Double]) {
+    public init (_ dictionary: [String: Double], Interp: TclInterp? = nil) {
+        self.Interp = Interp
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
