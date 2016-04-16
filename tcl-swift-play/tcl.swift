@@ -39,13 +39,14 @@ public enum SwiftTclFunctionType {
 enum TclError: ErrorType {
     case WrongNumArgs(nLeadingArguments: Int, message: String)
     case ErrorMessage(message: String, errorCode: String) // set error message in interpreter result
+    case UnknownReturnCode(code: Int32)
     case Error // error already set in interpreter result
 }
 
 enum TclControlFlow: ErrorType {
-    case TCL_RETURN
-    case TCL_BREAK
-    case TCL_CONTINUE
+    case Return
+    case Break
+    case Continue
 }
 
 // TclCommandBlock - when creating a Tcl command -> Swift
@@ -316,11 +317,11 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         return TCL_ERROR
     } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
-    } catch TclControlFlow.TCL_BREAK {
+    } catch TclControlFlow.Break {
         return TCL_BREAK
-    } catch TclControlFlow.TCL_CONTINUE {
+    } catch TclControlFlow.Continue {
         return TCL_CONTINUE
-    } catch TclControlFlow.TCL_RETURN {
+    } catch TclControlFlow.Return {
         return TCL_RETURN
     } catch (let error) {
         tcb.Interp.result = "unknown error type \(error)"
@@ -555,6 +556,10 @@ public class TclObj {
         return obj
     }
     
+    func getString() throws -> String {
+        return try tclobjp_to_String(obj)
+    }
+    
     func getInt() throws -> Int {
         return try tclobjp_to_Int(obj, interp: interp)
     }
@@ -571,7 +576,7 @@ public class TclObj {
         do {
             return try self.getInt()
         } catch {
-            Interp?.addErrorInfo("while converting \"\(varName)\" argument")
+            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
         }
     }
@@ -580,11 +585,31 @@ public class TclObj {
         do {
             return try self.getDouble()
         } catch {
-            Interp?.addErrorInfo("while converting \"\(varName)\" argument")
+            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
         }
     }
     
+    func getBoolArg(varName: String) throws -> Bool {
+        do {
+            return try self.getBool()
+        } catch {
+            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
+            throw TclError.Error
+        }
+    }
+
+    func getStringArg(varName: String) throws -> String {
+        do {
+            return try self.getString()
+        } catch {
+            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
+            throw TclError.Error
+        }
+    }
+    
+
+
 
     
     // lappend - append a Tcl_Obj * to the Tcl object list
@@ -868,13 +893,20 @@ public class TclInterp {
     // the Tcl result code (1 == error is the big one) is returned
     // this should probably be mapped to an enum in Swift
     //
-    public func eval(code: String) throws -> Int {
+    public func eval(code: String) throws {
         guard let cCode = code.cStringUsingEncoding(NSUTF8StringEncoding) else {
             throw InterpErrors.NotString(code)
         }
         let ret = Tcl_Eval(interp, cCode)
         
-        if ret == TCL_ERROR {
+        switch ret {
+        case TCL_RETURN:
+            throw TclControlFlow.Return
+        case TCL_BREAK:
+            throw TclControlFlow.Break
+        case TCL_CONTINUE:
+            throw TclControlFlow.Continue
+        case TCL_ERROR:
             if printErrors {
                 print("Error: \(self.result)")
                 let errorInfo: String = try self.getVar("errorInfo")
@@ -883,18 +915,18 @@ public class TclInterp {
             
             let errorCode = self.getVar("errorCode") ?? ""
             throw TclError.ErrorMessage(message: self.result, errorCode: errorCode)
-
+        case TCL_OK:
+            break
+        default:
+            throw TclError.UnknownReturnCode(code:ret)
         }
+    }
 
-        return Int(ret)
-    }
-    
+    /*
     public func eval(code: String) throws -> String {
-        let ret: Int = try self.eval(code)
-        return self.getResult()
-        
-        
-    }
+        try self.eval(code)
+        return try self.getResult()
+    }*/
     
     // resultString - grab the interpreter result as a string
     public var result: String {

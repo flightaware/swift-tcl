@@ -13,8 +13,8 @@ print("Hello, World!")
 
 let interp = TclInterp()
 
-    let ret: String = try? interp.eval("puts {Hey stikny}; return hijinks")
-    if (ret != nil) {print("interpreter returned '\(ret)'")
+    try! interp.eval("puts {Hey stikny}; return hijinks")
+    print("interpreter returned '\(interp.getResult)'")
 
 
 print(interp.result)
@@ -138,7 +138,7 @@ var xo = TclObj(5)
     print("Your machine is \(machine) and your byte order is \(byteOrder)")
     
     do {
-        try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+        try! interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
     }
 
     
