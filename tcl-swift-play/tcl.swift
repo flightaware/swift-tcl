@@ -42,6 +42,12 @@ enum TclError: ErrorType {
     case Error // error already set in interpreter result
 }
 
+enum TclControlFlow: ErrorType {
+    case TCL_RETURN
+    case TCL_BREAK
+    case TCL_CONTINUE
+}
+
 // TclCommandBlock - when creating a Tcl command -> Swift
 class TclCommandBlock {
     let swiftTclCallFunction: SwiftTclFunctionType
@@ -310,13 +316,18 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         return TCL_ERROR
     } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
+    } catch TclControlFlow.TCL_BREAK {
+        return TCL_BREAK
+    } catch TclControlFlow.TCL_CONTINUE {
+        return TCL_CONTINUE
+    } catch TclControlFlow.TCL_RETURN {
+        return TCL_RETURN
     } catch (let error) {
         tcb.Interp.result = "unknown error type \(error)"
         return TCL_ERROR
     }
     return TCL_OK
 }
-
 
 // TclObj - Tcl object class
 
