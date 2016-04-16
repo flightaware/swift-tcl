@@ -90,7 +90,6 @@ var xo = TclObj(5)
     }
     
     func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
-        
         if (objv.count != 4) {
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
@@ -104,8 +103,6 @@ var xo = TclObj(5)
             let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
             return distance
         }
-
-
     }
     
     interp.create_command("fa_latlongs_to_distance", fa_latlongs_to_distance_cmd)

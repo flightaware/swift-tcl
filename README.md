@@ -73,6 +73,38 @@ func avg (interp: TclInterp, objv: [TclObj]) -> Double {
 interp.create_command("avg", avg)
 ```
 
+Errors trying to convert Tcl objects to a data type such as trying to convert an alphanumeric string to a Double are thrown by the underlying helper functions and caught by Swift Tcl if you don't.  You get nice native error messages.
+
+TclObj methods like *getDoubleArg* make it a bit easier by taking on appropriate bits to Tcl's errorInfo traceback without requiring anything extra from the developer.
+
+```swift
+func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
+	if (objv.count != 4) {
+		throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
+	}
+	
+	do {
+		let lat1 = try objv[0].getDoubleArg("lat1")
+		let lon1 = try objv[1].getDoubleArg("lon1")
+		let lat2 = try objv[2].getDoubleArg("lat2")
+		let lon2 = try objv[3].getDoubleArg("lon2")
+		
+		let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
+		return distance
+	}
+}
+```
+
+In the above example invoking `try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")` emits **distance from KIAH to KSEA is 1874.5897193432174** while `try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")` produces a Tcl traceback that looks like
+
+```
+expected floating-point number but got "crash" while converting "lat2" argument
+    invoked from within
+"fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778"
+    invoked from within
+"puts "distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]""
+```
+
 ## Methods of the TclInterp class
 
 * `var interp = TclInterp()`
