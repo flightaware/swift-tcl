@@ -13,19 +13,9 @@ print("Hello, World!")
 
 let interp = TclInterp()
 
-    do {
-        try interp.eval("puts {Hey stikny}; return hijinks")
-    }
-    catch(TclInterp.InterpErrors.NotString(let str)) {
-        print("This isn't a C string \(str)")
-    }
+    let ret: String = try? interp.eval("puts {Hey stikny}; return hijinks")
+    if (ret != nil) {print("interpreter returned '\(ret)'")
 
-    do {
-        try interp.eval("invalid command")
-    }
-    catch(TclInterp.InterpErrors.EvalError(let ret)) {
-        print("Invalid command, error code \(ret)")
-    }
 
 print(interp.result)
 
@@ -56,6 +46,7 @@ var xo = TclObj(5)
     }
     
     interp.create_command("foo", foo)
+    
     do {
         try interp.eval("foo")
     }
@@ -105,10 +96,10 @@ var xo = TclObj(5)
         }
         
         do {
-            let lat1 = try objv[0].getDouble()
-            let lon1 = try objv[1].getDouble()
-            let lat2 = try objv[2].getDouble()
-            let lon2 = try objv[3].getDouble()
+            let lat1 = try objv[0].getDoubleArg("lat1")
+            let lon1 = try objv[1].getDoubleArg("lon1")
+            let lat2 = try objv[2].getDoubleArg("lat2")
+            let lon2 = try objv[3].getDoubleArg("lon2")
             
             let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
             return distance
@@ -149,6 +140,5 @@ var xo = TclObj(5)
     do {
         try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
     }
-    
-    interp.throwErrors = true
+
     

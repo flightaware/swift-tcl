@@ -556,6 +556,26 @@ public class TclObj {
         return try tclobjp_to_Bool(obj, interp: interp)
     }
     
+    func getIntArg(varName: String) throws -> Int {
+        do {
+            return try self.getInt()
+        } catch {
+            Interp?.addErrorInfo("while converting \"\(varName)\" argument")
+            throw TclError.Error
+        }
+    }
+    
+    func getDoubleArg(varName: String) throws -> Double {
+        do {
+            return try self.getDouble()
+        } catch {
+            Interp?.addErrorInfo("while converting \"\(varName)\" argument")
+            throw TclError.Error
+        }
+    }
+    
+
+    
     // lappend - append a Tcl_Obj * to the Tcl object list
     func lappend (value: UnsafeMutablePointer<Tcl_Obj>) throws {
         guard (Tcl_ListObjAppendElement (interp, obj, value) != TCL_ERROR) else {throw TclError.Error}
@@ -808,7 +828,6 @@ public class TclObj {
 
 public class TclInterp {
     let interp: UnsafeMutablePointer<Tcl_Interp>
-    public var throwErrors = false
     public var printErrors = true
     
     // init - create and initialize a full Tcl interpreter
@@ -850,12 +869,20 @@ public class TclInterp {
                 let errorInfo: String = try self.getVar("errorInfo")
                 print(errorInfo)
             }
-            if throwErrors {
-                throw TclError.ErrorMessage(message: self.result, errorCode: try self.getVar("errorCode"))
-            }
+            
+            let errorCode = self.getVar("errorCode") ?? ""
+            throw TclError.ErrorMessage(message: self.result, errorCode: errorCode)
+
         }
 
         return Int(ret)
+    }
+    
+    public func eval(code: String) throws -> String {
+        let ret: Int = try self.eval(code)
+        return self.getResult()
+        
+        
     }
     
     // resultString - grab the interpreter result as a string
@@ -878,6 +905,11 @@ public class TclInterp {
         set {
             Tcl_SetObjResult(interp,resultObj.getObj())
         }
+    }
+    
+    public func getResult() throws -> String {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
+        return try tclobjp_to_String(obj)
     }
     
     // setResult - set the interpreter result from a Double
