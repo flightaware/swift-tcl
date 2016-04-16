@@ -137,7 +137,7 @@ var xo = TclObj(5)
     print("Tcl version is \(tclVersion)")
     
     do {try interp.eval("array get tcl_platform")}
-    var dict: [String:String]! = interp.resultObj.toDictionary()
+    var dict: [String:String] = try! interp.resultObj.toDictionary()
     print(dict)
     var version = dict["osVersion"]!
     print("Your OS is \(dict["os"]!), running version \(version)")

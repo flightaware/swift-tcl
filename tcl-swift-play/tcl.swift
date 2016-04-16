@@ -323,27 +323,28 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 public class TclObj {
     let obj: UnsafeMutablePointer<Tcl_Obj>
     let Interp: TclInterp?
+    let interp: UnsafeMutablePointer<Tcl_Interp>
     
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
     
     // init - initialize from nothing, get an empty Tcl object
     public init(Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift Int
     public init(_ val: Int, Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewLongObj(val)
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift String
     public init(_ val: String, Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
         obj = Tcl_NewStringObj (string, -1)
 		IncrRefCount(obj)
@@ -351,21 +352,21 @@ public class TclObj {
     
     // init - initialize from a Swift Double
     public init(_ val: Double, Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewDoubleObj (val)
 		IncrRefCount(obj)
     }
     
     // init - initialize from a Swift Bool
     public init(_ val: Bool, Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewBooleanObj(val ? 1 : 0)
         IncrRefCount(obj)
     }
     
     // init - Initialize from a Tcl_Obj *
     init(_ val: UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = val
         IncrRefCount(val)
     }
@@ -373,6 +374,7 @@ public class TclObj {
     // init - init from a set of Strings to a list
     public init(_ set: Set<String>, Interp: TclInterp? = nil) {
         self.Interp = Interp
+        self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
@@ -385,6 +387,7 @@ public class TclObj {
     // init from a set of Ints to a list
     public init(_ set: Set<Int>, Interp: TclInterp? = nil) {
         self.Interp = Interp
+        self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -396,6 +399,7 @@ public class TclObj {
     // init from a Set of doubles to a list
     public init(_ set: Set<Double>, Interp: TclInterp? = nil) {
         self.Interp = Interp
+        self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -406,7 +410,7 @@ public class TclObj {
     
     // init from an Array of Strings to a Tcl list
     public init(_ array: [String], Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -418,7 +422,7 @@ public class TclObj {
     
     // Init from an Array of Int to a Tcl list
     public init (_ array: [Int], Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -429,7 +433,7 @@ public class TclObj {
     
     // Init from an Array of Double to a Tcl list
     public init (_ array: [Double], Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
@@ -440,7 +444,7 @@ public class TclObj {
 
     // init from a String/String dictionary to a list
     public init (_ dictionary: [String: String], Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
@@ -454,7 +458,7 @@ public class TclObj {
     
     // init from a String/Int dictionary to a list
     public init (_ dictionary: [String: Int], Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -467,7 +471,7 @@ public class TclObj {
    
     // init from a String/Double dictionary to a list
     public init (_ dictionary: [String: Double], Interp: TclInterp? = nil) {
-        self.Interp = Interp
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -544,20 +548,20 @@ public class TclObj {
     }
     
     func getInt() throws -> Int {
-        return try tclobjp_to_Int(obj)
+        return try tclobjp_to_Int(obj, interp: interp)
     }
     
     func getDouble() throws -> Double {
-        return try tclobjp_to_Double(obj)
+        return try tclobjp_to_Double(obj, interp: interp)
     }
     
     func getBool() throws -> Bool {
-        return try tclobjp_to_Bool(obj)
+        return try tclobjp_to_Bool(obj, interp: interp)
     }
     
     // lappend - append a Tcl_Obj * to the Tcl object list
     func lappend (value: UnsafeMutablePointer<Tcl_Obj>) -> Bool {
-        return Tcl_ListObjAppendElement (nil, obj, value) != TCL_ERROR
+        return Tcl_ListObjAppendElement (interp, obj, value) != TCL_ERROR
     }
     
     // lappend - append an Int to the Tcl object list
@@ -620,105 +624,98 @@ public class TclObj {
     }
     
     // llength - return the number of elements in the list if the contents of our obj can be interpreted as a list
-    public func llength () -> Int? {
+    public func llength () throws -> Int {
         var count: Int32 = 0
-        if (Tcl_ListObjLength(nil, obj, &count) == TCL_ERROR) {
-            return nil
+        if (Tcl_ListObjLength(interp, obj, &count) == TCL_ERROR) {
+            throw TclError.Error
         }
         return Int(count)
     }
     
     // lindex - return the nth element treating obj as a list, if possible, and return a Tcl_Obj *
-    func lindex (index: Int) -> UnsafeMutablePointer<Tcl_Obj>? {
+    func lindex (index: Int) throws -> UnsafeMutablePointer<Tcl_Obj>? {
         var tmpObj: UnsafeMutablePointer<Tcl_Obj> = nil
-        if Tcl_ListObjIndex(nil, obj, Int32(index), &tmpObj) == TCL_ERROR {return nil}
+        if Tcl_ListObjIndex(interp, obj, Int32(index), &tmpObj) == TCL_ERROR {throw TclError.Error}
         return tmpObj
     }
     
     // lindex returning a TclObj object or nil
-    public func lindex (index: Int) -> TclObj? {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
-        
-        guard tmpObj != nil else {return nil}
-        return TclObj(tmpObj!)
+    public func lindex (index: Int) throws -> TclObj? {
+        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
+        return TclObj(tmpObj!, Interp: Interp)
     }
     
     // lindex returning an Int or nil
     func lindex (index: Int) throws -> Int {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
-        return try tclobjp_to_Int(tmpObj)
+        return try tclobjp_to_Int(tmpObj, interp: interp)
     }
     
     // lindex returning a Double or nil
     public func lindex (index: Int) throws -> Double {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
-        return try tclobjp_to_Double(tmpObj)
+        return try tclobjp_to_Double(tmpObj, interp: interp)
     }
     
     // lindex returning a String or nil
     public func lindex (index: Int) throws -> String {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
         return try tclobjp_to_String(tmpObj)
     }
     
     // lindex returning a Bool or nil
     public func lindex (index: Int) throws -> Bool {
-        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
+        let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
-        return try tclobjp_to_Bool(tmpObj)
+        return try tclobjp_to_Bool(tmpObj, interp: interp)
     }
     
     // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
-    public func toDictionary () -> [String: TclObj]? {
+    public func toDictionary () throws -> [String: TclObj] {
         var dictionary: [String: TclObj] = [:]
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
 
         for i in 0.stride(to: objc-1, by: 2) {
-            let keyString = String.fromCString(Tcl_GetString (objv[i]))
-            dictionary[keyString ?? ""] = TclObj(objv[i+1])
+            let keyString = try tclobjp_to_String(objv[i])
+            dictionary[keyString] = TclObj(objv[i+1], Interp: Interp)
         }
         return dictionary
     }
     
     // toArray - create a String array from the tcl object as a list
-    public func toArray () -> [String]? {
+    public func toArray () throws -> [String] {
         var array: [String] = []
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0..<Int(objc) {
-            let string = String.fromCString(Tcl_GetString (objv[i]))
-            array.append(string ?? "")
+            try array.append(tclobjp_to_String(objv[i]))
         }
         
         return array
     }
     
     // toArray - create an Int array from the tcl object as a list
-    public func toArray () -> [Int]? {
+    public func toArray () throws -> [Int] {
         var array: [Int] = []
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0..<Int(objc) {
-            var longVal: CLong = 0
-            let result = Tcl_GetLongFromObj (nil, objv[i], &longVal)
-            if (result == TCL_ERROR) {
-                return nil
-            }
+            let longVal = try tclobjp_to_Int(objv[i], interp: interp)
             array.append(longVal)
 
         }
@@ -727,20 +724,16 @@ public class TclObj {
     }
     
     // toArray - create a Double array from the tcl object as a list
-    public func toArray () -> [Double]? {
+    public func toArray () throws ->  [Double] {
         var array: [Double] = []
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0..<Int(objc) {
-            var doubleVal: CDouble = 0
-            let result = Tcl_GetDoubleFromObj (nil, objv[i], &doubleVal)
-            if (result == TCL_ERROR) {
-                return nil
-            }
+            let doubleVal = try tclobjp_to_Double(objv[i], interp: interp)
             array.append(doubleVal)
             
         }
@@ -751,13 +744,13 @@ public class TclObj {
     // toArray - create a TclObj array from the tcl object as a list,
     // each element becomes its own TclObj
     
-    public func toArray () -> [TclObj]? {
+    public func toArray () throws -> [TclObj] {
         var array: [TclObj] = []
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0..<Int(objc) {
             array.append(TclObj(objv[i]))
@@ -767,57 +760,54 @@ public class TclObj {
     }
 
     // toDictionary - copy the tcl object as a list into a String/String dictionary
-    public func toDictionary () -> [String: String]? {
+    public func toDictionary () throws -> [String: String] {
         var dictionary: [String: String] = [:]
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
 
         for i in 0.stride(to: Int(objc-1), by: 2) {
-            let keyString = String.fromCString(Tcl_GetString (objv[i]))
-            let valueString = String.fromCString(Tcl_GetString(objv[i+1]))
+            let keyString = try tclobjp_to_String(objv[i])
+            let valueString = try tclobjp_to_String(objv[i+1])
 
-            dictionary[keyString ?? ""] = valueString ?? ""
+            dictionary[keyString] = valueString
         }
         return dictionary
     }
     
     // toDictionary - copy the tcl object as a list into a String/String dictionary
-    public func toDictionary () -> [String: Int]? {
+    public func toDictionary () throws -> [String: Int] {
         var dictionary: [String: Int] = [:]
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0.stride(to: Int(objc-1), by: 2) {
-            let keyString = String.fromCString(Tcl_GetString (objv[i]))
-            var val: Int32 = 0
-            Tcl_GetIntFromObj (nil, objv[i+1], &val)
-            
-            dictionary[keyString ?? ""] = Int(val)
+            let keyString = try tclobjp_to_String(objv[i])
+            let val = try tclobjp_to_Int(objv[i+1])
+            dictionary[keyString] = val
         }
         return dictionary
     }
 
     // toDictionary - copy the tcl object as a list into a String/String dictionary
-    public func toDictionary () -> [String: Double]? {
+    public func toDictionary () throws -> [String: Double] {
         var dictionary: [String: Double] = [:]
         
         var objc: Int32 = 0
         var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
         
-        if Tcl_ListObjGetElements(nil, obj, &objc, &objv) == TCL_ERROR {return nil}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0.stride(to: Int(objc-1), by: 2) {
-            let keyString = String.fromCString(Tcl_GetString (objv[i]))
-            var val = 0.0
-            Tcl_GetDoubleFromObj (nil, objv[i+1], &val)
+            let keyString = try tclobjp_to_String(objv[i])
+            let val = try tclobjp_to_Double(objv[i+1])
             
-            dictionary[keyString ?? ""] = val
+            dictionary[keyString] = val
         }
         return dictionary
     }
