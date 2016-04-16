@@ -104,13 +104,19 @@ var xo = TclObj(5)
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
         
-        guard let lat1 = Double(objv[0]) else {throw TclError.ErrorMessage(message: "lat1 NaN")}
-        guard let lon1 = Double(objv[1]) else {throw TclError.ErrorMessage(message:"lon1 NaN")}
-        guard let lat2 = Double(objv[2]) else {throw TclError.ErrorMessage(message: "lat2 NaN")}
-        guard let lon2 = Double(objv[3]) else {throw TclError.ErrorMessage(message: "lon2 NaN")}
+        do {
+            let lat1 = try objv[0].getDouble()
+            let lon1 = try objv[1].getDouble()
+            let lat2 = try objv[2].getDouble()
+            let lon2 = try objv[3].getDouble()
+            
+            let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
+            return distance
+        } catch {
+            throw TclError.Error
+        }
 
-        let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
-        return distance
+
     }
     
     interp.create_command("fa_latlongs_to_distance", fa_latlongs_to_distance_cmd)
@@ -126,10 +132,10 @@ var xo = TclObj(5)
     print(ints)
     print(intListObj.stringValue)
     
-    var autoPath: String = interp.getVar("auto_path")!
+    var autoPath: String = try! interp.getVar("auto_path")
     print("auto_path is '\(autoPath)'")
     
-    var tclVersion: Double = interp.getVar("tcl_version")!
+    let tclVersion: Double = try! interp.getVar("tcl_version")
     print("Tcl version is \(tclVersion)")
     
     do {try interp.eval("array get tcl_platform")}

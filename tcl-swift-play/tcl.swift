@@ -233,12 +233,10 @@ extension Int {
 }
 
 extension Double {
-    public init? (_ obj: TclObj) {
-        if obj.doubleValue == nil {
-            return nil
-        }
+    public init (_ obj: TclObj) {
         self.init(obj.doubleValue!)
     }
+
 
     func toTclObj() -> TclObj {
         return TclObj(self)
@@ -276,7 +274,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     // (go from 1 not 0 because we don't include the obj containing the command name)
     var objvec = [TclObj]()
     for i in 1..<Int(objc) {
-        objvec.append(TclObj(objv[i]))
+        objvec.append(TclObj(objv[i], Interp: tcb.Interp))
     }
     
     // invoke the Swift implementation of the Tcl command and return the value it returns
@@ -555,6 +553,18 @@ public class TclObj {
     // getObj - return the Tcl object pointer (Tcl_Obj *)
     func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
         return obj
+    }
+    
+    func getInt() throws -> Int {
+        return try tclobjp_to_Int(obj)
+    }
+    
+    func getDouble() throws -> Double {
+        return try tclobjp_to_Double(obj)
+    }
+    
+    func getBool() throws -> Bool {
+        return try tclobjp_to_Bool(obj)
     }
     
     // lappend - append a Tcl_Obj * to the Tcl object list
@@ -918,8 +928,17 @@ public class TclInterp {
         Tcl_SetBooleanObj (Tcl_GetObjResult(interp), val ? 1 : 0)
     }
     
+    // setErrorCode - set the Tcl error code
+    
     public func setErrorCode(val: String) {
         Tcl_SetObjErrorCode (interp, string_to_tclobjp(val))
+    }
+    
+    // addErrorInfo() - append a message to the error information
+    
+    public func addErrorInfo(message: String) {
+        guard let cMessage = message.cStringUsingEncoding(NSUTF8StringEncoding) else {return}
+        Tcl_AddObjErrorInfo (interp, cMessage, -1)
     }
     
     // getVar - return var as an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil
@@ -951,7 +970,7 @@ public class TclInterp {
     }
     
     // getVar - return a TclObj containing var as an Int, or nil
-    public func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) throws -> Int? {
+    public func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) throws -> Int {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
         return try tclobjp_to_Int(obj)
@@ -970,6 +989,18 @@ public class TclInterp {
         
         return try tclobjp_to_String(objp)
     }
+    
+    // getVar - return a TclObj containing var as a String, or nil
+    public func getVar(arrayName: String, elementName: String? = nil)  -> String? {
+        let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+        
+        do {
+            return try tclobjp_to_String(objp)
+        } catch {
+            return nil
+        }
+    }
+
     
     
     // setVar - set a variable or array element in the Tcl interpreter
