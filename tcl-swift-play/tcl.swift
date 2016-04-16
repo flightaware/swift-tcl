@@ -557,67 +557,58 @@ public class TclObj {
     }
     
     // lappend - append a Tcl_Obj * to the Tcl object list
-    func lappend (value: UnsafeMutablePointer<Tcl_Obj>) -> Bool {
-        return Tcl_ListObjAppendElement (interp, obj, value) != TCL_ERROR
+    func lappend (value: UnsafeMutablePointer<Tcl_Obj>) throws {
+        guard (Tcl_ListObjAppendElement (interp, obj, value) != TCL_ERROR) else {throw TclError.Error}
     }
     
     // lappend - append an Int to the Tcl object list
-    public func lappend (value: Int) -> Bool {
-        return self.lappend (Tcl_NewLongObj (value))
+    public func lappend (value: Int) throws {
+        try self.lappend (Tcl_NewLongObj (value))
     }
     
     // lappend - append a Double to the Tcl object list
-    public func lappend (value: Double) -> Bool {
-        return self.lappend (Tcl_NewDoubleObj (value))
+    public func lappend (value: Double) throws {
+        try self.lappend (Tcl_NewDoubleObj (value))
     }
     
     // lappend - append a String to the Tcl object list
-    public func lappend (value: String) -> Bool {
+    public func lappend (value: String) throws {
         let cString = value.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-        return self.lappend(Tcl_NewStringObj (cString, -1))
+        try self.lappend(Tcl_NewStringObj (cString, -1))
     }
     
     // lappend - append a Bool to the Tcl object list
-    public func lappend (value: Bool) -> Bool {
-        return self.lappend (Tcl_NewBooleanObj (value ? 1 : 0))
+    public func lappend (value: Bool) throws {
+        try self.lappend (Tcl_NewBooleanObj (value ? 1 : 0))
     }
     
     // lappend - append a tclObj to the Tcl object list
-    public func lappend (value: TclObj) -> Bool {
-        return self.lappend(value)
+    public func lappend (value: TclObj) throws {
+        try self.lappend(value)
     }
     
     // lappend - append an array of Int to the Tcl object list
     // (flattens them out)
-    public func lappend (array: [Int]) -> Bool {
-        for element in array {
-            if (!self.lappend(element)) {
-                return false
-            }
+    public func lappend (array: [Int]) throws {
+        try array.forEach {
+            try self.lappend($0)
         }
-        return true
     }
     
     // lappend - append an array of Double to the Tcl object list
     // (flattens them out)
-    public func lappend (array: [Double]) -> Bool {
-        for element in array {
-            if (!self.lappend(element)) {
-                return false
-            }
+    public func lappend (array: [Double]) throws {
+        try array.forEach {
+            try self.lappend($0)
         }
-        return true
     }
     
     // lappend - append an array of String to the Tcl object list
     // (flattens them out)
-    public func lappend (array: [String]) -> Bool {
-        for element in array {
-            if (!self.lappend(element)) {
-                return false
-            }
+    public func lappend (array: [String]) throws {
+        try array.forEach {
+            try self.lappend($0)
         }
-        return true
     }
     
     // llength - return the number of elements in the list if the contents of our obj can be interpreted as a list
