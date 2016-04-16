@@ -373,33 +373,30 @@ public class TclObj {
     
     // init - init from a set of Strings to a list
     public init(_ set: Set<String>, Interp: TclInterp? = nil) {
-        self.Interp = Interp
-        self.interp = Interp?.interp ?? nil
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
 
         for element in set {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (string, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (string, -1))
         }
     }
     
     // init from a set of Ints to a list
     public init(_ set: Set<Int>, Interp: TclInterp? = nil) {
-        self.Interp = Interp
-        self.interp = Interp?.interp ?? nil
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
         for element in set {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj (element))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (element))
         }
     }
     
     // init from a Set of doubles to a list
     public init(_ set: Set<Double>, Interp: TclInterp? = nil) {
-        self.Interp = Interp
-        self.interp = Interp?.interp ?? nil
+        self.Interp = Interp; self.interp = Interp?.interp ?? nil
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
@@ -426,8 +423,8 @@ public class TclObj {
         obj = Tcl_NewObj()
 		IncrRefCount(obj)
         
-        for element in array {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj(element))
+        array.forEach {
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj($0))
         }
     }
     
