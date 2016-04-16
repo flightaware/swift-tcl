@@ -112,8 +112,6 @@ var xo = TclObj(5)
             
             let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
             return distance
-        } catch {
-            throw TclError.Error
         }
 
 

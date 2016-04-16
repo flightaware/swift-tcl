@@ -217,9 +217,7 @@ extension String {
 extension Int {
     // var foo: Int = someTclObj; failable initializer
     public init? (_ obj: TclObj) {
-        if obj.intValue == nil {
-            return nil
-        }
+        guard obj.intValue != nil else {return nil}
         self.init(obj.intValue!)
     }
 
@@ -249,9 +247,7 @@ extension Double {
 
 extension Bool {
     public init? (_ obj: TclObj) {
-        if obj.boolValue == nil {
-            return nil
-        }
+        guard obj.boolValue != nil else {return nil}
         self.init(obj.boolValue!)
     }
 
@@ -523,11 +519,7 @@ public class TclObj {
     // if in-object Tcl type conversion fails
     public var doubleValue: Double? {
         get {
-            do {
-                return try tclobjp_to_Double(obj)
-            } catch {
-                return nil
-            }
+            return try? tclobjp_to_Double(obj)
         }
         set {
             guard let val = newValue else {return}
@@ -538,11 +530,7 @@ public class TclObj {
     // getBool - return the Tcl object as a Bool or nil
     public var boolValue: Bool? {
         get {
-            do {
-                return try tclobjp_to_Bool(obj)
-            } catch {
-                return nil
-            }
+            return try? tclobjp_to_Bool(obj)
         }
         set {
             guard let val = newValue else {return}
@@ -651,7 +639,8 @@ public class TclObj {
     public func lindex (index: Int) -> TclObj? {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = self.lindex(index)
         
-        return tmpObj == nil ? nil : TclObj(tmpObj!)
+        guard tmpObj != nil else {return nil}
+        return TclObj(tmpObj!)
     }
     
     // lindex returning an Int or nil
@@ -962,9 +951,7 @@ public class TclInterp {
     public func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> TclObj? {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
-        if (obj == nil) {
-            return nil
-        }
+        guard (obj != nil) else {return nil}
         
         return TclObj(obj)
     }
@@ -1118,8 +1105,6 @@ public class TclInterp {
         let substOutObj: UnsafeMutablePointer<Tcl_Obj>?
         do {
             substOutObj = try self.subst (substIn, flags: flags)
-        } catch {
-            throw TclError.Error
         }
         return try tclobjp_to_String (substOutObj)
     }
