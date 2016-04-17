@@ -56,7 +56,7 @@ In this example we import an "array get" of Tcl's global _tcl_platform_ array in
 
 ```swift
 try interp.eval("array get tcl_platform")
-var dict: [String:String]? = interp.resultObj.toDictionary()
+var dict: [String:String] = try interp.resultObj.toDictionary()
 ```
 
 We can then access the array we've imported into a Swift dictionary in the usual Swift way:
@@ -162,31 +162,27 @@ Create a new command in Tcl of the specified name that when the name is invoked 
 
 Get a variable or array element out of the Tcl interpreter and return it as a Tcl\_Obj \*.  This is internal and you shouldn't really ever need it.
 
-* `var val: TclObj? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
+* `var val: TclObj = try interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
-Get a variable or array element out of the Tcl interpreter and return it as an optional string.
+Get a variable or array element out of the Tcl interpreter and return it as a string or throw an error.
 
-* `var val: Int? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
+* `var val: Int = try interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
-Get a variable or array element out of the Tcl interpreter and return it as an optional Int.  nil is returned if the object's contents aren't a valid list or if the element can't be converted to an Int.
+Get a variable or array element out of the Tcl interpreter and return it as an Int.  An error is thrown if the object's contents aren't a valid list or if the element can't be converted to an Int.
 
-* `var val: Double? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
-* `var val: String? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
-* `var val: Bool? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
+* `var val: Double = try interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
+* `var val: String = try interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
+* `var val: Bool = try interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
-Get a variable or array element out of the Tcl interpeter and return it as an optional Double, String or Bool.
+Get a variable or array element out of the Tcl interpeter and return it as a Double, String or Bool et al or throw an error.
 
-* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0)`
+* `interp.setVar(varName: String, elementName: String?, value: String, flags: Int = 0)`
+* `interp.setVar(varName: String, elementName: String?, value: Int, flags: Int = 0)`
+* `interp.setVar(varName: String, elementName: String?, value: Double, flags: Int = 0)`
+* `interp.setVar(varName: String, elementName: String?, value: Bool, flags: Int = 0)`
+* `interp.setVar(varName: String, elementName: String?, value: TclObj, flags: Int = 0)`
 
-Set a variable or array element in the Tcl interpreter to be the Tcl\_Obj \* that was passed.
-
-* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: String, flags: Int = 0)`
-* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Int, flags: Int = 0)`
-* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Double, flags: Int = 0)`
-* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: Bool, flags: Int = 0)`
-* `var success: Bool = interp.setVar(varName: String, elementName: String?, value: TclObj, flags: Int = 0)`
-
-Set a variable or array element in the Tcl interpeter to be the String, Int, Double, Bool or TclObj that was passed.
+Set a variable or array element in the Tcl interpeter to be the String, Int, Double, Bool or TclObj that was passed or throw an error if unable.  For instance you might be unable to set an array element when the variable name is a scalar.
 
 * `interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0)`
 * `interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0)`
@@ -301,10 +297,10 @@ Return the number of elements in the list contained in the TclObj or throws an e
 
 Treating TclObj obj as a Tcl list, if it is a valid list and the data types are OK the elements are imported into an array of the corresponding type.
 
-* `var dictionary: [String:String]? = obj.toDictionary()`
-* `var dictionary: [String:Int]? = obj.toDictionary()`
-* `var dictionary: [String:Double]? = obj.toDictionary()`
-* `var dictionary: [String:TclObj]? = obj.toDictionary()`
+* `var dictionary: [String:String] = try obj.toDictionary()`
+* `var dictionary: [String:Int] = try obj.toDictionary()`
+* `var dictionary: [String:Double] = try obj.toDictionary()`
+* `var dictionary: [String:TclObj] = try obj.toDictionary()`
 
 Import a Tcl list of key-value pairs contained in a TclObj to a dictionary having a key of a String type and values of String, Int, Double or TclObjs.
 
