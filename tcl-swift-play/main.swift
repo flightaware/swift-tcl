@@ -94,15 +94,14 @@ var xo = TclObj(5)
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
         
-        do {
-            let lat1 = try objv[0].getDoubleArg("lat1")
-            let lon1 = try objv[1].getDoubleArg("lon1")
-            let lat2 = try objv[2].getDoubleArg("lat2")
-            let lon2 = try objv[3].getDoubleArg("lon2")
+
+        let lat1 = try objv[0].getDoubleArg("lat1")
+        let lon1 = try objv[1].getDoubleArg("lon1")
+        let lat2 = try objv[2].getDoubleArg("lat2")
+        let lon2 = try objv[3].getDoubleArg("lon2")
             
-            let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
-            return distance
-        }
+        let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
+        return distance
     }
     
     interp.create_command("fa_latlongs_to_distance", fa_latlongs_to_distance_cmd)
@@ -134,8 +133,8 @@ var xo = TclObj(5)
     var byteOrder: String = interp.getVar("tcl_platform", elementName: "byteOrder")!
     print("Your machine is \(machine) and your byte order is \(byteOrder)")
     
-    do {
-        try! interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
-    }
 
+    let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+
+    
     

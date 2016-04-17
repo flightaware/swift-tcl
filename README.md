@@ -4,7 +4,7 @@ This is Swift Tcl, a bridge between Swift and Tcl, providing deep integration be
 
 Swift developers can use Tcl to make new and powerful ways to interact with, debug, construct automated testing for, and orchestrate the high level activities of their applications.
 
-Tcl developers can use Swift to gets its sweet, expressive, high performance, scripting-language-like capabilities while retaining all of their existing code.
+Tcl developers can use Swift to gets its sweet, expressive, high performance, scripting-language-like capabilities wherever they would like while retaining all of their existing code.
 
 Either can go in for a lot or a little.
 
@@ -16,13 +16,9 @@ Likewise through introspection, automation and a bit of static hinting, Tcl proc
 
 Users of either language invoke functions written in the other indistinguishably from those written in the one they're using.
 
-Swift Tcl defines a TclInterp class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.
+Likewise errors are handled naturally across both languages in both directions.  Errors thrown from Swift code called by Tcl come back as Tcl errors with proper errorInfo, errorCode, etc.  Closing the loop, uncaught errors occuring in Tcl code called from Swift are thrown back to the caller as Swift errors.
 
-It also defines a TclObj class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
-
-New Tcl commands can be written in Swift and are far more compact and generally simpler than their counterparts in C.
-
-Real work can be done with the Tcl interpeter without using TclObj objects at all.
+Swift Tcl defines a TclInterp class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.  Creating a Tcl interpreter and doming something with it in Swift is as easy as:
 
 ```swift
 let interp = TclInterp()
@@ -30,15 +26,27 @@ let interp = TclInterp()
 interp.eval("puts {Hello, World.}")
 ```
 
+
+It also defines a TclObj class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
+
+New Tcl commands can be written in Swift and are far more compact and generally simpler than their counterparts in C.
+
+Real work can be done with the Tcl interpeter without using TclObj objects at all.
+
+
+
 The TclInterp object has methods for accessing and manipulating variables, arrays, evaluating code, etc.  In the exsamples below a String and a Double are obtained from variables in the Tcl interpreter:
 
 ```swift
-var autoPath: String = interp.getVar("auto_path")!
+var autoPath: String = try! interp.getVar("auto_path")
 print("auto_path is '\(autoPath)'")
 
-var tclVersion: Double = interp.getVar("tcl_version")!
+let tclVersion: Double = try! interp.getVar("tcl_version")
 print("Tcl version is \(tclVersion)")
 ```
+
+Y'see how getVar just gave you the data type you asked for with no funny business?  How cool is that?
+
 Likewise TclInterp's getVar can fetch elements out of an array:
 
 ```swift
