@@ -2,7 +2,15 @@
 
 This is Swift Tcl, a bridge between Swift and Tcl, providing deep integration between the two languages.
 
-Developers can extend Tcl by writing new commands in Swift and extend Swift by writing new commands in Tcl.  Tcl commands written in Swift are smaller and cleaner and require far less scaffolding, argument handling and code interpreter result management than those written in C.  They are a joy.
+Swift developers can use Tcl to make new and powerful ways to interact with, debug, construct automated testing for, and orchestrate the high level activities of their applications.
+
+Tcl developers can use Swift to gets its sweet, expressive, high performance, scripting-language-like capabilities while retaining all of their existing code.
+
+Either can go in for a lot or a little.
+
+Developers can extend Tcl by writing new commands in Swift and extend Swift by writing new commands in Tcl.  Tcl commands written in Swift are tiny and simple compared to those written in C.  They are a joy.
+
+Soon, the bridge will be able to automatically generate Tcl interfaces to existing Swift functions and classes through automated scanning of Swift source.
 
 Likewise through introspection, automation and a bit of static hinting, Tcl procedures appear as native Swift functions, with argument names, default values and "normal" native Swift argument and return data types.
 
