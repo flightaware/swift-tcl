@@ -31,9 +31,9 @@ var xo = TclObj(5)
     let x5 = TclObj(5)
     print(x5.doubleValue)
     
-    func foo (interp: TclInterp, objv: [TclObj]) -> TclReturn {
+    func foo (interp: TclInterp, objv: [TclObj]) {
         print("foo baby foo baby foo baby foo")
-        return TclReturn.OK
+        // return ""
     }
     
     func avg (interp: TclInterp, objv: [TclObj]) -> Double {
@@ -55,6 +55,8 @@ var xo = TclObj(5)
     do {
         try interp.eval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
+    
+     try interp.eval("puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
     
     func latlongs_to_distance (interp: TclInterp, objv: [TclObj]) -> TclReturn {
         if (objv.count != 4) {

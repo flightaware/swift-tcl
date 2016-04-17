@@ -918,7 +918,19 @@ public class TclInterp {
             throw TclError.UnknownReturnCode(code:ret)
         }
     }
+    
+    public func evals(code: String, caller: String = #function) throws -> String {
+        try self.eval(code, caller: caller)
+        return try self.getResult()
+    }
 
+    public func evals(code: String, caller: String = #function) throws -> Int {
+        try self.eval(code, caller: caller)
+        return try self.getIntResult()
+    }
+    
+
+    
     /*
     public func eval(code: String) throws -> String {
         try self.eval(code)
@@ -952,6 +964,21 @@ public class TclInterp {
         return try tclobjp_to_String(obj)
     }
     
+    public func getIntResult() throws -> Int {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
+        return try tclobjp_to_Int(obj)
+    }
+    
+    public func getDoubleResult() throws -> Double {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
+        return try tclobjp_to_Double(obj)
+    }
+    
+    public func getBoolResult() throws -> Bool {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
+        return try tclobjp_to_Bool(obj)
+    }
+
     // setResult - set the interpreter result from a Double
     func setResult(val: Double) {
         Tcl_SetDoubleObj (Tcl_GetObjResult(interp), val)
@@ -1103,6 +1130,7 @@ public class TclInterp {
     }
 
     // create_command - create a new Tcl command that will be handled by the specified Swift function
+    // NB - this is kludgey, too much replication with variants
     public func create_command(name: String, _ swiftTclFunction:SwiftTclFuncReturningTclReturn) {
         let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
         
@@ -1125,6 +1153,19 @@ public class TclInterp {
         
         Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
     }
+
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func create_command(name: String, _ swiftTclFunction:SwiftTclFuncReturningString) {
+        let cname = name.cStringUsingEncoding(NSUTF8StringEncoding)!
+        
+        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
+        let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
+        let ptr = UnsafeMutablePointer<TclCommandBlock>.alloc(1)
+        ptr.memory = cmdBlock
+        
+        Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
+    }
+    
 
     
     func subst (substInObj: UnsafeMutablePointer<Tcl_Obj>, flags: Int32 = TCL_SUBST_ALL) throws -> UnsafeMutablePointer<Tcl_Obj>? {

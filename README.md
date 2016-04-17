@@ -251,58 +251,48 @@ Assign TclObj to contain a String, Int, Double or Bool.
 
 Set String to contain the String representation of whatever TclObj has in it
 
-* `var val: Int? = obj.getInt()`
+* `var val: Int = try obj.getInt()`
 
-Set Int to contain the Int representation of the TclObj, or nil if it cannot be represented as an Int.
+Set val to contain the Int representation of the TclObj, or throws an error if object cannot be represented as an Int.
 
-* `var val: Double? = obj.getDouble()`
-* `var valBool Double? = obj.getBool()`
+* `var val: Double = try obj.getDouble()`
+* `var valBool Double = try obj.getBool()`
 
 Same as the above but for Double and Bool.
-
-*  `do {var val: Int = obj.getInt()}`
-
-Return the TclObj's value as an Int or throw an error if it cannot be represented as one.
-
-*  `do {var val: Int = obj.getDouble()}`
-
-Same as the above but for Double.
 
 * `var nativeObj: UnsafeMutablePointer<Tcl_Obj> = obj.getObj()`
 
 Obtain a pointer to the native C Tcl object from a TclObj
 
-* `var status: Bool = obj.lappend(value: UnsafeMootablePointer<Tcl_Obj>)`
+* `try obj.lappend(value: UnsafeMootablePointer<Tcl_Obj>)`
 
-Append a Tcl\_Obj \* to a list contained in a TclObj
+Append a Tcl\_Obj \* to a list contained in a TclObj.
 
-* `var status: Bool = obj.lappend(value: Int)`
-* `var status: Bool = obj.lappend(value: Double)`
-* `var status: Bool = obj.lappend(value: String)`
-* `var status: Bool = obj.lappend(value: Bool)`
-* `var status: Bool = obj.lappend(value: TclObj)`
+* `try obj.lappend(value: Int)`
+* `try obj.lappend(value: Double)`
+* `try obj.lappend(value: String)`
+* `try obj.lappend(value: Bool)`
+* `try obj.lappend(value: TclObj)`
 
-Append an Int, Double, String, Bool or TclObj to a list contained in a TclObj
+Append an Int, Double, String, Bool or TclObj to a list contained in a TclObj.
 
-* `var status: Bool = obj.lappend(array: [Int])`
-* `var status: Bool = obj.lappend(array: [Double])`
-* `var status: Bool = obj.lappend(array: [String])`
+* `try obj.lappend(array: [Int])`
+* `try obj.lappend(array: [Double])`
+* `try obj.lappend(array: [String])`
 
 Append an array of Int, Double, or String to a list contained in a TclObj.  Each element is appended.
 
-* `var val: Int? = obj.lindex(index)
-* `var val: Double? = obj.lindex(index)
-* `var val: String? = obj.lindex(index)
-* `var val: Bool? = obj.lindex(index)
-* `var val: TclObj? = obj.lindex(index)
+* `var val: Int = try obj.lindex(index)
+* `var val: Double = try obj.lindex(index)
+* `var val: String = try obj.lindex(index)
+* `var val: Bool = try obj.lindex(index)
+* `var val: TclObj = try obj.lindex(index)
 
-Return the nth element of the obj as a list, if possible, according to the specified data type, else nil.
+Return the nth element of the obj as a list, if possible, according to the specified data type, else throws an error.
 
-* `var count: Int? = obj.llength()`
+* `var count: Int = try obj.llength()`
 
-Return the number of elements in the list contained in the TclObj or nil if the value in the TclObj cannot be represented as a list
-
-Return the number of elements 
+Return the number of elements in the list contained in the TclObj or throws an error if the value in the TclObj cannot be represented as a list.
 
 * `var array: [Double] = obj.toArray()`
 * `var array: [Int] = obj.toArray()`
