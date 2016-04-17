@@ -18,14 +18,13 @@ Users of either language invoke functions written in the other indistinguishably
 
 Likewise errors are handled naturally across both languages in both directions.  Errors thrown from Swift code called by Tcl come back as Tcl errors with proper errorInfo, errorCode, etc.  Closing the loop, uncaught errors occuring in Tcl code called from Swift are thrown back to the caller as Swift errors.
 
-Swift Tcl defines a TclInterp class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.  Creating a Tcl interpreter and doming something with it in Swift is as easy as:
+Swift Tcl defines a TclInterp class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.  Creating a Tcl interpreter and doing something with it in Swift is as easy as:
 
 ```swift
 let interp = TclInterp()
 
 interp.eval("puts {Hello, World.}")
 ```
-
 
 It also defines a TclObj class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
 
@@ -50,13 +49,13 @@ Y'see how getVar just gave you the data type you asked for with no funny busines
 Likewise TclInterp's getVar can fetch elements out of an array:
 
 ```swift
-var machine: String = interp.getVar("tcl_platform", elementName: "machine")!
+var machine: String = try interp.getVar("tcl_platform", elementName: "machine")
 ```
 
 In this example we import an "array get" of Tcl's global _tcl_platform_ array into a Swift dictionary:
 
 ```swift
-do {try interp.eval("array get tcl_platform")}
+try interp.eval("array get tcl_platform")
 var dict: [String:String]? = interp.resultObj.toDictionary()
 ```
 
@@ -68,13 +67,13 @@ print("Your OS is \(dict["os"]!), running version \(dict["osVersion"]!)")
 
 ## Writing Tcl extensions in Swift
 
-You can create new commands in Tcl that are implemented as Swift functions.  
+You can extend Tcl with new commands written in Swift.
 
-Swift functions implementing Tcl commands are invoked with a TclInterp object and an array of TclObj objects corresponding to the arguments to the function, although unlike with C objv[0] is the first argument to the function, not the function itself.
+Swift functions implementing Tcl commands are invoked with arguments comprising a TclInterp object and an array of TclObj objects corresponding to the arguments to the function (although unlike with C, objv[0] is the first argument to the function, not the function itself.)
 
 Below is a function that will average all of its arguments that are numbers and return the result:
 
-To report errors, functions throw them and because of this and due to included support can directly return a String, Int, Double, Bool, TclObj or TclReturn without all that tedious mucking about with the interpreter result and distinct explicit return of a Tcl return code (ok, error, break, continue, return).
+To report errors back to Tcl, Swift functions throw them, and because of this and due to included support your function can directly return a String, Int, Double, Bool, TclObj or TclReturn without all that tedious mucking about with the interpreter result and distinct explicit return of a Tcl return code (ok, return, break, continue, error).
 
 ```swift
 func avg (interp: TclInterp, objv: [TclObj]) -> Double {
@@ -89,9 +88,9 @@ func avg (interp: TclInterp, objv: [TclObj]) -> Double {
 interp.create_command("avg", avg)
 ```
 
-Errors trying to convert Tcl objects to a data type such as trying to convert an alphanumeric string to a Double are thrown by the underlying helper functions and caught by Swift Tcl if you don't.  You get nice native error messages.
+Errors trying to convert Tcl objects to a data type such as trying to convert an alphanumeric string to a Double are thrown by the underlying helper functions and caught by Swift Tcl if you don't catch them in your Swift code.  You get nice native error messages.
 
-TclObj methods like *getDoubleArg* make it a bit easier by taking on appropriate bits to Tcl's errorInfo traceback without requiring anything extra from the developer.
+TclObj methods like *getDoubleArg* make it a bit easier by tacking on appropriate bits to Tcl's *errorInfo* traceback, making error messages from Swift conformant to the Tcl style.
 
 ```swift
 func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
@@ -127,13 +126,11 @@ expected floating-point number but got "crash" while converting "lat2" argument
 
 Create a new Tcl interpreter.  You can create as many as you like.
 
-* `var result: Int = interp.eval(code: String)`
+* try interp.eval(code: String)`
 
-Evaluate Tcl code in the Tcl interpreter and return the interpreter result as an Int.
+Evaluate Tcl code in the Tcl interpreter.
 
-You can control whether or not errors resulting from invoking eval throw Swift errors by setting the *throwErrors* boolean to true.  Otherwise Tcl errors are not thrown and it is up to the caller to examine the return code if they want to see if there was an error.  It currently defaults to false.
-
-You can control whether or not errors are printed by manipulating the *printErrors* variable, which currently defaults to true and will include the traceback.
+You can control whether or not error are printed by manipulating the *printErrors* variable, which currently defaults to true and will include the traceback.
 
 * `var result: String = interp.result`
 
@@ -163,7 +160,7 @@ Create a new command in Tcl of the specified name that when the name is invoked 
 
 * `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 
-Get a variable or array element out of the Tcl interpreter and return it as a Tcl\_Obj \*.
+Get a variable or array element out of the Tcl interpreter and return it as a Tcl\_Obj \*.  This is internal and you shouldn't really ever need it.
 
 * `var val: TclObj? = interp.getVar(varName: String, elementName: String?, flags: Int = 0)`
 

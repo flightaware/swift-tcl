@@ -123,6 +123,8 @@ var xo = TclObj(5)
     let tclVersion: Double = try! interp.getVar("tcl_version")
     print("Tcl version is \(tclVersion)")
     
+    try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
+    
     do {try interp.eval("array get tcl_platform")}
     var dict: [String:String] = try! interp.resultObj.toDictionary()
     print(dict)

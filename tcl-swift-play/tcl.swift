@@ -40,6 +40,7 @@ enum TclError: ErrorType {
     case WrongNumArgs(nLeadingArguments: Int, message: String)
     case ErrorMessage(message: String, errorCode: String) // set error message in interpreter result
     case UnknownReturnCode(code: Int32)
+    case NotString(string: String)
     case Error // error already set in interpreter result
 }
 
@@ -197,8 +198,8 @@ func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMut
 
 // string_to_tclobjp - create a Tcl_Obj * from a Swift String
 
-func string_to_tclobjp (string: String) -> UnsafeMutablePointer<Tcl_Obj> {
-    guard let cString = string.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
+func string_to_tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> {
+    guard let cString = string.cStringUsingEncoding(NSUTF8StringEncoding) else {throw TclError.NotString(string: string)}
     return Tcl_NewStringObj (cString, -1)
 }
 
@@ -313,7 +314,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         return TCL_ERROR
     } catch TclError.ErrorMessage(let message) {
         tcb.Interp.result = message.message
-        tcb.Interp.setErrorCode(message.errorCode)
+        try! tcb.Interp.setErrorCode(message.errorCode)
         return TCL_ERROR
     } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
@@ -877,11 +878,6 @@ public class TclInterp {
     deinit {
         Tcl_DeleteInterp (interp)
     }
-
-    enum InterpErrors: ErrorType {
-        case NotString(String)
-        case EvalError(Int)
-    }
     
     // getRawInterpPtr - return Tcl_Interp *
     func getRawInterpPtr() -> UnsafeMutablePointer<Tcl_Interp> {
@@ -895,7 +891,7 @@ public class TclInterp {
     //
     public func eval(code: String) throws {
         guard let cCode = code.cStringUsingEncoding(NSUTF8StringEncoding) else {
-            throw InterpErrors.NotString(code)
+            throw TclError.NotString(string: code)
         }
         let ret = Tcl_Eval(interp, cCode)
         
@@ -972,8 +968,8 @@ public class TclInterp {
     
     // setErrorCode - set the Tcl error code
     
-    public func setErrorCode(val: String) {
-        Tcl_SetObjErrorCode (interp, string_to_tclobjp(val))
+    public func setErrorCode(val: String) throws {
+        Tcl_SetObjErrorCode (interp, try string_to_tclobjp(val))
     }
     
     // addErrorInfo() - append a message to the error information
@@ -983,11 +979,11 @@ public class TclInterp {
         Tcl_AddObjErrorInfo (interp, cMessage, -1)
     }
     
-    // getVar - return var as an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil
-    // if elementName is specified, var is an array, otherwise var is a variable
-    // NB still need to handle FLAGS
+    // getVar - return a Tcl variable or array element as an
+    // UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil if it doesn't exist.
+    // if elementName is specified, var is an element of an array, otherwise var is a variable
     
-    func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> UnsafeMutablePointer<Tcl_Obj> {
+    private func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> UnsafeMutablePointer<Tcl_Obj> {
         
         guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return nil}
         
@@ -1000,7 +996,7 @@ public class TclInterp {
         }
     }
     
-    // getVar - return a TclObj containing var in a TclObj object, or nil
+    // getVar - return a Tcl variable or  in a TclObj object, or nil
     public func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) -> TclObj? {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
@@ -1009,21 +1005,22 @@ public class TclInterp {
         return TclObj(obj)
     }
     
-    // getVar - return a TclObj containing var as an Int, or nil
+    // getVar - return Tcl variable or array element as an Int or throw an error
     public func getVar(varName: String, elementName: String? = nil, flags: Int32 = 0) throws -> Int {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
         
         return try tclobjp_to_Int(obj)
     }
     
-    // getVar - return a TclObj containing var as a Double, or nil
+    // getVar - return a var as a Double, or throw an error if unable
     public func getVar(arrayName: String, elementName: String? = nil) throws -> Double {
         let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
         
         return try tclobjp_to_Double(objp)
     }
     
-    // getVar - return a TclObj containing var as a String, or nil
+    // getVar - return a TclObj containing var as a String or throw an error if unable
+    // the error seems unlikely but could be like a UTF-8 conversion error or something.
     public func getVar(arrayName: String, elementName: String? = nil) throws -> String {
         let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
         
@@ -1040,69 +1037,67 @@ public class TclInterp {
             return nil
         }
     }
-
-    
     
     // setVar - set a variable or array element in the Tcl interpreter
     // from an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *)
     // returns true or false based on whether it succeeded or not
-    func setVar(varName: String, elementName: String? = nil, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0) -> Bool {
-        guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {return false}
+    func setVar(varName: String, elementName: String? = nil, value: UnsafeMutablePointer<Tcl_Obj>, flags: Int = 0) throws {
+        guard let cVarName = varName.cStringUsingEncoding(NSUTF8StringEncoding) else {throw TclError.Error}
         let cElementName = elementName!.cStringUsingEncoding(NSUTF8StringEncoding)
         
         let ret = Tcl_SetVar2Ex(interp, cVarName, cElementName!, value, Int32(flags))
-        
-        return (ret != nil)
+        if ret == nil {
+            throw TclError.Error
+        }
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Int
-    public func setVar(varName: String, elementName: String? = nil, value: String, flags: Int = 0) -> Bool {
-        guard let cString = value.cStringUsingEncoding(NSUTF8StringEncoding) else {return false}
-        let obj = Tcl_NewStringObj(cString, -1)
-        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+    public func setVar(varName: String, elementName: String? = nil, value: String, flags: Int = 0) throws {
+        let obj = try string_to_tclobjp(value)
+        return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Int
-    public func setVar(varName: String, elementName: String? = nil, value: Int, flags: Int = 0) -> Bool {
+    public func setVar(varName: String, elementName: String? = nil, value: Int, flags: Int = 0) throws {
         let obj = Tcl_NewIntObj(Int32(value))
-        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+        return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Bool
-    public func setVar(varName: String, elementName: String? = nil, value: Bool, flags: Int = 0) -> Bool {
+    public func setVar(varName: String, elementName: String? = nil, value: Bool, flags: Int = 0) throws {
         let obj = Tcl_NewBooleanObj(value ? 1 : 0)
-        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+        return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Double
-    public func setVar(varName: String, elementName: String? = nil, value: Double, flags: Int = 0) -> Bool {
+    public func setVar(varName: String, elementName: String? = nil, value: Double, flags: Int = 0) throws {
         let obj = Tcl_NewDoubleObj(value)
-        return self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+        return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
-    public func setVar(varName: String, elementName: String? = nil, obj: TclObj, flags: Int = 0) -> Bool {
-        return self.setVar(varName, elementName: elementName, value: obj.getObj(), flags: flags)
+    public func setVar(varName: String, elementName: String? = nil, obj: TclObj, flags: Int = 0) throws {
+        return try self.setVar(varName, elementName: elementName, value: obj.getObj(), flags: flags)
     }
     
     // dictionaryToArray - set a String/String dictionary into a Tcl array
-    public func dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0) {
-        dictionary.forEach {
-            setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+    public func dictionaryToArray (arrayName: String, dictionary: [String: String], flags: Int = 0) throws {
+        try dictionary.forEach {
+            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
         }
     }
 
     // dictionaryToArray - set a String/Int dictionary into a Tcl array
-    public func dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0) {
-        dictionary.forEach {
-            setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+    public func dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: Int = 0) throws {
+        try dictionary.forEach {
+            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
         }
     }
 
     // dictionaryToArray - set a String/Double dictionary into a Tcl array
-    public func dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: Int = 0) {
-        dictionary.forEach {
-            setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+    public func dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: Int = 0) throws {
+        try dictionary.forEach {
+            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
         }
     }
 
