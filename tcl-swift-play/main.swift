@@ -116,13 +116,17 @@ var xo = TclObj(5)
     var intListObj = TclObj(ints)
     print(ints)
     print(intListObj.stringValue)
+    print("")
     
+    print("digging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")
     print("auto_path is '\(autoPath)'")
     
     let tclVersion: Double = try! interp.getVar("tcl_version")
     print("Tcl version is \(tclVersion)")
+    print("")
     
+    print("sticking something extra into the tcl_platform array")
     try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
     
     do {try interp.eval("array get tcl_platform")}
@@ -134,9 +138,15 @@ var xo = TclObj(5)
     var machine: String = interp.getVar("tcl_platform", elementName: "machine")!
     var byteOrder: String = interp.getVar("tcl_platform", elementName: "byteOrder")!
     print("Your machine is \(machine) and your byte order is \(byteOrder)")
+    print("")
     
-
-    let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
-
+    func badcall () throws {
+        print("intentionally calling a swift extension with a bad argument")
+        let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+        print("")
+    }
+    
+    let _ = try? badcall()
+    
     
     

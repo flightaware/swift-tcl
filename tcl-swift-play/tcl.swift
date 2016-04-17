@@ -880,7 +880,7 @@ public class TclInterp {
     }
     
     // getRawInterpPtr - return Tcl_Interp *
-    func getRawInterpPtr() -> UnsafeMutablePointer<Tcl_Interp> {
+    private func getRawInterpPtr() -> UnsafeMutablePointer<Tcl_Interp> {
         return interp
     }
     
@@ -889,7 +889,7 @@ public class TclInterp {
     // the Tcl result code (1 == error is the big one) is returned
     // this should probably be mapped to an enum in Swift
     //
-    public func eval(code: String) throws {
+    public func eval(code: String, caller: String = #function) throws {
         guard let cCode = code.cStringUsingEncoding(NSUTF8StringEncoding) else {
             throw TclError.NotString(string: code)
         }
@@ -903,6 +903,7 @@ public class TclInterp {
         case TCL_CONTINUE:
             throw TclControlFlow.Continue
         case TCL_ERROR:
+            self.addErrorInfo(" called from Swift '(caller)'")
             if printErrors {
                 print("Error: \(self.result)")
                 let errorInfo: String = try self.getVar("errorInfo")
