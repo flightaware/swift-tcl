@@ -1,6 +1,6 @@
 ## Overview
 
-This is Swift Tcl, a bridge between Swift and Tcl, providing deep integration between the two languages.
+This is Swift Tcl, a bridge between Swift and Tcl, providing deep interoperability between the two languages.
 
 Swift developers can use Tcl to make new and powerful ways to interact with, debug, construct automated testing for, and orchestrate the high level activities of their applications.
 
