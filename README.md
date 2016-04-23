@@ -18,7 +18,7 @@ Users of either language invoke functions written in the other indistinguishably
 
 Likewise errors are handled naturally across both languages in both directions.  Errors thrown from Swift code called by Tcl come back as Tcl errors with proper errorInfo, errorCode, etc.  Closing the loop, uncaught errors occuring in Tcl code called from Swift are thrown back to the caller as Swift errors.
 
-Swift Tcl defines a TclInterp class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.  Creating a Tcl interpreter and doing something with it in Swift is as easy as:
+Swift Tcl defines a *TclInterp* class in Swift that provides methods for creating and managing Tcl interpreters, executing Tcl code in them, etc.  Creating a Tcl interpreter and doing something with it in Swift is as easy as:
 
 ```swift
 let interp = TclInterp()
@@ -26,25 +26,23 @@ let interp = TclInterp()
 interp.eval("puts {Hello, World.}")
 ```
 
-It also defines a TclObj class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
+It also defines a *TclObj* class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
 
-New Tcl commands can be written in Swift and are far more compact and generally simpler than their counterparts in C.
+New Tcl commands written in Swift and are far more compact and generally simpler than their counterparts in C.
 
 Real work can be done with the Tcl interpeter without using TclObj objects at all.
 
-
-
-The TclInterp object has methods for accessing and manipulating variables, arrays, evaluating code, etc.  In the exsamples below a String and a Double are obtained from variables in the Tcl interpreter:
+The TclInterp object has methods for accessing and manipulating variables, arrays, evaluating code, etc.  In the examples below a String and a Double are obtained from variables in the Tcl interpreter:
 
 ```swift
-var autoPath: String = try! interp.getVar("auto_path")
+var autoPath: String = try interp.getVar("auto_path")
 print("auto_path is '\(autoPath)'")
 
-let tclVersion: Double = try! interp.getVar("tcl_version")
+let tclVersion: Double = try interp.getVar("tcl_version")
 print("Tcl version is \(tclVersion)")
 ```
 
-Y'see how getVar just gave you the data type you asked for with no funny business?  How cool is that?
+Y'see how getVar just gave you the data type you asked for with no funny business?  How cool is that?  Also note how we use *try* because getVar will fail if the variable doesn't exist.
 
 Likewise TclInterp's getVar can fetch elements out of an array:
 
@@ -52,14 +50,14 @@ Likewise TclInterp's getVar can fetch elements out of an array:
 var machine: String = try interp.getVar("tcl_platform", elementName: "machine")
 ```
 
-In this example we import an "array get" of Tcl's global _tcl_platform_ array into a Swift dictionary:
+In this example we import Tcl's global _tcl_platform_ array into a Swift dictionary:
 
 ```swift
 try interp.eval("array get tcl_platform")
 var dict: [String:String] = try interp.resultObj.toDictionary()
 ```
 
-We can then access the array we've imported into a Swift dictionary in the usual Swift way:
+We can then access the imported Tcl array in the usual Swift way:
 
 ```swift
 print("Your OS is \(dict["os"]!), running version \(dict["osVersion"]!)")
@@ -98,15 +96,13 @@ func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> D
 		throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
 	}
 	
-	do {
-		let lat1 = try objv[0].getDoubleArg("lat1")
-		let lon1 = try objv[1].getDoubleArg("lon1")
-		let lat2 = try objv[2].getDoubleArg("lat2")
-		let lon2 = try objv[3].getDoubleArg("lon2")
+	let lat1 = try objv[0].getDoubleArg("lat1")
+	let lon1 = try objv[1].getDoubleArg("lon1")
+	let lat2 = try objv[2].getDoubleArg("lat2")
+	let lon2 = try objv[3].getDoubleArg("lon2")
 		
-		let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
-		return distance
-	}
+	let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
+	return distance
 }
 ```
 
