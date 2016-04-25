@@ -14,6 +14,11 @@ proc hint {proc args} {
 	set hints($proc) $args
 }
 
+#
+# guess_default_type - given a string try to suss out what
+#   data type it is. first see if it is a strict int, then
+#   see if it is a sttrict double, then say it is a string.
+#
 proc guess_default_type {defaultValue} {
 	if {[string is int -strict $defaultValue]} {
 		return Int
@@ -26,12 +31,19 @@ proc guess_default_type {defaultValue} {
 	return String
 }
 
+#
+# does_proc_return_something - meatball check to see if a
+# tcl proc returns a value.
+#
 proc does_proc_return_something {proc} {
 	set body [info body $proc]
 
 	return [regexp {return } $body]
 }
 
+#
+# gen - generate interface functions
+#
 proc gen {proc} {
 	variable hints
 
@@ -89,7 +101,7 @@ proc gen {proc} {
 
 	append string ") {\n"
 
-	set springboard "    return tcl_springboard(\"$proc\""
+	set springboard "    return tcl_springboard(springboardInterp, \"$proc\""
 	foreach arg $args {
 		append springboard ", "
 
@@ -118,9 +130,6 @@ proc gen {proc} {
 
 	return $string
 }
-
-
-
 
 #
 # enumerate_procs - recursively enumerate all procs within a namespace and

@@ -31,9 +31,9 @@ var xo = TclObj(5)
     let x5 = TclObj(5)
     print(x5.doubleValue)
     
-    func foo (interp: TclInterp, objv: [TclObj]) {
+    func foo (interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
-        // return ""
+        return ""
     }
     
     func avg (interp: TclInterp, objv: [TclObj]) -> Double {

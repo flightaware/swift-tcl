@@ -331,6 +331,18 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     return TCL_OK
 }
 
+func tcl_springboard(Interp: TclInterp, commandName: String, objv: UnsafeMutablePointer<Tcl_Obj>...) throws {
+	let cCommandName = commandName.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
+	let command = Tcl_NewStringObj (cCommandName, -1)
+	let vec = TclObj()
+	try vec.lappend(command)
+	try objv.forEach {
+		try vec.lappend ($0)
+	}
+	Tcl_EvalObjEx (Interp.interp, vec.getObj(), 0);
+	
+}
+
 // TclObj - Tcl object class
 
 public class TclObj {
@@ -1199,5 +1211,4 @@ public class TclInterp {
         return try tclobjp_to_String (substOutObj)
     }
 }
-
 
