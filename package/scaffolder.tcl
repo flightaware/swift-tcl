@@ -14,6 +14,11 @@ proc hint {proc args} {
 	set hints($proc) $args
 }
 
+#
+# guess_default_type - try to guess a Swift type from a string
+#
+# can return Int, Double, Bool, and String.
+#
 proc guess_default_type {defaultValue} {
 	if {[string is int -strict $defaultValue]} {
 		return Int
@@ -22,6 +27,11 @@ proc guess_default_type {defaultValue} {
 	if {[string is double -strict $defaultValue]} {
 		return Double
 	}
+
+	if {[string is boolean -strict $defaultValue]} {
+		return Bool
+	}
+
 
 	return String
 }
