@@ -21,13 +21,22 @@ I think these hints ultimately belong in comments in the source code.
 I have been toying with that possibly not every proc needs to be directly accessible from Swift (but maybe it would be best if it did?).  I am also toying with the idea that you might bite the bullet and include a full Swift declaration for the proc inside the comments.
 
 ```tcl
-proc ::fa_community_media::flightaware_photos_displayWidget {compare sort {limit 6} {context default} {style default} {photos_period 0} {dryrun 0}} {...}
+proc flightaware_photos_displayWidget {compare sort {limit 6} {context default} {style default} {photos_period 0} {dryrun 0}} {...}
 ```
 
+
 ```
- % swift::gen ::fa_community_media::flightaware_photos_displayWidget
+ % swift::gen flightaware_photos_displayWidget
  func ::fa_community_media::flightaware_photos_displayWidget (compare: String, sort: String, limit: Int = 6, context: String = "default", style: String = "default", photos_period: Int = 0, dryrun: Int = 0 -> String) {
-     return tcl_springboard(springboardInterp, "::fa_community_media::flightaware_photos_displayWidget", string_to_tclobjp(compare), string_to_tclobjp(sort), Tcl_NewLongObj(limit), string_to_tclobjp(context), string_to_tclobjp(style), Tcl_NewLongObj(photos_period), Tcl_NewLongObj(dryrun))
+     return tcl_springboard(springboardInterp, "flightaware_photos_displayWidget", string_to_tclobjp(compare), string_to_tclobjp(sort), Tcl_NewLongObj(limit), string_to_tclobjp(context), string_to_tclobjp(style), Tcl_NewLongObj(photos_period), Tcl_NewLongObj(dryrun))
+}
+```
+
+In the above example *dryrun* should have been a Bool, consequently we tell the hinter...  ``` % swift::hint ::fa_community_media::flightaware_photos_displayWidget dryrun Bool ``` to produce
+
+```tcl
+func ::fa_community_media::flightaware_photos_displayWidget (compare: String, sort: String, limit: Int = 6, context: String = "default", style: String = "default", photos_period: Int = 0, dryrun: Bool = 0 -> String) {
+    return tcl_springboard(springboardInterp, "::fa_community_media::flightaware_photos_displayWidget", string_to_tclobjp(compare), string_to_tclobjp(sort), Tcl_NewLongObj(limit), string_to_tclobjp(context), string_to_tclobjp(style), Tcl_NewLongObj(photos_period), Tcl_NewBooleanObj(dryrun ? 1 : 0))
 }
 ```
 
