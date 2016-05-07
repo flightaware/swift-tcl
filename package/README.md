@@ -27,7 +27,7 @@ proc flightaware_photos_displayWidget {compare sort {limit 6} {context default} 
 
 ```
  % swift::gen flightaware_photos_displayWidget
- func ::fa_community_media::flightaware_photos_displayWidget (compare: String, sort: String, limit: Int = 6, context: String = "default", style: String = "default", photos_period: Int = 0, dryrun: Int = 0 -> String) {
+ func flightaware_photos_displayWidget (compare: String, sort: String, limit: Int = 6, context: String = "default", style: String = "default", photos_period: Int = 0, dryrun: Int = 0 -> String) {
      return tcl_springboard(springboardInterp, "flightaware_photos_displayWidget", string_to_tclobjp(compare), string_to_tclobjp(sort), Tcl_NewLongObj(limit), string_to_tclobjp(context), string_to_tclobjp(style), Tcl_NewLongObj(photos_period), Tcl_NewLongObj(dryrun))
 }
 ```
