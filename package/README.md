@@ -32,12 +32,12 @@ proc flightaware_photos_displayWidget {compare sort {limit 6} {context default} 
 }
 ```
 
-In the above example *dryrun* should have been a Bool, consequently we tell the hinter...  ``` % swift::hint ::fa_community_media::flightaware_photos_displayWidget dryrun Bool ``` to produce
+In the above example *dryrun* should have been a Bool, consequently we tell the hinter...  ``` % swift::hint flightaware_photos_displayWidget dryrun Bool ``` to produce
 
 ```tcl
-func ::fa_community_media::flightaware_photos_displayWidget (compare: String, sort: String, limit: Int = 6, context: String = "default", style: String = "default", photos_period: Int = 0, dryrun: Bool = 0 -> String) {
-    return tcl_springboard(springboardInterp, "::fa_community_media::flightaware_photos_displayWidget", string_to_tclobjp(compare), string_to_tclobjp(sort), Tcl_NewLongObj(limit), string_to_tclobjp(context), string_to_tclobjp(style), Tcl_NewLongObj(photos_period), Tcl_NewBooleanObj(dryrun ? 1 : 0))
+func flightaware_photos_displayWidget (compare: String, sort: String, limit: Int = 6, context: String = "default", style: String = "default", photos_period: Int = 0, dryrun: Bool = 0 -> String) {
+    return tcl_springboard(springboardInterp, "flightaware_photos_displayWidget", string_to_tclobjp(compare), string_to_tclobjp(sort), Tcl_NewLongObj(limit), string_to_tclobjp(context), string_to_tclobjp(style), Tcl_NewLongObj(photos_period), Tcl_NewBooleanObj(dryrun ? 1 : 0))
 }
 ```
 
-A tricky issue is going to be passing Swift objects around it Tcl.  I think it will be possible to accept objects possibly as the AnyObject type and get the object type as a string from Swift.  Definitely there is a way to get the unsafeAddressOf something so an instance of an object that in Swift may not have any kind of name can have a name in Tcl consisting of the object type concatenated with the address of the object as a string, a lot like Swig does for bringing C and C++ stuff to Tcl in an automated way.
+A tricky issue is going to be passing Swift objects around in Tcl.  I think it will be possible to accept objects possibly as the AnyObject type and get the object type as a string from Swift.  Definitely there is a way to get the unsafeAddressOf something so an instance of an object that in Swift may not have any kind of name can have a name in Tcl consisting of the object type concatenated with the address of the object as a string, a lot like Swig does for bringing C and C++ stuff to Tcl in an automated way.
