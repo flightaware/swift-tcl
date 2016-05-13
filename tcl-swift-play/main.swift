@@ -13,7 +13,7 @@ print("Hello, World!")
 
 let interp = TclInterp()
 
-    try! interp.eval("puts {Hey stikny}; return hijinks")
+    try! interp.eval("puts {Hey stinky}; return hijinks")
     print("interpreter returned '\(interp.getResult)'")
 
 
@@ -147,7 +147,7 @@ var xo = TclObj(5)
         let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
         print("")
     }
-    
+
     let _ = try? badcall()
     
     

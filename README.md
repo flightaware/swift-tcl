@@ -274,11 +274,11 @@ Append an Int, Double, String, Bool or TclObj to a list contained in a TclObj.
 
 Append an array of Int, Double, or String to a list contained in a TclObj.  Each element is appended.
 
-* `var val: Int = try obj.lindex(index)
-* `var val: Double = try obj.lindex(index)
-* `var val: String = try obj.lindex(index)
-* `var val: Bool = try obj.lindex(index)
-* `var val: TclObj = try obj.lindex(index)
+* `var val: Int = try obj.lindex(index)`
+* `var val: Double = try obj.lindex(index)`
+* `var val: String = try obj.lindex(index)`
+* `var val: Bool = try obj.lindex(index)`
+* `var val: TclObj = try obj.lindex(index)`
 
 Return the nth element of the obj as a list, if possible, according to the specified data type, else throws an error.
 
