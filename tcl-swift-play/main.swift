@@ -141,12 +141,6 @@ var xo = TclObj(5)
     var byteOrder: String = interp.getVar("tcl_platform", elementName: "byteOrder")!
     print("Your machine is \(machine) and your byte order is \(byteOrder)")
     print("")
-    
-    func badcall ()  {
-        print("intentionally calling a swift extension with a bad argument")
-        // Error is printed anyway because interp.printErrors = 1 (see tcl.swift) 
-        let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
-        print("")
-    }
 
-    badcall()
+    print("intentionally calling a swift extension with a bad argument")
+    let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
