@@ -13,11 +13,19 @@ print("Hello, World!")
 
 let interp = TclInterp()
 
-    try! interp.eval("puts {Hey stinky}; return hijinks")
-    print("interpreter returned '\(interp.getResult)'")
-
+    if let result: String = try? interp.eval("puts {Hey stinky}; return hijinks") {
+        print("interpreter returned '\(result)'")
+    } else {
+        print("interpreter failed")
+    }
 
 print(interp.result)
+    
+    if let result: Int = try? interp.eval("expr 1 + 4") {
+        print("interpreter returned '\(result)'")
+    } else {
+        print("interpreter failed")
+    }
 
 var xo = TclObj(5)
     let xy = TclObj("hi mom")
@@ -48,15 +56,15 @@ var xo = TclObj(5)
     interp.create_command("foo", foo)
     
     do {
-        try interp.eval("foo")
+        try interp.rawEval("foo")
     }
     
     interp.create_command("avg", avg)
     do {
-        try interp.eval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
+        try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
     
-     try interp.eval("puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
+     try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
     
     func latlongs_to_distance (interp: TclInterp, objv: [TclObj]) -> TclReturn {
         if (objv.count != 4) {
@@ -110,7 +118,7 @@ var xo = TclObj(5)
 
     
     do {
-        try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")
+        try interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")
     }
     
     print("importing a swift array")
@@ -131,7 +139,7 @@ var xo = TclObj(5)
     print("sticking something extra into the tcl_platform array")
     try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
     
-    do {try interp.eval("array get tcl_platform")}
+    do {try interp.rawEval("array get tcl_platform")}
     var dict: [String:String] = try! interp.resultObj.toDictionary()
     print(dict)
     var version = dict["osVersion"]!
@@ -143,4 +151,4 @@ var xo = TclObj(5)
     print("")
 
     print("intentionally calling a swift extension with a bad argument")
-    let _ = try? interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+    let _ = try? interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")

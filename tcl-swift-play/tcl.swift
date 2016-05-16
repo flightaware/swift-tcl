@@ -896,12 +896,11 @@ public class TclInterp {
         return interp
     }
     
-    // eval - evaluate a string with the Tcl interpreter
+    // rawEval - evaluate a string with the Tcl interpreter
     //
-    // the Tcl result code (1 == error is the big one) is returned
-    // this should probably be mapped to an enum in Swift
+    // Returns void, throws a TclError or TclResultCode
     //
-    public func eval(code: String, caller: String = #function) throws {
+    public func rawEval(code: String, caller: String = #function) throws {
         guard let cCode = code.cStringUsingEncoding(NSUTF8StringEncoding) else {
             throw TclError.NotString(string: code)
         }
@@ -931,23 +930,27 @@ public class TclInterp {
         }
     }
     
-    public func evals(code: String, caller: String = #function) throws -> String {
-        try self.eval(code, caller: caller)
+    // eval - evaluate the string via the Tcl Interpreter, return the Tcl result of the
+    // evaluation. Throws TclError or TclControlFlow.
+    public func eval(code: String, caller: String = #function) throws -> String {
+        try self.rawEval(code, caller: caller)
         return try self.getResult()
     }
 
-    public func evals(code: String, caller: String = #function) throws -> Int {
-        try self.eval(code, caller: caller)
-        return try self.getIntResult()
+    public func eval(code: String, caller: String = #function) throws -> Int {
+        try self.rawEval(code, caller: caller)
+        return try self.getResult()
     }
     
-
-    
-    /*
-    public func eval(code: String) throws -> String {
-        try self.eval(code)
+    public func eval(code: String, caller: String = #function) throws -> Double {
+        try self.rawEval(code, caller: caller)
         return try self.getResult()
-    }*/
+    }
+    
+    public func eval(code: String, caller: String = #function) throws -> Bool {
+        try self.rawEval(code, caller: caller)
+        return try self.getResult()
+    }
     
     // resultString - grab the interpreter result as a string
     public var result: String {
@@ -976,17 +979,17 @@ public class TclInterp {
         return try tclobjp_to_String(obj)
     }
     
-    public func getIntResult() throws -> Int {
+    public func getResult() throws -> Int {
         let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
         return try tclobjp_to_Int(obj)
     }
     
-    public func getDoubleResult() throws -> Double {
+    public func getResult() throws -> Double {
         let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
         return try tclobjp_to_Double(obj)
     }
     
-    public func getBoolResult() throws -> Bool {
+    public func getResult() throws -> Bool {
         let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_GetObjResult(interp)
         return try tclobjp_to_Bool(obj)
     }
