@@ -497,6 +497,24 @@ public class TclObj {
         return (start, end)
     }
     
+    // lrange returning a TclObj array
+    public func lrange (first: Int, _ last: Int) throws -> [TclObj] {
+        var array: [TclObj] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        
+        let (start, end) = normalize_range(first, last, Int(objc))
+        
+        for i in start...end {
+            array.append(TclObj(objv[i], Interp: Interp))
+        }
+        
+        return array
+    }
+    
     // lrange returning a string array
     public func lrange (first: Int, _ last: Int) throws -> [String] {
         var array: [String] = []
@@ -627,6 +645,26 @@ public class TclObj {
         return dictionary
     }
     
+    subscript(index: Int) -> TclObj? {
+        get {
+            if let result : TclObj? = try? self.lindex(index) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    subscript(start: Int, end: Int) -> [TclObj]? {
+        get {
+            if let result : [TclObj] = try? self.lrange(start, end) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
     subscript(index: Int) -> String? {
         get {
             if let result : String = try? self.lindex(index) {
@@ -646,7 +684,6 @@ public class TclObj {
             }
         }
     }
-
 }
 
 
