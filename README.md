@@ -231,7 +231,15 @@ Perform substitution on String in the fashion of the Tcl *subst* command, perfor
 
 Flags are an OptionSet of one or more of [.Commands, .Variables, .Backslashes, .All].  [.All] is the default.
  
+### Errors
 
+* `setErrorCode(val: String) throws`
+    
+Set the Tcl error code
+    
+* `addErrorInfo(message: String)`
+
+Append a message to the error information
 
 ## The TclObj class
 
