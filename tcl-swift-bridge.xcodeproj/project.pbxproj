@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9BEF00231CEB406B00ED067B /* tcl-interp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEF00221CEB406B00ED067B /* tcl-interp.swift */; };
+		9BEF00251CEB40BF00ED067B /* tcl-object.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEF00241CEB40BF00ED067B /* tcl-object.swift */; };
 		CB30DB911CB5898400F53FF5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB30DB901CB5898400F53FF5 /* main.swift */; };
 		CB30DB9A1CB5899500F53FF5 /* c-stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = CB30DB981CB5899500F53FF5 /* c-stuff.c */; };
 		CB574D671CB5FBF300B90411 /* libtcl8.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CB574D661CB5FBF300B90411 /* libtcl8.6.dylib */; };
@@ -26,6 +28,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9BEF00221CEB406B00ED067B /* tcl-interp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "tcl-interp.swift"; sourceTree = "<group>"; };
+		9BEF00241CEB40BF00ED067B /* tcl-object.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "tcl-object.swift"; sourceTree = "<group>"; };
 		CB30DB8D1CB5898400F53FF5 /* tcl-swift-bridge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tcl-swift-bridge"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB30DB901CB5898400F53FF5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CB30DB971CB5899500F53FF5 /* tcl-swift-play-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tcl-swift-play-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -72,6 +76,8 @@
 				CB30DB901CB5898400F53FF5 /* main.swift */,
 				CB574D681CB600FD00B90411 /* tcl.swift */,
 				CB30DB971CB5899500F53FF5 /* tcl-swift-play-Bridging-Header.h */,
+				9BEF00221CEB406B00ED067B /* tcl-interp.swift */,
+				9BEF00241CEB40BF00ED067B /* tcl-object.swift */,
 			);
 			name = "tcl-swift-bridge";
 			path = "tcl-swift-play";
@@ -134,7 +140,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BEF00251CEB40BF00ED067B /* tcl-object.swift in Sources */,
 				CB30DB9A1CB5899500F53FF5 /* c-stuff.c in Sources */,
+				9BEF00231CEB406B00ED067B /* tcl-interp.swift in Sources */,
 				CB30DB911CB5898400F53FF5 /* main.swift in Sources */,
 				CB574D691CB600FD00B90411 /* tcl.swift in Sources */,
 			);
