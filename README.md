@@ -154,51 +154,50 @@ Set the interpreter result to the specified Double, Int, or Bool, respectively.
 
 Create a new command in Tcl of the specified name that when the name is invoked from Tcl the corresponding Swift function will be invoked to perform the command.
 
-* `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [.None])`
+* `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpreter and return it as a Tcl\_Obj \*.  This is internal and you shouldn't really ever need it.
 
-* `var val: TclObj = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [.None])`
+* `var val: TclObj = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpreter and return it as a string or throw an error.
 
-* `var val: Int = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [.None])`
+* `var val: Int = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpreter and return it as an Int.  An error is thrown if the object's contents aren't a valid list or if the element can't be converted to an Int.
 
-* `var val: Double = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [.None])`
-* `var val: String = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [.None])`
-* `var val: Bool = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [.None])`
+* `var val: Double = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
+* `var val: String = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
+* `var val: Bool = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpeter and return it as a Double, String or Bool et al or throw an error.
 
-* `interp.setVar(varName: String, elementName: String?, value: String, flags: VariableFlags = [.None])`
-* `interp.setVar(varName: String, elementName: String?, value: Int, flags: VariableFlags = [.None])`
-* `interp.setVar(varName: String, elementName: String?, value: Double, flags: VariableFlags = [.None])`
-* `interp.setVar(varName: String, elementName: String?, value: Bool, flags: VariableFlags = [.None])`
-* `interp.setVar(varName: String, elementName: String?, value: TclObj, flags: VariableFlags = [.None])`
+* `interp.setVar(varName: String, elementName: String?, value: String, flags: VariableFlags = [])`
+* `interp.setVar(varName: String, elementName: String?, value: Int, flags: VariableFlags = [])`
+* `interp.setVar(varName: String, elementName: String?, value: Double, flags: VariableFlags = [])`
+* `interp.setVar(varName: String, elementName: String?, value: Bool, flags: VariableFlags = [])`
+* `interp.setVar(varName: String, elementName: String?, value: TclObj, flags: VariableFlags = [])`
 
 Set a variable or array element in the Tcl interpeter to be the String, Int, Double, Bool or TclObj that was passed or throw an error if unable.  For instance you might be unable to set an array element when the variable name is a scalar.
 
-* `interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: VariableFlags = [.None])`
-* `interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: VariableFlags = [.None])`
-* `interp.dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: VariableFlags = [.None])`
+* `interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: VariableFlags = [])`
+* `interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: VariableFlags = [])`
+* `interp.dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: VariableFlags = [])`
 
 Flags are an OptionSet. Values are:
-* `.GlobalOnly          TCL_GLOBAL_ONLY`
-* `.NamespaceOnly       TCL_NAMESPACE_ONLY`
-* `.LeaveErroMsg        TCL_LEAVE_ERR_MSG`
-* `.AppendValue         TCL_APPEND_VALUE`
-* `.ListElement         TCL_LIST_ELEMENT`
-* `.TraceReads          TCL_TRACE_READS`
-* `.TraceWrites         TCL_TRACE_WRITES`
-* `.TraceUnsets         TCL_TRACE_UNSETS`
-* `.TraceDestroyed      TCL_TRACE_DESTROYED`
-* `.InterpDestroyed     TCL_INTERP_DESTROYED`
-* `.TraceArray          TCL_TRACE_ARRAY`
-* `.TraceResultDynamic  TCL_TRACE_RESULT_DYNAMIC`
-* `.TraceResultObject   TCL_TRACE_RESULT_OBJECT`
-* `.None                0`
+* `.GlobalOnly         = TCL_GLOBAL_ONLY`
+* `.NamespaceOnly      = TCL_NAMESPACE_ONLY`
+* `.LeaveErroMsg       = TCL_LEAVE_ERR_MSG`
+* `.AppendValue        = TCL_APPEND_VALUE`
+* `.ListElement        = TCL_LIST_ELEMENT`
+* `.TraceReads         = TCL_TRACE_READS`
+* `.TraceWrites        = TCL_TRACE_WRITES`
+* `.TraceUnsets        = TCL_TRACE_UNSETS`
+* `.TraceDestroyed     = TCL_TRACE_DESTROYED`
+* `.InterpDestroyed    = TCL_INTERP_DESTROYED`
+* `.TraceArray         = TCL_TRACE_ARRAY`
+* `.TraceResultDynamic = TCL_TRACE_RESULT_DYNAMIC`
+* `.TraceResultObject  = TCL_TRACE_RESULT_OBJECT`
 
 Import a Swift Dictionary into a Tcl array.
 
