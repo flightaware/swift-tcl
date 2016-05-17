@@ -27,7 +27,7 @@ print(interp.result)
         print("interpreter failed")
     }
 
-var xo = TclObj(5)
+    var xo = TclObj(5)
     let xy = TclObj("hi mom")
     print(xy.stringValue)
     xy.stringValue = "hi dad"
@@ -39,6 +39,7 @@ var xo = TclObj(5)
     let x5 = TclObj(5)
     print(x5.doubleValue)
     
+
     func foo (interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
         return ""
@@ -127,6 +128,18 @@ var xo = TclObj(5)
     print(ints)
     print(intListObj.stringValue)
     print("")
+
+    let sarray = ["zero","one","two","three","four"]
+    print("Testing lrange on \(sarray)")
+    let xarray = TclObj(sarray, Interp: interp)
+    let one_to_three : [String]? = try? xarray.lrange(1, 3);
+    print("    lrange(1,3) = \(one_to_three)")
+    let three_to_one : [String]? = try? xarray.lrange(-3,-1)
+    print("    lrange(-3,-1) = \(three_to_one)")
+    print("testing lindex")
+    let zero : String? = try? xarray.lindex(0)
+    print("zero = \(zero)")
+    
     
     print("digging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")

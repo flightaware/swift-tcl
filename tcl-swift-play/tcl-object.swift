@@ -353,6 +353,7 @@ public class TclObj {
         return Int(count)
     }
     
+    
     // lindex - return the nth element treating obj as a list, if possible, and return a Tcl_Obj *
     func lindex (index: Int) throws -> UnsafeMutablePointer<Tcl_Obj>? {
         var tmpObj: UnsafeMutablePointer<Tcl_Obj> = nil
@@ -393,6 +394,7 @@ public class TclObj {
         
         return try tclobjp_to_Bool(tmpObj, interp: interp)
     }
+
     
     // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
     public func toDictionary () throws -> [String: TclObj] {
@@ -438,7 +440,6 @@ public class TclObj {
         for i in 0..<Int(objc) {
             let longVal = try tclobjp_to_Int(objv[i], interp: interp)
             array.append(longVal)
-            
         }
         
         return array
@@ -480,6 +481,99 @@ public class TclObj {
         return array
     }
     
+    // Utility function for lrange
+    private func normalize_range(first: Int, _ last: Int, _ count: Int) -> ( Int, Int) {
+        var start: Int = first
+        var end: Int = last
+        
+        if start < 0 { start = max(0, count + start) }
+        else if start >= count { start = count - 1 }
+        
+        if end < 0 { end = max(0, count + end) }
+        else if end >= count { end = count  - 1}
+        
+        if end < start { end = start }
+        
+        return (start, end)
+    }
+    
+    // lrange returning a string array
+    public func lrange (first: Int, _ last: Int) throws -> [String] {
+        var array: [String] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        
+        let (start, end) = normalize_range(first, last, Int(objc))
+        
+        for i in start...end {
+            try array.append(tclobjp_to_String(objv[i]))
+        }
+        
+        return array
+    }
+    
+    // lrange returning an integer array
+    public func lrange (first: Int, _ last: Int) throws -> [Int] {
+        var array: [Int] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        
+        let (start, end) = normalize_range(first, last, Int(objc))
+        
+        for i in start...end {
+            let longVal = try tclobjp_to_Int(objv[i], interp: interp)
+            array.append(longVal)
+        }
+        
+        return array
+    }
+    
+    // lrange returning a float array
+    public func lrange (first: Int, _ last: Int) throws -> [Double] {
+        var array: [Double] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        
+        let (start, end) = normalize_range(first, last, Int(objc))
+        
+        for i in start...end {
+            let doubleVal = try tclobjp_to_Double(objv[i], interp: interp)
+            array.append(doubleVal)
+        }
+        
+        return array
+    }
+
+    
+    // lrange returning a boolean array
+    public func lrange (first: Int, _ last: Int) throws -> [Bool] {
+        var array: [Bool] = []
+        
+        var objc: Int32 = 0
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        
+        let (start, end) = normalize_range(first, last, Int(objc))
+        
+        for i in start...end {
+            let boolVal = try tclobjp_to_Bool(objv[i], interp: interp)
+            array.append(boolVal)
+        }
+        
+        return array
+    }
+
+
     // toDictionary - copy the tcl object as a list into a String/String dictionary
     public func toDictionary () throws -> [String: String] {
         var dictionary: [String: String] = [:]
