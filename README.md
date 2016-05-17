@@ -222,6 +222,8 @@ Flags are an OptionSet. Values are:
 * `.TraceResultDynamic = TCL_TRACE_RESULT_DYNAMIC`
 * `.TraceResultObject  = TCL_TRACE_RESULT_OBJECT`
 
+#String substitution
+
 * `interp.subst (substIn: String, flags: SubstFlags) -> String`
 * `interp.subst (substIn: String, flags: SubstFlags) -> TclObj`
 
