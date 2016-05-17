@@ -68,7 +68,7 @@ public struct VariableFlags : OptionSetType {
     static let TraceResultDynamic = VariableFlags(rawValue: TCL_TRACE_RESULT_DYNAMIC)
     static let TraceResultObject  = VariableFlags(rawValue: TCL_TRACE_RESULT_OBJECT)
 
-    static let None               = VariableFlags(rawValue: 0)
+    //static let None               = VariableFlags(rawValue: 0)
 }
 
 public struct SubstFlags : OptionSetType {
