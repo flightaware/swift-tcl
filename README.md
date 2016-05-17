@@ -122,11 +122,19 @@ expected floating-point number but got "crash" while converting "lat2" argument
 
 Create a new Tcl interpreter.  You can create as many as you like.
 
-* try interp.eval(code: String)`
+* `try interp.eval(code: String) -> Type`
 
-Evaluate Tcl code in the Tcl interpreter.
+Evaluate Tcl code in the Tcl interpreter. Return value is the result of the code, can be any of String, Int, Double, or Bool.
+
+* `try interp.RawEval(code: String)`
+
+Evaluate the code, don't return anything.
 
 You can control whether or not error are printed by manipulating the *printErrors* variable, which currently defaults to true and will include the traceback.
+
+# Accessing the interpreter result.
+
+There are a number of interfaces here, which will be trimmed down with experience:
 
 * `var result: String = interp.result`
 
@@ -150,9 +158,22 @@ Set the interpreter result to the specified TclObj object.
 
 Set the interpreter result to the specified Double, Int, or Bool, respectively.
 
-* interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
+* `interp.getResult() -> String`
+* `interp.getResult() -> Double`
+* `interp.getResult() -> Int`
+* `interp.getResult() -> Bool`
 
-Create a new command in Tcl of the specified name that when the name is invoked from Tcl the corresponding Swift function will be invoked to perform the command.
+Get the Interpreter result as the corresponding type.
+
+# Registering commands
+
+* `interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
+
+Create a new command in the Tcl interpreter with the specified name: when the name is invoked from Tcl the corresponding Swift function will be invoked to perform the command. The Swift function should be of type (tclInterp, [TclObj]) -> Type, where Type can be String, Double, Int, or Bool. Eg:
+
+* `func swiftFunction (interp: TclInterp, objv: [TclObj]) throws -> Type`
+
+# Handling variables.
 
 * `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
 
@@ -184,6 +205,8 @@ Set a variable or array element in the Tcl interpeter to be the String, Int, Dou
 * `interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: VariableFlags = [])`
 * `interp.dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: VariableFlags = [])`
 
+Import a Swift Dictionary into a Tcl array.
+
 Flags are an OptionSet. Values are:
 * `.GlobalOnly         = TCL_GLOBAL_ONLY`
 * `.NamespaceOnly      = TCL_NAMESPACE_ONLY`
@@ -198,8 +221,6 @@ Flags are an OptionSet. Values are:
 * `.TraceArray         = TCL_TRACE_ARRAY`
 * `.TraceResultDynamic = TCL_TRACE_RESULT_DYNAMIC`
 * `.TraceResultObject  = TCL_TRACE_RESULT_OBJECT`
-
-Import a Swift Dictionary into a Tcl array.
 
 * `interp.subst (substIn: String, flags: SubstFlags) -> String`
 * `interp.subst (substIn: String, flags: SubstFlags) -> TclObj`
