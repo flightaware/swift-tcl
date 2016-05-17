@@ -329,9 +329,21 @@ Append an array of Int, Double, or String to a list contained in a TclObj.  Each
 
 Return the nth element of the obj as a list, if possible, according to the specified data type, else throws an error.
 
+* `var val: [Int] = try obj.lrange(start, end)`
+* `var val: [Double] = try obj.lrange(start, end)`
+* `var val: [String] = try obj.lrange(start, end)`
+* `var val: [Bool] = try obj.lrange(start, end)`
+
+Return the start...end range of object as a list
+
 * `var count: Int = try obj.llength()`
 
 Return the number of elements in the list contained in the TclObj or throws an error if the value in the TclObj cannot be represented as a list.
+
+* `var String? s = obj[index]`
+* `var [String]? s = obj[start, end]`
+
+Subscripting the object treats it as a list, exactly like lindex and lrange.
 
 * `var array: [Double] = obj.toArray()`
 * `var array: [Int] = obj.toArray()`
