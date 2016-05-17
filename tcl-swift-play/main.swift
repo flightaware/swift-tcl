@@ -140,6 +140,11 @@ print(interp.result)
     let zero : String? = try? xarray.lindex(0)
     print("zero = \(zero)")
     
+    print("Testing array type")
+    let fred = TclArray("fred", Interp: interp)
+    try fred.fromDict(["name": "Nick", "age": "32", "role": "sidekick"])
+    print("fred[\"name\"]?.stringValue = \(fred["name"]?.stringValue)")
+    
     print("Testing subscript on Tcl List")
     print("xarray[0].stringValue = \(xarray[0]?.stringValue)")
     let indexed : [String]? = xarray[0, 2];
