@@ -140,6 +140,9 @@ print(interp.result)
     let zero : String? = try? xarray.lindex(0)
     print("zero = \(zero)")
     
+    print("Testing subscript on Tcl List")
+    print("xarray[0] = \(xarray[0])")
+    print("xarray[0, 2] = \(xarray[0, 2])")
     
     print("digging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")

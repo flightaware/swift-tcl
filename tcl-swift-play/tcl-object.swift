@@ -627,6 +627,26 @@ public class TclObj {
         return dictionary
     }
     
+    subscript(index: Int) -> String? {
+        get {
+            if let result : String = try? self.lindex(index) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    subscript(start: Int, end: Int) -> [String]? {
+        get {
+            if let result : [String] = try? self.lrange(start, end) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+
 }
 
 
