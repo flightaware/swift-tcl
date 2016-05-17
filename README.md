@@ -132,7 +132,7 @@ Evaluate the code, don't return anything.
 
 You can control whether or not error are printed by manipulating the *printErrors* variable, which currently defaults to true and will include the traceback.
 
-# Accessing the interpreter result.
+### Accessing the interpreter result.
 
 There are a number of interfaces here, which will be trimmed down with experience:
 
@@ -165,7 +165,7 @@ Set the interpreter result to the specified Double, Int, or Bool, respectively.
 
 Get the Interpreter result as the corresponding type.
 
-# Registering commands
+### Registering commands
 
 * `interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
 
@@ -173,7 +173,7 @@ Create a new command in the Tcl interpreter with the specified name: when the na
 
 * `func swiftFunction (interp: TclInterp, objv: [TclObj]) throws -> Type`
 
-# Handling variables.
+### Handling variables.
 
 * `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
 
@@ -222,7 +222,7 @@ Flags are an OptionSet. Values are:
 * `.TraceResultDynamic = TCL_TRACE_RESULT_DYNAMIC`
 * `.TraceResultObject  = TCL_TRACE_RESULT_OBJECT`
 
-#String substitution
+###String substitution
 
 * `interp.subst (substIn: String, flags: SubstFlags) -> String`
 * `interp.subst (substIn: String, flags: SubstFlags) -> TclObj`
