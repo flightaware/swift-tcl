@@ -684,6 +684,66 @@ public class TclObj {
             }
         }
     }
+    
+    subscript(index: Int) -> Double? {
+        get {
+            if let result : Double = try? self.lindex(index) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    subscript(start: Int, end: Int) -> [Double]? {
+        get {
+            if let result : [Double] = try? self.lrange(start, end) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    subscript(index: Int) -> Int? {
+        get {
+            if let result : Int = try? self.lindex(index) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    subscript(start: Int, end: Int) -> [Int]? {
+        get {
+            if let result : [Int] = try? self.lrange(start, end) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+
+    subscript(index: Int) -> Bool? {
+        get {
+            if let result : Bool = try? self.lindex(index) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    subscript(start: Int, end: Int) -> [Bool]? {
+        get {
+            if let result : [Bool] = try? self.lrange(start, end) {
+                return result
+            } else {
+                return nil
+            }
+        }
+    }
 }
 
 
