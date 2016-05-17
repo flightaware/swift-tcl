@@ -340,7 +340,9 @@ Return the start...end range of object as a list
 
 Return the number of elements in the list contained in the TclObj or throws an error if the value in the TclObj cannot be represented as a list.
 
+* `var TclObj? s = obj[index]`
 * `var String? s = obj[index]`
+* `var [TclObj]? s = obj[start, end]`
 * `var [String]? s = obj[start, end]`
 
 Subscripting the object treats it as a list, exactly like lindex and lrange.
