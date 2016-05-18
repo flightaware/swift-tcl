@@ -132,17 +132,15 @@ print(interp.result)
     let sarray = ["zero","one","two","three","four"]
     print("Testing lrange on \(sarray)")
     let xarray = TclObj(sarray, Interp: interp)
-    let one_to_three : [String]? = try? xarray.lrange(1, 3);
-    print("    lrange(1,3) = \(one_to_three)")
-    let three_to_one : [String]? = try? xarray.lrange(-3,-1)
-    print("    lrange(-3,-1) = \(three_to_one)")
+    print("    lrange(1,3) = \(try? xarray.lrange(1, 3) as [String])")
+    print("    lrange(-3,-1) = \(try? xarray.lrange(-3,-1) as [String])")
     print("testing lindex")
-    let zero : String? = try? xarray.lindex(0)
-    print("zero = \(zero)")
+    print("xarray.lindex(1) = \(try? xarray.lindex(1) as String)")
     
     print("Testing array type")
     if let fred = try? TclArray("fred", Interp: interp, fromDict: ["name": "Nick", "age": "32", "role": "sidekick"]) {
         print("fred[\"name\"]?.stringValue = \(fred["name"]?.stringValue)")
+        print("fred[\"name\"] as String = \(fred["name"] as String?)")
     } else {
         print("Could not initialize array from dictionary.")
     }

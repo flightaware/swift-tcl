@@ -64,4 +64,18 @@ public class TclArray {
             }
         }
     }
+    
+    subscript (key: String) -> String? {
+        get {
+            return getValue(key)?.stringValue
+        }
+        set {
+            if let string = newValue {
+                do {
+                    try setValue(key, value: string)
+                } catch {
+                }
+            }
+        }
+    }
 }
