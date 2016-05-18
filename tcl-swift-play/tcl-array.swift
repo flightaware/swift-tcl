@@ -51,6 +51,18 @@ public class TclArray {
         try Interp?.setVar(name, elementName: key, value: value)
     }
     
+    func setValue(key: String, value: Int) throws {
+        try Interp?.setVar(name, elementName: key, value: value)
+    }
+    
+    func setValue(key: String, value: Double) throws {
+        try Interp?.setVar(name, elementName: key, value: value)
+    }
+    
+    func setValue(key: String, value: Bool) throws {
+        try Interp?.setVar(name, elementName: key, value: value)
+    }
+
     subscript (key: String) -> TclObj? {
         get {
             return getValue(key)
@@ -73,6 +85,48 @@ public class TclArray {
             if let string = newValue {
                 do {
                     try setValue(key, value: string)
+                } catch {
+                }
+            }
+        }
+    }
+    
+    subscript (key: String) -> Int? {
+        get {
+            return getValue(key)?.intValue
+        }
+        set {
+            if let int = newValue {
+                do {
+                    try setValue(key, value: int)
+                } catch {
+                }
+            }
+        }
+    }
+    
+    subscript (key: String) -> Double? {
+        get {
+            return getValue(key)?.doubleValue
+        }
+        set {
+            if let double = newValue {
+                do {
+                    try setValue(key, value: double)
+                } catch {
+                }
+            }
+        }
+    }
+    
+    subscript (key: String) -> Bool? {
+        get {
+            return getValue(key)?.boolValue
+        }
+        set {
+            if let bool = newValue {
+                do {
+                    try setValue(key, value: bool)
                 } catch {
                 }
             }
