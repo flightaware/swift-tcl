@@ -65,14 +65,7 @@ print(interp.result)
         try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
     
-     try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
-    
-    func latlongs_to_distance (interp: TclInterp, objv: [TclObj]) -> TclReturn {
-        if (objv.count != 4) {
-            
-        }
-        return TclReturn.OK
-    }
+    try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
     
     let EARTH_RADIUS_MILES = 3963.0
     
@@ -104,7 +97,6 @@ print(interp.result)
         if (objv.count != 4) {
             throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
-        
 
         let lat1 = try objv[0].getDoubleArg("lat1")
         let lon1 = try objv[1].getDoubleArg("lon1")

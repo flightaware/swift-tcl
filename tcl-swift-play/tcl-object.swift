@@ -239,25 +239,9 @@ public class TclObj {
         return obj
     }
     
-    func getString() throws -> String {
-        return try tclobjp_to_String(obj)
-    }
-    
-    func getInt() throws -> Int {
-        return try tclobjp_to_Int(obj, interp: interp)
-    }
-    
-    func getDouble() throws -> Double {
-        return try tclobjp_to_Double(obj, interp: interp)
-    }
-    
-    func getBool() throws -> Bool {
-        return try tclobjp_to_Bool(obj, interp: interp)
-    }
-    
     func getIntArg(varName: String) throws -> Int {
         do {
-            return try self.getInt()
+            return try tclobjp_to_Int(obj, interp: interp)
         } catch {
             Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
@@ -266,7 +250,7 @@ public class TclObj {
     
     func getDoubleArg(varName: String) throws -> Double {
         do {
-            return try self.getDouble()
+            return try tclobjp_to_Double(obj, interp: interp)
         } catch {
             Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
@@ -275,7 +259,7 @@ public class TclObj {
     
     func getBoolArg(varName: String) throws -> Bool {
         do {
-            return try self.getBool()
+            return try tclobjp_to_Bool(obj, interp: interp)
         } catch {
             Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
@@ -284,7 +268,7 @@ public class TclObj {
     
     func getStringArg(varName: String) throws -> String {
         do {
-            return try self.getString()
+            return try tclobjp_to_String(obj)
         } catch {
             Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
@@ -354,7 +338,6 @@ public class TclObj {
         }
         return Int(count)
     }
-    
     
     // lindex - return the nth element treating obj as a list, if possible, and return a Tcl_Obj *
     func lindex (index: Int) throws -> UnsafeMutablePointer<Tcl_Obj>? {
