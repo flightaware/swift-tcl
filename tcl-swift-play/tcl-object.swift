@@ -21,42 +21,6 @@ public class TclObj {
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
     
-    // init - initialize from nothing, get an empty Tcl object
-    public init(Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-    }
-    
-    // init - initialize from a Swift Int
-    public init(_ val: Int, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewLongObj(val)
-        IncrRefCount(obj)
-    }
-    
-    // init - initialize from a Swift String
-    public init(_ val: String, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        let string = val.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-        obj = Tcl_NewStringObj (string, -1)
-        IncrRefCount(obj)
-    }
-    
-    // init - initialize from a Swift Double
-    public init(_ val: Double, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewDoubleObj (val)
-        IncrRefCount(obj)
-    }
-    
-    // init - initialize from a Swift Bool
-    public init(_ val: Bool, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewBooleanObj(val ? 1 : 0)
-        IncrRefCount(obj)
-    }
-    
     // init - Initialize from a Tcl_Obj *
     init(_ val: UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp? = nil) {
         self.Interp = Interp; self.interp = Interp?.interp ?? nil
@@ -64,12 +28,42 @@ public class TclObj {
         IncrRefCount(val)
     }
     
+    // init - initialize from nothing, get an empty Tcl object
+    public convenience init(Interp: TclInterp? = nil) {
+        self.init(Tcl_NewObj(), Interp: Interp)
+    }
+    
+    // init - initialize from a Swift Int
+    public convenience init(_ val: Int, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.intValue = val;
+    }
+    
+    // init - initialize from a Swift String
+    public convenience init(_ val: String, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.stringValue = val;
+    }
+    
+    // init - initialize from a Swift Double
+    public convenience init(_ val: Double, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.doubleValue = val;
+    }
+    
+    // init - initialize from a Swift Bool
+    public convenience init(_ val: Bool, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.boolValue = val;
+    }
+    
     // init - init from a set of Strings to a list
-    public init(_ set: Set<String>, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init(_ set: Set<String>, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromSet(set)
+    }
+    
+    func fromSet(set: Set<String>) {
         for element in set {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (string, -1))
@@ -77,33 +71,36 @@ public class TclObj {
     }
     
     // init from a set of Ints to a list
-    public init(_ set: Set<Int>, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init(_ set: Set<Int>, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromSet(set)
+    }
+    
+    func fromSet(set: Set<Int>) {
         for element in set {
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (element))
         }
     }
     
     // init from a Set of doubles to a list
-    public init(_ set: Set<Double>, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init(_ set: Set<Double>, Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromSet(set)
+    }
+    
+    func fromSet(set: Set<Double>) {
         for element in set {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
         }
     }
     
     // init from an Array of Strings to a Tcl list
-    public init(_ array: [String], Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init(_ array: [String], Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromArray(array)
+    }
+    
+    func fromArray(array: [String]) {
         for element in array {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (string, -1))
@@ -111,33 +108,36 @@ public class TclObj {
     }
     
     // Init from an Array of Int to a Tcl list
-    public init (_ array: [Int], Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init (_ array: [Int], Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromArray(array)
+    }
+    
+    func fromArray(array: [Int]) {
         array.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj($0))
         }
     }
     
     // Init from an Array of Double to a Tcl list
-    public init (_ array: [Double], Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init (_ array: [Double], Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromArray(array)
+    }
+    
+    func fromArray(array: [Double]) {
         array.forEach {
             Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
         }
     }
     
     // init from a String/String dictionary to a list
-    public init (_ dictionary: [String: String], Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init (_ dictionary: [String: String], Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromDictionary(dictionary)
+    }
+    
+    func fromDictionary(dictionary: [String: String]) {
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
@@ -147,11 +147,12 @@ public class TclObj {
     }
     
     // init from a String/Int dictionary to a list
-    public init (_ dictionary: [String: Int], Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init (_ dictionary: [String: Int], Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromDictionary(dictionary)
+    }
+
+    func fromDictionary(dictionary: [String: Int]) {
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
@@ -160,11 +161,12 @@ public class TclObj {
     }
     
     // init from a String/Double dictionary to a list
-    public init (_ dictionary: [String: Double], Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
-        obj = Tcl_NewObj()
-        IncrRefCount(obj)
-        
+    public convenience init (_ dictionary: [String: Double], Interp: TclInterp? = nil) {
+        self.init(Interp: Interp)
+        self.fromDictionary(dictionary)
+    }
+    
+    func fromDictionary(dictionary: [String: Double]) {
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
