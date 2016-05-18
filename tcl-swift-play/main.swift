@@ -141,9 +141,11 @@ print(interp.result)
     print("zero = \(zero)")
     
     print("Testing array type")
-    let fred = TclArray("fred", Interp: interp)
-    try fred.fromDict(["name": "Nick", "age": "32", "role": "sidekick"])
-    print("fred[\"name\"]?.stringValue = \(fred["name"]?.stringValue)")
+    if let fred = try? TclArray("fred", Interp: interp, fromDict: ["name": "Nick", "age": "32", "role": "sidekick"]) {
+        print("fred[\"name\"]?.stringValue = \(fred["name"]?.stringValue)")
+    } else {
+        print("Could not initialize array from dictionary.")
+    }
     
     print("Testing subscript on Tcl List")
     print("xarray[0].stringValue = \(xarray[0]?.stringValue)")

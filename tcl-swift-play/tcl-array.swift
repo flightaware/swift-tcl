@@ -18,7 +18,7 @@ public class TclArray {
     let Interp: TclInterp?
     let interp: UnsafeMutablePointer<Tcl_Interp>
     
-    // init - initialize from interpreter and name
+    // init - initialize from empty or existing array
     public init(_ name: String, Interp: TclInterp? = nil, namespace: String? = nil) {
         self.Interp = Interp;
         self.interp = Interp?.interp ?? nil
@@ -31,6 +31,18 @@ public class TclArray {
     
     func fromDict(dict: [String : String]) throws {
         try Interp?.dictionaryToArray(name, dictionary: dict)
+    }
+    
+    // init - initialize from dictionary
+    public init(_ name: String, Interp: TclInterp? = nil, namespace: String? = nil, fromDict dict: [String: String]) throws {
+        self.Interp = Interp;
+        self.interp = Interp?.interp ?? nil
+        if namespace == nil {
+            self.name = name;
+        } else {
+            self.name = namespace! + "::" + name;
+        }
+        try self.fromDict(dict)
     }
     
     func getValue(key: String) -> TclObj? {
