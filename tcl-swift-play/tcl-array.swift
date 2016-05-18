@@ -34,14 +34,8 @@ public class TclArray {
     }
     
     // init - initialize from dictionary
-    public init(_ name: String, Interp: TclInterp? = nil, namespace: String? = nil, fromDict dict: [String: String]) throws {
-        self.Interp = Interp;
-        self.interp = Interp?.interp ?? nil
-        if namespace == nil {
-            self.name = name;
-        } else {
-            self.name = namespace! + "::" + name;
-        }
+    public convenience init(_ name: String, Interp: TclInterp? = nil, namespace: String? = nil, fromDict dict: [String: String]) throws {
+        self.init(name, Interp: Interp, namespace: namespace)
         try self.fromDict(dict)
     }
     
@@ -61,10 +55,10 @@ public class TclArray {
         get {
             return getValue(key)
         }
-        set (obj) {
-            if obj != nil {
+        set {
+            if let obj = newValue {
                 do {
-                    try setValue(key, obj: obj!)
+                    try setValue(key, obj: obj)
                 } catch {
                 }
             }
