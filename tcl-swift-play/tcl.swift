@@ -353,6 +353,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         return TCL_ERROR
     } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
+        return TCL_ERROR
     } catch TclControlFlow.Break {
         return TCL_BREAK
     } catch TclControlFlow.Continue {

@@ -166,3 +166,4 @@ print(interp.result)
 
     print("intentionally calling a swift extension with a bad argument")
     let _ = try? interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+    let _ = try? interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444]\"")
