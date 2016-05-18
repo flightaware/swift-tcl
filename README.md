@@ -259,7 +259,7 @@ Create a Swift TclObj object that's empty, contains a String, an Int, Double or 
 
 * `var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)`
 
-Create a TclObj object encapsulating a <UnsafeMutablePointer<Tcl_Obj> aka a Tcl\_Obj \*.
+Create a TclObj object encapsulating a UnsafeMutablePointer<Tcl_Obj> aka a Tcl\_Obj \*.
 
 * `obj.set(Set<String>)`
 * `obj.set(Set<Int>)`
@@ -279,27 +279,27 @@ Set a TclObj object to be a Tcl list containing a Swift array of either String, 
 
 Set a TclObj object to contain a Tcl list of key-value pairs from the contents of a Swift Dictionary having names of String and values of String, Int or Double
 
-* `obj = String`
-* `obj = Int`
-* `obj = Double`
-* `obj = Bool`
+* `obj.set(String)`
+* `obj.set(Int)`
+* `obj.set(Double)`
+* `obj.set(Bool)`
 
 Assign TclObj to contain a String, Int, Double or Bool.
 
-* `var val: String = obj`
+* `var val: String = obj.get()`
 
 Set String to contain the String representation of whatever TclObj has in it
 
-* `var val: Int = try obj.getInt()`
+* `var val: Int = try obj.get()`
 
 Set val to contain the Int representation of the TclObj, or throws an error if object cannot be represented as an Int.
 
-* `var val: Double = try obj.getDouble()`
-* `var valBool Double = try obj.getBool()`
+* `var val: Double = try obj.get()`
+* `var valBool Double = try obj.get()`
 
 Same as the above but for Double and Bool.
 
-* `var nativeObj: UnsafeMutablePointer<Tcl_Obj> = obj.getObj()`
+* `var nativeObj: UnsafeMutablePointer<Tcl_Obj> = obj.get()`
 
 Obtain a pointer to the native C Tcl object from a TclObj
 
