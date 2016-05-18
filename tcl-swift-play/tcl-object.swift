@@ -60,10 +60,10 @@ public class TclObj {
     // init - init from a set of Strings to a list
     public convenience init(_ set: Set<String>, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromSet(set)
+        self.set(set)
     }
     
-    func fromSet(set: Set<String>) {
+    func set(set: Set<String>) {
         for element in set {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (string, -1))
@@ -73,10 +73,10 @@ public class TclObj {
     // init from a set of Ints to a list
     public convenience init(_ set: Set<Int>, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromSet(set)
+        self.set(set)
     }
     
-    func fromSet(set: Set<Int>) {
+    func set(set: Set<Int>) {
         for element in set {
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (element))
         }
@@ -85,10 +85,10 @@ public class TclObj {
     // init from a Set of doubles to a list
     public convenience init(_ set: Set<Double>, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromSet(set)
+        self.set(set)
     }
     
-    func fromSet(set: Set<Double>) {
+    func set(set: Set<Double>) {
         for element in set {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
         }
@@ -97,10 +97,10 @@ public class TclObj {
     // init from an Array of Strings to a Tcl list
     public convenience init(_ array: [String], Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromArray(array)
+        self.set(array)
     }
     
-    func fromArray(array: [String]) {
+    func set(array: [String]) {
         for element in array {
             let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (string, -1))
@@ -110,10 +110,10 @@ public class TclObj {
     // Init from an Array of Int to a Tcl list
     public convenience init (_ array: [Int], Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromArray(array)
+        self.set(array)
     }
     
-    func fromArray(array: [Int]) {
+    func set(array: [Int]) {
         array.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj($0))
         }
@@ -122,10 +122,10 @@ public class TclObj {
     // Init from an Array of Double to a Tcl list
     public convenience init (_ array: [Double], Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromArray(array)
+        self.set(array)
     }
     
-    func fromArray(array: [Double]) {
+    func set(array: [Double]) {
         array.forEach {
             Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
         }
@@ -134,10 +134,10 @@ public class TclObj {
     // init from a String/String dictionary to a list
     public convenience init (_ dictionary: [String: String], Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromDictionary(dictionary)
+        self.set(dictionary)
     }
     
-    func fromDictionary(dictionary: [String: String]) {
+    func set(dictionary: [String: String]) {
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
@@ -149,10 +149,10 @@ public class TclObj {
     // init from a String/Int dictionary to a list
     public convenience init (_ dictionary: [String: Int], Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromDictionary(dictionary)
+        self.set(dictionary)
     }
 
-    func fromDictionary(dictionary: [String: Int]) {
+    func set(dictionary: [String: Int]) {
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
@@ -163,10 +163,10 @@ public class TclObj {
     // init from a String/Double dictionary to a list
     public convenience init (_ dictionary: [String: Double], Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.fromDictionary(dictionary)
+        self.set(dictionary)
     }
     
-    func fromDictionary(dictionary: [String: Double]) {
+    func set(dictionary: [String: Double]) {
         dictionary.forEach {
             let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
@@ -182,64 +182,89 @@ public class TclObj {
     }
     
     // various set functions to set the Tcl object from a string, Int, Double, etc
-    public var stringValue: String {
+    public var stringValue: String? {
         get {
-            do {
-                return try tclobjp_to_String(obj)
-            } catch {
-                return ""
-            }
+            return try? get()
         }
         set {
-            Tcl_SetStringObj (obj, newValue.cStringUsingEncoding(NSUTF8StringEncoding) ?? [], -1)
+            guard let val = newValue else {return}
+            set(val)
         }
+    }
+    
+    func get() throws -> String {
+        return try tclobjp_to_String(obj)
+    }
+    
+    func set(value: String) {
+        Tcl_SetStringObj (obj, value.cStringUsingEncoding(NSUTF8StringEncoding) ?? [], -1)
     }
     
     // getInt - return the Tcl object as an Int or nil
     // if in-object Tcl type conversion fails
     public var intValue: Int? {
         get {
-            do {
-                return try tclobjp_to_Int(obj)
-            } catch {
-                return nil
-            }
+            return try? get()
         }
         set {
             guard let val = newValue else {return}
-            Tcl_SetLongObj (obj, val)
+            set(val)
         }
     }
-    
+
+    func get() throws -> Int {
+        return try tclobjp_to_Int(obj)
+    }
+
+    func set(val: Int) {
+        Tcl_SetLongObj (obj, val)
+    }
+
     // getDouble - return the Tcl object as a Double or nil
     // if in-object Tcl type conversion fails
     public var doubleValue: Double? {
         get {
-            return try? tclobjp_to_Double(obj)
+            return try? get()
         }
         set {
             guard let val = newValue else {return}
-            Tcl_SetDoubleObj (obj, val)
+            set(val)
         }
+    }
+    
+    func get() throws -> Double {
+        return try tclobjp_to_Double(obj)
+    }
+    
+    func set(val: Double) {
+        Tcl_SetDoubleObj (obj, val)
     }
     
     // getBool - return the Tcl object as a Bool or nil
     public var boolValue: Bool? {
         get {
-            return try? tclobjp_to_Bool(obj)
+            return try? get()
         }
         set {
             guard let val = newValue else {return}
-            Tcl_SetBooleanObj (obj, val ? 1 : 0)
+            set(val)
         }
     }
-    
+
+    func get() throws -> Bool {
+        return try tclobjp_to_Bool(obj)
+    }
+
+    func set(val: Bool) {
+        Tcl_SetBooleanObj (obj, val ? 1 : 0)
+    }
+
     // getObj - return the Tcl object pointer (Tcl_Obj *)
-    func getObj() -> UnsafeMutablePointer<Tcl_Obj> {
+    func get() -> UnsafeMutablePointer<Tcl_Obj> {
         return obj
     }
     
-    func getIntArg(varName: String) throws -> Int {
+    func getArg(varName: String) throws -> Int {
         do {
             return try tclobjp_to_Int(obj, interp: interp)
         } catch {
@@ -248,7 +273,7 @@ public class TclObj {
         }
     }
     
-    func getDoubleArg(varName: String) throws -> Double {
+    func getArg(varName: String) throws -> Double {
         do {
             return try tclobjp_to_Double(obj, interp: interp)
         } catch {
@@ -257,7 +282,7 @@ public class TclObj {
         }
     }
     
-    func getBoolArg(varName: String) throws -> Bool {
+    func getArg(varName: String) throws -> Bool {
         do {
             return try tclobjp_to_Bool(obj, interp: interp)
         } catch {
@@ -266,7 +291,7 @@ public class TclObj {
         }
     }
     
-    func getStringArg(varName: String) throws -> String {
+    func getArg(varName: String) throws -> String {
         do {
             return try tclobjp_to_String(obj)
         } catch {

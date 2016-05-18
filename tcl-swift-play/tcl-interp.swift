@@ -108,7 +108,7 @@ public class TclInterp {
             return TclObj(Tcl_GetObjResult(interp))
         }
         set {
-            Tcl_SetObjResult(interp,resultObj.getObj())
+            Tcl_SetObjResult(interp,resultObj.get())
         }
     }
     
@@ -258,7 +258,7 @@ public class TclInterp {
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
     public func setVar(varName: String, elementName: String? = nil, obj: TclObj, flags: VariableFlags = []) throws {
-        return try self.setVar(varName, elementName: elementName, value: obj.getObj(), flags: flags)
+        return try self.setVar(varName, elementName: elementName, value: obj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
     }
     
     // dictionaryToArray - set a String/String dictionary into a Tcl array
@@ -339,7 +339,7 @@ public class TclInterp {
     }
     
     func subst (substInTclObj: TclObj, flags: SubstFlags = [.All]) throws -> UnsafeMutablePointer<Tcl_Obj>? {
-        return try self.subst (substInTclObj.getObj(), flags: flags)
+        return try self.subst (substInTclObj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
     }
     
     public func subst (substIn: String, flags: SubstFlags = [.All]) throws -> String {

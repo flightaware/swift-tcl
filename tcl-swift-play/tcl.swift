@@ -26,6 +26,7 @@ public typealias SwiftTclFuncReturningDouble = (TclInterp, [TclObj]) throws -> D
 public typealias SwiftTclFuncReturningString = (TclInterp, [TclObj]) throws -> String
 public typealias SwiftTclFuncReturningBool = (TclInterp, [TclObj]) throws -> Bool
 public typealias SwiftTclFuncReturningTclObj = (TclInterp, [TclObj]) throws -> TclObj
+//public typealias Tcl_ObjP = UnsafeMutablePointer<Tcl_Obj>
 
 public enum SwiftTclFunctionType {
     case TclReturn(SwiftTclFuncReturningTclReturn)
@@ -234,26 +235,29 @@ func string_to_tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> 
     return Tcl_NewStringObj (cString, -1)
 }
 
-// omg this is so cool
+// Protocol for types that Tcl knows
+protocol TclType {
+    func toTclObj() -> TclObj
+    mutating func fromTclObj(obj: TclObj)
+}
 
-// extend Swift's String object
-
-extension String {
+// extend Swift objects to satisfy protocol TclType
+extension String: TclType {
     // initialize string straight from a TclObj!
     public init (_ obj: TclObj) {
         self.init(obj.stringValue)
     }
     
-    func toTclObj() -> TclObj? {
+    func toTclObj() -> TclObj {
         return TclObj(self)
     }
     
     mutating func fromTclObj(obj: TclObj) {
-        self = obj.stringValue
+        self = obj.stringValue!
     }
 }
 
-extension Int {
+extension Int: TclType {
     // var foo: Int = someTclObj; failable initializer
     public init? (_ obj: TclObj) {
         guard obj.intValue != nil else {return nil}
@@ -269,7 +273,7 @@ extension Int {
     }
 }
 
-extension Double {
+extension Double: TclType {
     public init (_ obj: TclObj) {
         self.init(obj.doubleValue!)
     }
@@ -284,7 +288,7 @@ extension Double {
     }
 }
 
-extension Bool {
+extension Bool: TclType {
     public init? (_ obj: TclObj) {
         guard obj.boolValue != nil else {return nil}
         self.init(obj.boolValue!)
@@ -370,7 +374,7 @@ func tcl_springboard(Interp: TclInterp, commandName: String, objv: UnsafeMutable
 	try objv.forEach {
 		try vec.lappend ($0)
 	}
-	Tcl_EvalObjEx (Interp.interp, vec.getObj(), 0);
+	Tcl_EvalObjEx (Interp.interp, vec.get(), 0);
 	
 }
 
