@@ -90,6 +90,11 @@ public class TclInterp {
         return try self.getResult()
     }
     
+    public func eval(code: String, caller: String = #function) throws -> TclObj {
+        try self.rawEval(code, caller: caller)
+        return self.resultObj
+    }
+    
     // resultString - grab the interpreter result as a string
     public var result: String {
         get {

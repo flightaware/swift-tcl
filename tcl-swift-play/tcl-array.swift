@@ -29,14 +29,32 @@ public class TclArray {
         }
     }
     
-    func fromDict(dict: [String : String]) throws {
+    func set(dict: [String : String]) throws {
         try Interp?.dictionaryToArray(name, dictionary: dict)
     }
-    
+
     // init - initialize from dictionary
     public convenience init(_ name: String, Interp: TclInterp? = nil, namespace: String? = nil, fromDict dict: [String: String]) throws {
         self.init(name, Interp: Interp, namespace: namespace)
-        try self.fromDict(dict)
+        try self.set(dict)
+    }
+    
+    func names() throws -> [String]? {
+        guard Interp != nil else { return nil }
+        let cmd = TclObj("array names")
+        do { try cmd.lappend(self.name) } catch { return nil }
+        let res: TclObj = try Interp!.eval(cmd.get())
+        return try res.get()
+    }
+    
+    func get() throws -> [String: String] {
+        var dict: [String: String] = [:]
+        try self.names()?.forEach {
+            if let val: String = try self.getValue($0)?.get() {
+                dict[$0] = val
+            }
+        }
+        return dict
     }
     
     func getValue(key: String) -> TclObj? {

@@ -367,7 +367,15 @@ public class TclObj {
     // lindex - return the nth element treating obj as a list, if possible, and return a Tcl_Obj *
     func lindex (index: Int) throws -> UnsafeMutablePointer<Tcl_Obj>? {
         var tmpObj: UnsafeMutablePointer<Tcl_Obj> = nil
-        if Tcl_ListObjIndex(interp, obj, Int32(index), &tmpObj) == TCL_ERROR {throw TclError.Error}
+        var index = index;
+        if(index < 0) {
+            if let count = try? self.llength() {
+                index += count
+            }
+        }
+        if Tcl_ListObjIndex(interp, obj, Int32(index), &tmpObj) == TCL_ERROR {
+            throw TclError.Error
+        }
         return tmpObj
     }
     
@@ -404,10 +412,9 @@ public class TclObj {
         
         return try tclobjp_to_Bool(tmpObj, interp: interp)
     }
-
     
     // toDictionary - copy the tcl object as a list into a String/TclObj dictionary
-    public func toDictionary () throws -> [String: TclObj] {
+    public func get() throws -> [String: TclObj] {
         var dictionary: [String: TclObj] = [:]
         
         var objc: Int32 = 0
@@ -423,7 +430,7 @@ public class TclObj {
     }
     
     // toArray - create a String array from the tcl object as a list
-    public func toArray () throws -> [String] {
+    public func get() throws -> [String] {
         var array: [String] = []
         
         var objc: Int32 = 0
@@ -439,7 +446,7 @@ public class TclObj {
     }
     
     // toArray - create an Int array from the tcl object as a list
-    public func toArray () throws -> [Int] {
+    public func get() throws -> [Int] {
         var array: [Int] = []
         
         var objc: Int32 = 0
@@ -456,7 +463,7 @@ public class TclObj {
     }
     
     // toArray - create a Double array from the tcl object as a list
-    public func toArray () throws ->  [Double] {
+    public func get() throws ->  [Double] {
         var array: [Double] = []
         
         var objc: Int32 = 0
@@ -476,7 +483,7 @@ public class TclObj {
     // toArray - create a TclObj array from the tcl object as a list,
     // each element becomes its own TclObj
     
-    public func toArray () throws -> [TclObj] {
+    public func get() throws -> [TclObj] {
         var array: [TclObj] = []
         
         var objc: Int32 = 0
@@ -525,6 +532,10 @@ public class TclObj {
         return array
     }
     
+    public func lrange(range: Range<Int>) throws -> [TclObj] {
+        return try self.lrange(range.startIndex, range.endIndex)
+    }
+    
     // lrange returning a string array
     public func lrange (first: Int, _ last: Int) throws -> [String] {
         var array: [String] = []
@@ -541,6 +552,10 @@ public class TclObj {
         }
         
         return array
+    }
+    
+    public func lrange(range: Range<Int>) throws -> [String] {
+        return try self.lrange(range.startIndex, range.endIndex-1)
     }
     
     // lrange returning an integer array
@@ -562,6 +577,10 @@ public class TclObj {
         return array
     }
     
+    public func lrange(range: Range<Int>) throws -> [Int] {
+        return try self.lrange(range.startIndex, range.endIndex)
+    }
+    
     // lrange returning a float array
     public func lrange (first: Int, _ last: Int) throws -> [Double] {
         var array: [Double] = []
@@ -577,10 +596,13 @@ public class TclObj {
             let doubleVal = try tclobjp_to_Double(objv[i], interp: interp)
             array.append(doubleVal)
         }
-        
+    
         return array
     }
-
+    
+    public func lrange(range: Range<Int>) throws -> [Double] {
+        return try self.lrange(range.startIndex, range.endIndex)
+    }
     
     // lrange returning a boolean array
     public func lrange (first: Int, _ last: Int) throws -> [Bool] {
@@ -600,10 +622,13 @@ public class TclObj {
         
         return array
     }
+    
+    public func lrange(range: Range<Int>) throws -> [Bool] {
+        return try self.lrange(range.startIndex, range.endIndex)
+    }
 
-
-    // toDictionary - copy the tcl object as a list into a String/String dictionary
-    public func toDictionary () throws -> [String: String] {
+    // get - copy the tcl object as a list into a String/String dictionary
+    public func get() throws -> [String: String] {
         var dictionary: [String: String] = [:]
         
         var objc: Int32 = 0
@@ -620,8 +645,8 @@ public class TclObj {
         return dictionary
     }
     
-    // toDictionary - copy the tcl object as a list into a String/String dictionary
-    public func toDictionary () throws -> [String: Int] {
+    // get - copy the tcl object as a list into a String/String dictionary
+    public func get() throws -> [String: Int] {
         var dictionary: [String: Int] = [:]
         
         var objc: Int32 = 0
@@ -637,8 +662,8 @@ public class TclObj {
         return dictionary
     }
     
-    // toDictionary - copy the tcl object as a list into a String/String dictionary
-    public func toDictionary () throws -> [String: Double] {
+    // get - copy the tcl object as a list into a String/String dictionary
+    public func get() throws -> [String: Double] {
         var dictionary: [String: Double] = [:]
         
         var objc: Int32 = 0
@@ -665,9 +690,9 @@ public class TclObj {
         }
     }
     
-    subscript(start: Int, end: Int) -> [TclObj]? {
+    subscript(range: Range<Int>) -> [TclObj]? {
         get {
-            if let result : [TclObj] = try? self.lrange(start, end) {
+            if let result : [TclObj] = try? self.lrange(range) {
                 return result
             } else {
                 return nil
@@ -684,10 +709,10 @@ public class TclObj {
             }
         }
     }
-    
-    subscript(start: Int, end: Int) -> [String]? {
+  
+    subscript(range: Range<Int>) -> [String]? {
         get {
-            if let result : [String] = try? self.lrange(start, end) {
+            if let result : [String] = try? self.lrange(range) {
                 return result
             } else {
                 return nil
@@ -705,9 +730,9 @@ public class TclObj {
         }
     }
     
-    subscript(start: Int, end: Int) -> [Double]? {
+    subscript(range: Range<Int>) -> [Double]? {
         get {
-            if let result : [Double] = try? self.lrange(start, end) {
+            if let result : [Double] = try? self.lrange(range) {
                 return result
             } else {
                 return nil
@@ -725,9 +750,9 @@ public class TclObj {
         }
     }
     
-    subscript(start: Int, end: Int) -> [Int]? {
+    subscript(range: Range<Int>) -> [Int]? {
         get {
-            if let result : [Int] = try? self.lrange(start, end) {
+            if let result : [Int] = try? self.lrange(range) {
                 return result
             } else {
                 return nil
@@ -745,14 +770,42 @@ public class TclObj {
         }
     }
     
-    subscript(start: Int, end: Int) -> [Bool]? {
+    subscript(range: Range<Int>) -> [Bool]? {
         get {
-            if let result : [Bool] = try? self.lrange(start, end) {
+            if let result : [Bool] = try? self.lrange(range) {
                 return result
             } else {
                 return nil
             }
         }
+    }
+    
+    func lreplace (range: Range<Int>, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
+        guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex+1), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
+    }
+    
+    func lreplace (range: Range<Int>, list: [TclObj]) throws {
+        try self.lreplace(range, objv: list.map { $0.obj })
+    }
+    
+    // IMPORTANT NOTE
+    // Orginally used self.lreplace(range, objv: list.map { TclObj($0).map } )
+    // This allocated and deallocated the TclObj for each step of the map, so passing freed memory to Tcl_ListObjReplace above
+    // Creating a [ TclObj ] meant that none of the TclObjs are deallocated until lreplace returns.
+    func lreplace (range: Range<Int>, list: [String]) throws {
+        try self.lreplace(range, list: list.map { TclObj($0) })
+    }
+    
+    func linsert (index: Int, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
+        guard (Tcl_ListObjReplace (interp, obj, Int32(index), Int32(0), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
+    }
+    
+    func linsert (index: Int, list: [TclObj]) throws {
+        try self.linsert(index, objv: list.map { $0.obj })
+    }
+    
+    func linsert (index: Int, list: [String]) throws {
+        try self.linsert(index, list: list.map { TclObj($0) })
     }
 }
 

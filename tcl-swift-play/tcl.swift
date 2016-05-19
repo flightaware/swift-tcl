@@ -327,7 +327,6 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
             let result: String = try tcb.invoke(objvec)
             tcb.Interp.result = result
             
-            
         case .Double:
             let result: Double = try tcb.invoke(objvec)
             tcb.Interp.setResult(result)

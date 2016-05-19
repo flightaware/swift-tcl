@@ -122,26 +122,41 @@ print(interp.result)
     print("")
 
     let sarray = ["zero","one","two","three","four"]
-    print("Testing lrange on \(sarray)")
+    print("Testing ranges and indexes on \(sarray)")
     let xarray = TclObj(sarray, Interp: interp)
-    print("    lrange(1,3) = \(try? xarray.lrange(1, 3) as [String])")
-    print("    lrange(-3,-1) = \(try? xarray.lrange(-3,-1) as [String])")
-    print("testing lindex")
-    print("xarray.lindex(1) = \(try? xarray.lindex(1) as String)")
+    print(" xarray.lrange(1...3) = \(try? xarray.lrange(1...3) as [String])")
+    print(" xarray.lrange(-3 ... -1) = \(try? xarray.lrange(-3 ... -1) as [String])")
+    print(" xarray.lindex(1) = \(try? xarray.lindex(1) as String)")
+    print(" xarray.lindex(-1) = \(try? xarray.lindex(-1) as String)")
+    print("Testing subscripts")
+    print(" xarray[0].stringValue = \(xarray[0]?.stringValue)")
+    print(" xarray[0...2] = \(xarray[0...2] as [String]?)")
+    print(" xarray as String = \(try xarray.get() as String)")
+    try xarray.linsert(5, list: ["five"])
+    print(" after insert at end: xarray as String = \(try xarray.get() as String)")
+    try xarray.lreplace(0...2, list: ["0", "dos", "III"])
+    print(" after replace at beginning: xarray as String = \(try xarray.get() as String)")
     
-    print("Testing array type")
-    if let fred = try? TclArray("fred", Interp: interp, fromDict: ["name": "Nick", "age": "32", "role": "sidekick"]) {
-        print("fred[\"name\"]?.stringValue = \(fred["name"]?.stringValue)")
-        print("fred[\"name\"] as String = \(fred["name"] as String?)")
+    let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
+    print("Testing array type on \(testdict)")
+    if let character = try? TclArray("character", Interp: interp, fromDict: testdict) {
+        print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
+        print("character[\"name\"] as String = \(character["name"] as String?)")
+        print("character.names() = \(try character.names())")
+        print("character.get() = \(try character.get())")
+
+        print("Modifying character")
+        character["name"] = "Nick Wilde"
+        character["animal"] = "fox"
+        character["role"] = "cop"
+        character["movie"] = "Zootopia"
+        print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
+        print("character.names() = \(try character.names())")
+        print("character.get() = \(try character.get())")
     } else {
         print("Could not initialize array from dictionary.")
     }
-    
-    print("Testing subscript on Tcl List")
-    print("xarray[0].stringValue = \(xarray[0]?.stringValue)")
-    let indexed : [String]? = xarray[0, 2];
-    print("xarray[0, 2] = \(indexed)")
-    
+
     print("digging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")
     print("auto_path is '\(autoPath)'")
@@ -154,7 +169,7 @@ print(interp.result)
     try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
     
     do {try interp.rawEval("array get tcl_platform")}
-    var dict: [String:String] = try! interp.resultObj.toDictionary()
+    var dict: [String:String] = try! interp.resultObj.get()
     print(dict)
     var version = dict["osVersion"]!
     print("Your OS is \(dict["os"]!), running version \(version)")
