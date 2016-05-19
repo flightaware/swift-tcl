@@ -324,35 +324,17 @@ public class TclInterp {
         Tcl_CreateObjCommand(interp, cname, swift_tcl_bridger, ptr, nil)
     }
     
-    func subst (substInObj: UnsafeMutablePointer<Tcl_Obj>, flags: SubstFlags = [.All]) throws -> UnsafeMutablePointer<Tcl_Obj>? {
-        guard let substOutObj: UnsafeMutablePointer<Tcl_Obj> = Tcl_SubstObj (interp, substInObj, flags.rawValue) else {throw TclError.Error}
-        return substOutObj
-    }
-    
-    func subst (substInObj: UnsafeMutablePointer<Tcl_Obj>, flags: SubstFlags = [.All]) throws -> TclObj {
-        let substOutObj: UnsafeMutablePointer<Tcl_Obj>?
-        do {
-            substOutObj = try self.subst (substInObj, flags: flags)
-        } catch {
+    func subst (substInTclObj: TclObj, flags: SubstFlags = [.All]) throws -> TclObj {
+        let substOutObj = Tcl_SubstObj (interp, substInTclObj.obj, flags.rawValue)
+        guard substOutObj != nil else {
             throw TclError.Error
         }
-        return TclObj(substOutObj!)
-    }
-    
-    func subst (substIn: String, flags: SubstFlags = [.All]) throws -> UnsafeMutablePointer<Tcl_Obj>? {
-        return try self.subst (string_to_tclobjp(substIn), flags: flags)
-    }
-    
-    func subst (substInTclObj: TclObj, flags: SubstFlags = [.All]) throws -> UnsafeMutablePointer<Tcl_Obj>? {
-        return try self.subst (substInTclObj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
+        return TclObj(substOutObj)
     }
     
     public func subst (substIn: String, flags: SubstFlags = [.All]) throws -> String {
-        let substOutObj: UnsafeMutablePointer<Tcl_Obj>?
-        do {
-            substOutObj = try self.subst (substIn, flags: flags)
-        }
-        return try tclobjp_to_String (substOutObj)
+        let substOutObj: TclObj = try self.subst (TclObj(substIn), flags: flags)
+        return try substOutObj.get()
     }
 }
 

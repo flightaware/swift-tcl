@@ -36,25 +36,25 @@ public class TclObj {
     // init - initialize from a Swift Int
     public convenience init(_ val: Int, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.intValue = val;
+        self.set(val);
     }
     
     // init - initialize from a Swift String
     public convenience init(_ val: String, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.stringValue = val;
+        self.set(val);
     }
     
     // init - initialize from a Swift Double
     public convenience init(_ val: Double, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.doubleValue = val;
+        self.set(val);
     }
     
     // init - initialize from a Swift Bool
     public convenience init(_ val: Bool, Interp: TclInterp? = nil) {
         self.init(Interp: Interp)
-        self.boolValue = val;
+        self.set(val);
     }
     
     // init - init from a set of Strings to a list

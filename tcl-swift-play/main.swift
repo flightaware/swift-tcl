@@ -164,10 +164,13 @@ print(interp.result)
         print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
         print("character.names() = \(try character.names())")
         print("character.get() = \(try character.get())")
+
+        print("subst test")
+        print(try interp.subst("character(name) = $character(name)"))
     } else {
         print("Could not initialize array from dictionary.")
     }
-
+    
     print("digging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")
     print("auto_path is '\(autoPath)'")
