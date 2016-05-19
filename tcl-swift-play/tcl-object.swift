@@ -688,6 +688,10 @@ public class TclObj {
                 return nil
             }
         }
+        set {
+            let list = newValue != nil ? [newValue!] : []
+            do { try lreplace(index...index, list: list) } catch { }
+        }
     }
     
     subscript(range: Range<Int>) -> [TclObj]? {
@@ -697,6 +701,10 @@ public class TclObj {
             } else {
                 return nil
             }
+        }
+        set {
+            let list = newValue != nil ? newValue! : []
+            do { try lreplace(range, list: list) } catch { }
         }
     }
     
@@ -708,6 +716,10 @@ public class TclObj {
                 return nil
             }
         }
+        set {
+            let list = newValue != nil ? [newValue!] : []
+            do { try lreplace(index...index, list: list) } catch { }
+        }
     }
   
     subscript(range: Range<Int>) -> [String]? {
@@ -717,6 +729,10 @@ public class TclObj {
             } else {
                 return nil
             }
+        }
+        set {
+            let list = newValue != nil ? newValue! : []
+            do { try lreplace(range, list: list) } catch { }
         }
     }
     
@@ -728,6 +744,10 @@ public class TclObj {
                 return nil
             }
         }
+        set {
+            let list = newValue != nil ? [newValue!] : []
+            do { try lreplace(index...index, list: list) } catch { }
+        }
     }
     
     subscript(range: Range<Int>) -> [Double]? {
@@ -737,6 +757,10 @@ public class TclObj {
             } else {
                 return nil
             }
+        }
+        set {
+            let list = newValue != nil ? newValue! : []
+            do { try lreplace(range, list: list) } catch { }
         }
     }
     
@@ -748,6 +772,10 @@ public class TclObj {
                 return nil
             }
         }
+        set {
+            let list = newValue != nil ? [newValue!] : []
+            do { try lreplace(index...index, list: list) } catch { }
+        }
     }
     
     subscript(range: Range<Int>) -> [Int]? {
@@ -757,6 +785,10 @@ public class TclObj {
             } else {
                 return nil
             }
+        }
+        set {
+            let list = newValue != nil ? newValue! : []
+            do { try lreplace(range, list: list) } catch { }
         }
     }
 
@@ -768,6 +800,10 @@ public class TclObj {
                 return nil
             }
         }
+        set {
+            let list = newValue != nil ? [newValue!] : []
+            do { try lreplace(index...index, list: list) } catch { }
+        }
     }
     
     subscript(range: Range<Int>) -> [Bool]? {
@@ -778,10 +814,15 @@ public class TclObj {
                 return nil
             }
         }
+        set {
+            let list = newValue != nil ? newValue! : []
+            do { try lreplace(range, list: list) } catch { }
+        }
     }
     
+    // lreplace(range, list) and variants
     func lreplace (range: Range<Int>, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
-        guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex+1), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
+        guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
     }
     
     func lreplace (range: Range<Int>, list: [TclObj]) throws {
@@ -796,6 +837,18 @@ public class TclObj {
         try self.lreplace(range, list: list.map { TclObj($0) })
     }
     
+    func lreplace (range: Range<Int>, list: [Int]) throws {
+        try self.lreplace(range, list: list.map { TclObj($0) })
+    }
+    
+    func lreplace (range: Range<Int>, list: [Double]) throws {
+        try self.lreplace(range, list: list.map { TclObj($0) })
+    }
+    
+    func lreplace (range: Range<Int>, list: [Bool]) throws {
+        try self.lreplace(range, list: list.map { TclObj($0) })
+    }
+    
     func linsert (index: Int, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
         guard (Tcl_ListObjReplace (interp, obj, Int32(index), Int32(0), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
     }
@@ -805,6 +858,18 @@ public class TclObj {
     }
     
     func linsert (index: Int, list: [String]) throws {
+        try self.linsert(index, list: list.map { TclObj($0) })
+    }
+    
+    func linsert (index: Int, list: [Int]) throws {
+        try self.linsert(index, list: list.map { TclObj($0) })
+    }
+    
+    func linsert (index: Int, list: [Double]) throws {
+        try self.linsert(index, list: list.map { TclObj($0) })
+    }
+    
+    func linsert (index: Int, list: [Bool]) throws {
         try self.linsert(index, list: list.map { TclObj($0) })
     }
 }

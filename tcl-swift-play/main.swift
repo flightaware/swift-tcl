@@ -134,8 +134,19 @@ print(interp.result)
     print(" xarray as String = \(try xarray.get() as String)")
     try xarray.linsert(5, list: ["five"])
     print(" after insert at end: xarray as String = \(try xarray.get() as String)")
-    try xarray.lreplace(0...2, list: ["0", "dos", "III"])
+    try xarray.lreplace(0...2, list: ["0", "uno", "II"])
     print(" after replace at beginning: xarray as String = \(try xarray.get() as String)")
+    xarray[0...2] = ["ZERO", "ONE", "TWO"]
+    xarray[3] = "(3)"
+    print(" after subscript assignment: xarray as String = \(try xarray.get() as String)")
+    xarray[4...4] = ["4", "four", "IV", "[d]"]
+    print(" after subscript assignment changing length: xarray as String = \(try xarray.get() as String)")
+    xarray[5...7] = [] as [String]
+    print(" after subscript assignment deleting elements: xarray as String = \(try xarray.get() as String)")
+    xarray[0] = false
+    xarray[1...4] = [1, 2, 3, 4]
+    xarray[5] = 5.0
+    print(" after subscript assignment of typed values: xarray as String = \(try xarray.get() as String)")
     
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("Testing array type on \(testdict)")
