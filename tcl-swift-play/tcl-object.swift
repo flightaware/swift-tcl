@@ -13,7 +13,7 @@ import Foundation
 
 // TclObj - Tcl object class
 
-public class TclObj {
+public class TclObj: SequenceType {
     let obj: UnsafeMutablePointer<Tcl_Obj>
     let Interp: TclInterp?
     let interp: UnsafeMutablePointer<Tcl_Interp>
@@ -63,7 +63,7 @@ public class TclObj {
         self.set(set)
     }
     
-    func set(set: Set<String>) {
+    public func set(set: Set<String>) {
         for element in set {
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (element, -1))
         }
@@ -75,7 +75,7 @@ public class TclObj {
         self.set(set)
     }
     
-    func set(set: Set<Int>) {
+    public func set(set: Set<Int>) {
         for element in set {
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (element))
         }
@@ -87,7 +87,7 @@ public class TclObj {
         self.set(set)
     }
     
-    func set(set: Set<Double>) {
+    public func set(set: Set<Double>) {
         for element in set {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
         }
@@ -99,7 +99,7 @@ public class TclObj {
         self.set(array)
     }
     
-    func set(array: [String]) {
+    public func set(array: [String]) {
         for element in array {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (element, -1))
         }
@@ -111,7 +111,7 @@ public class TclObj {
         self.set(array)
     }
     
-    func set(array: [Int]) {
+    public func set(array: [Int]) {
         array.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj($0))
         }
@@ -123,7 +123,7 @@ public class TclObj {
         self.set(array)
     }
     
-    func set(array: [Double]) {
+    public func set(array: [Double]) {
         array.forEach {
             Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
         }
@@ -135,7 +135,7 @@ public class TclObj {
         self.set(dictionary)
     }
     
-    func set(dictionary: [String: String]) {
+    public func set(dictionary: [String: String]) {
         dictionary.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.1, -1))
@@ -148,7 +148,7 @@ public class TclObj {
         self.set(dictionary)
     }
 
-    func set(dictionary: [String: Int]) {
+    public func set(dictionary: [String: Int]) {
         dictionary.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj ($0.1))
@@ -161,7 +161,7 @@ public class TclObj {
         self.set(dictionary)
     }
     
-    func set(dictionary: [String: Double]) {
+    public func set(dictionary: [String: Double]) {
         dictionary.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj ($0.1))
@@ -186,11 +186,11 @@ public class TclObj {
         }
     }
     
-    func get() throws -> String {
+    public func get() throws -> String {
         return try tclobjp_to_String(obj)
     }
     
-    func set(value: String) {
+    public func set(value: String) {
         Tcl_SetStringObj (obj, value, -1)
     }
     
@@ -206,11 +206,11 @@ public class TclObj {
         }
     }
 
-    func get() throws -> Int {
+    public func get() throws -> Int {
         return try tclobjp_to_Int(obj)
     }
 
-    func set(val: Int) {
+    public func set(val: Int) {
         Tcl_SetLongObj (obj, val)
     }
 
@@ -226,11 +226,11 @@ public class TclObj {
         }
     }
     
-    func get() throws -> Double {
+    public func get() throws -> Double {
         return try tclobjp_to_Double(obj)
     }
     
-    func set(val: Double) {
+    public func set(val: Double) {
         Tcl_SetDoubleObj (obj, val)
     }
     
@@ -245,11 +245,11 @@ public class TclObj {
         }
     }
 
-    func get() throws -> Bool {
+    public func get() throws -> Bool {
         return try tclobjp_to_Bool(obj)
     }
 
-    func set(val: Bool) {
+    public func set(val: Bool) {
         Tcl_SetBooleanObj (obj, val ? 1 : 0)
     }
 
@@ -258,7 +258,7 @@ public class TclObj {
         return obj
     }
     
-    func getArg(varName: String) throws -> Int {
+    public func getArg(varName: String) throws -> Int {
         do {
             return try tclobjp_to_Int(obj, interp: interp)
         } catch {
@@ -267,7 +267,7 @@ public class TclObj {
         }
     }
     
-    func getArg(varName: String) throws -> Double {
+    public func getArg(varName: String) throws -> Double {
         do {
             return try tclobjp_to_Double(obj, interp: interp)
         } catch {
@@ -276,7 +276,7 @@ public class TclObj {
         }
     }
     
-    func getArg(varName: String) throws -> Bool {
+    public func getArg(varName: String) throws -> Bool {
         do {
             return try tclobjp_to_Bool(obj, interp: interp)
         } catch {
@@ -285,7 +285,7 @@ public class TclObj {
         }
     }
     
-    func getArg(varName: String) throws -> String {
+    public func getArg(varName: String) throws -> String {
         do {
             return try tclobjp_to_String(obj)
         } catch {
@@ -379,7 +379,7 @@ public class TclObj {
     }
     
     // lindex returning an Int or nil
-    func lindex (index: Int) throws -> Int {
+    public func lindex (index: Int) throws -> Int {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
         return try tclobjp_to_Int(tmpObj, interp: interp)
@@ -618,7 +618,7 @@ public class TclObj {
         return dictionary
     }
     
-    // get - copy the tcl object as a list into a String/String dictionary
+    // get - copy the tcl object as a list into a String/Int dictionary
     public func get() throws -> [String: Int] {
         var dictionary: [String: Int] = [:]
         
@@ -635,7 +635,7 @@ public class TclObj {
         return dictionary
     }
     
-    // get - copy the tcl object as a list into a String/String dictionary
+    // get - copy the tcl object as a list into a String/Double dictionary
     public func get() throws -> [String: Double] {
         var dictionary: [String: Double] = [:]
         
@@ -653,7 +653,7 @@ public class TclObj {
         return dictionary
     }
     
-    subscript(index: Int) -> TclObj? {
+    public subscript(index: Int) -> TclObj? {
         get {
             if let result : TclObj? = try? self.lindex(index) {
                 return result
@@ -667,7 +667,7 @@ public class TclObj {
         }
     }
     
-    subscript(range: Range<Int>) -> [TclObj]? {
+    public subscript(range: Range<Int>) -> [TclObj]? {
         get {
             if let result : [TclObj] = try? self.lrange(range) {
                 return result
@@ -681,7 +681,7 @@ public class TclObj {
         }
     }
     
-    subscript(index: Int) -> String? {
+    public subscript(index: Int) -> String? {
         get {
             if let result : String = try? self.lindex(index) {
                 return result
@@ -695,7 +695,7 @@ public class TclObj {
         }
     }
   
-    subscript(range: Range<Int>) -> [String]? {
+    public subscript(range: Range<Int>) -> [String]? {
         get {
             if let result : [String] = try? self.lrange(range) {
                 return result
@@ -709,7 +709,7 @@ public class TclObj {
         }
     }
     
-    subscript(index: Int) -> Double? {
+    public subscript(index: Int) -> Double? {
         get {
             if let result : Double = try? self.lindex(index) {
                 return result
@@ -723,7 +723,7 @@ public class TclObj {
         }
     }
     
-    subscript(range: Range<Int>) -> [Double]? {
+    public subscript(range: Range<Int>) -> [Double]? {
         get {
             if let result : [Double] = try? self.lrange(range) {
                 return result
@@ -737,7 +737,7 @@ public class TclObj {
         }
     }
     
-    subscript(index: Int) -> Int? {
+    public subscript(index: Int) -> Int? {
         get {
             if let result : Int = try? self.lindex(index) {
                 return result
@@ -751,7 +751,7 @@ public class TclObj {
         }
     }
     
-    subscript(range: Range<Int>) -> [Int]? {
+    public subscript(range: Range<Int>) -> [Int]? {
         get {
             if let result : [Int] = try? self.lrange(range) {
                 return result
@@ -765,7 +765,7 @@ public class TclObj {
         }
     }
 
-    subscript(index: Int) -> Bool? {
+    public subscript(index: Int) -> Bool? {
         get {
             if let result : Bool = try? self.lindex(index) {
                 return result
@@ -779,7 +779,7 @@ public class TclObj {
         }
     }
     
-    subscript(range: Range<Int>) -> [Bool]? {
+    public subscript(range: Range<Int>) -> [Bool]? {
         get {
             if let result : [Bool] = try? self.lrange(range) {
                 return result
@@ -798,7 +798,7 @@ public class TclObj {
         guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
     }
     
-    func lreplace (range: Range<Int>, list: [TclObj]) throws {
+    public func lreplace (range: Range<Int>, list: [TclObj]) throws {
         try self.lreplace(range, objv: list.map { $0.obj })
     }
     
@@ -806,19 +806,19 @@ public class TclObj {
     // Orginally used self.lreplace(range, objv: list.map { TclObj($0).map } )
     // This allocated and deallocated the TclObj for each step of the map, so passing freed memory to Tcl_ListObjReplace above
     // Creating a [ TclObj ] meant that none of the TclObjs are deallocated until lreplace returns.
-    func lreplace (range: Range<Int>, list: [String]) throws {
+    public func lreplace (range: Range<Int>, list: [String]) throws {
         try self.lreplace(range, list: list.map { TclObj($0) })
     }
     
-    func lreplace (range: Range<Int>, list: [Int]) throws {
+    public func lreplace (range: Range<Int>, list: [Int]) throws {
         try self.lreplace(range, list: list.map { TclObj($0) })
     }
     
-    func lreplace (range: Range<Int>, list: [Double]) throws {
+    public func lreplace (range: Range<Int>, list: [Double]) throws {
         try self.lreplace(range, list: list.map { TclObj($0) })
     }
     
-    func lreplace (range: Range<Int>, list: [Bool]) throws {
+    public func lreplace (range: Range<Int>, list: [Bool]) throws {
         try self.lreplace(range, list: list.map { TclObj($0) })
     }
     
@@ -826,24 +826,109 @@ public class TclObj {
         guard (Tcl_ListObjReplace (interp, obj, Int32(index), Int32(0), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
     }
     
-    func linsert (index: Int, list: [TclObj]) throws {
+    public func linsert (index: Int, list: [TclObj]) throws {
         try self.linsert(index, objv: list.map { $0.obj })
     }
     
-    func linsert (index: Int, list: [String]) throws {
+    public func linsert (index: Int, list: [String]) throws {
         try self.linsert(index, list: list.map { TclObj($0) })
     }
     
-    func linsert (index: Int, list: [Int]) throws {
+    public func linsert (index: Int, list: [Int]) throws {
         try self.linsert(index, list: list.map { TclObj($0) })
     }
     
-    func linsert (index: Int, list: [Double]) throws {
+    public func linsert (index: Int, list: [Double]) throws {
         try self.linsert(index, list: list.map { TclObj($0) })
     }
     
-    func linsert (index: Int, list: [Bool]) throws {
+    public func linsert (index: Int, list: [Bool]) throws {
         try self.linsert(index, list: list.map { TclObj($0) })
+    }
+    
+    public func generate() -> AnyGenerator<TclObj> {
+        var next = 0
+        return AnyGenerator<TclObj> {
+            guard let length = try? self.llength() else {
+                return nil
+            }
+            if next >= length {
+                return nil
+            }
+            guard let element: TclObj? = try? self.lindex(next) else {
+                return nil
+            }
+            next += 1
+            return element;
+        }
+    }
+    
+    public func generate() -> AnyGenerator<String> {
+        var next = 0
+        return AnyGenerator<String> {
+            guard let length = try? self.llength() else {
+                return nil
+            }
+            if next >= length {
+                return nil
+            }
+            guard let element: String = try? self.lindex(next) else {
+                return nil
+            }
+            next += 1
+            return element;
+        }
+    }
+    
+    public func generate() -> AnyGenerator<Int> {
+        var next = 0
+        return AnyGenerator<Int> {
+            guard let length = try? self.llength() else {
+                return nil
+            }
+            if next >= length {
+                return nil
+            }
+            guard let element: Int = try? self.lindex(next) else {
+                return nil
+            }
+            next += 1
+            return element;
+        }
+    }
+    
+    public func generate() -> AnyGenerator<Double> {
+        var next = 0
+        return AnyGenerator<Double> {
+            guard let length = try? self.llength() else {
+                return nil
+            }
+            if next >= length {
+                return nil
+            }
+            guard let element: Double = try? self.lindex(next) else {
+                return nil
+            }
+            next += 1
+            return element;
+        }
+    }
+    
+    public func generate() -> AnyGenerator<Bool> {
+        var next = 0
+        return AnyGenerator<Bool> {
+            guard let length = try? self.llength() else {
+                return nil
+            }
+            if next >= length {
+                return nil
+            }
+            guard let element: Bool = try? self.lindex(next) else {
+                return nil
+            }
+            next += 1
+            return element;
+        }
     }
 }
 

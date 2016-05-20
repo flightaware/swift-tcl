@@ -147,6 +147,16 @@ print(interp.result)
     xarray[1...4] = [1, 2, 3, 4]
     xarray[5] = 5.0
     print(" after subscript assignment of typed values: xarray as String = \(try xarray.get() as String)")
+    print("Testing generator")
+    var list = ""
+    for s in xarray {
+        if list == "" {
+            list = "{" + s
+        } else {
+            list = list + ", " + s
+        }
+    }
+    print (list + "}")
 
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("Testing array type on \(testdict)")

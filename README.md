@@ -257,32 +257,37 @@ The TclObj object manages Tcl reference counts so that all this will work.  For 
 
 Create a Swift TclObj object that's empty, contains a String, an Int, Double or Bool.
 
-* `var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)`
+* `var obj = TclObj(Set<String/Int/Double/Bool>)`
+
+Create a TclObj containing a Tcl List initialized from a Set
+
+* `var obj = TclObj([String/Int/Double/Bool])`
+
+Create a TclObj containing a Tcl List initialized from an array.
+
+* `var obj = TclObj([String: String/Int/Double/Bool])`
+
+Create a TclObj containing a Tcl List initialized from an dict, in [array get] format... a list of key/value pairs.
+
+* `internal var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)`
 
 Create a TclObj object encapsulating a UnsafeMutablePointer<Tcl_Obj> aka a Tcl\_Obj \*.
 
-* `obj.set(Set<String>)`
-* `obj.set(Set<Int>)`
-* `obj.set(Set<Double>)`
-
-Set the TclObj object to contain a String, Int or Double.
-
-* `obj.set([String])`
-* `obj.set([Int])`
-* `obj.set([Double])`
-
-Set a TclObj object to be a Tcl list containing a Swift array of either String, Int or Double.
-
-* `obj.set([String:String])`
-* `obj.set([String:Int])`
-* `obj.set([String:Double])`
-
-Set a TclObj object to contain a Tcl list of key-value pairs from the contents of a Swift Dictionary having names of String and values of String, Int or Double
+There are setter and getter methods for all of the above types:
 
 * `obj.set(String)`
 * `obj.set(Int)`
 * `obj.set(Double)`
 * `obj.set(Bool)`
+* `obj.set(Set<String>)`
+* `obj.set(Set<Int>)`
+* `obj.set(Set<Double>)`
+* `obj.set([String])`
+* `obj.set([Int])`
+* `obj.set([Double])`
+* `obj.set([String:String])`
+* `obj.set([String:Int])`
+* `obj.set([String:Double])`
 
 Assign TclObj to contain a String, Int, Double or Bool.
 
@@ -295,9 +300,15 @@ Set String to contain the String representation of whatever TclObj has in it
 Set val to contain the Int representation of the TclObj, or throws an error if object cannot be represented as an Int.
 
 * `var val: Double = try obj.get()`
-* `var valBool Double = try obj.get()`
+* `var val: Bool = try obj.get()`
 
 Same as the above but for Double and Bool.
+
+* `var val: Set<String/Int/Double/Bool> = try obj.get()`
+* `var val: [String/Int/Double/Bool] = try obj.get()`
+* `var val: [String: String/Int/Double/Bool] = try obj.get()`
+
+Same as above for sets, arrays, and dicts.
 
 * `var nativeObj: UnsafeMutablePointer<Tcl_Obj> = obj.get()`
 
@@ -329,12 +340,28 @@ Append an array of Int, Double, or String to a list contained in a TclObj.  Each
 
 Return the nth element of the obj as a list, if possible, according to the specified data type, else throws an error.
 
-* `var val: [Int] = try obj.lrange(start, end)`
-* `var val: [Double] = try obj.lrange(start, end)`
-* `var val: [String] = try obj.lrange(start, end)`
-* `var val: [Bool] = try obj.lrange(start, end)`
+* `var val: [Int] = try obj.lrange(start...end)`
+* `var val: [Double] = try obj.lrange(start...end)`
+* `var val: [String] = try obj.lrange(start...end)`
+* `var val: [Bool] = try obj.lrange(start...end)`
 
 Return the start...end range of object as a list
+
+* `try obj.linsert(index, list: [TclObj])`
+* `try obj.linsert(index, list: [String])`
+* `try obj.linsert(index, list: [Int])`
+* `try obj.linsert(index, list: [Double])`
+* `try obj.linsert(index, list: [Bool])`
+
+Insert the array into the object, before index.
+
+* `try obj.linsert(start...end, list: [TclObj])`
+* `try obj.linsert(start...end, list: [String])`
+* `try obj.linsert(start...end, list: [Int])`
+* `try obj.linsert(start...end, list: [Double])`
+* `try obj.linsert(start...end, list: [Bool])`
+
+Insert the array into the object, replacing the specified range.
 
 * `var count: Int = try obj.llength()`
 
@@ -342,24 +369,19 @@ Return the number of elements in the list contained in the TclObj or throws an e
 
 * `var TclObj? s = obj[index]`
 * `var String? s = obj[index]`
-* `var [TclObj]? s = obj[start, end]`
-* `var [String]? s = obj[start, end]`
+* `var [TclObj]? s = obj[start...end]`
+* `var [String]? s = obj[start...end]`
 
 Subscripting the object treats it as a list, exactly like lindex and lrange.
 
-* `var array: [Double] = obj.toArray()`
-* `var array: [Int] = obj.toArray()`
-* `var array: [String] = obj.toArray()`
-* `var array: [TclObj] = obj.toArray()`
+* `obj[index] = String/Int/Double/Bool`
+* `obj[start...end] = [String/Int/Double/Bool]`
 
-Treating TclObj obj as a Tcl list, if it is a valid list and the data types are OK the elements are imported into an array of the corresponding type.
+And you can set elements in the object, exactly like linsert.
 
-* `var dictionary: [String:String] = try obj.toDictionary()`
-* `var dictionary: [String:Int] = try obj.toDictionary()`
-* `var dictionary: [String:Double] = try obj.toDictionary()`
-* `var dictionary: [String:TclObj] = try obj.toDictionary()`
+Finally, a list is a sequence:
 
-Import a Tcl list of key-value pairs contained in a TclObj to a dictionary having a key of a String type and values of String, Int, Double or TclObjs.
+`for s: String in obj { print("Got '\(s)'") }`
 
 ## Building
 
