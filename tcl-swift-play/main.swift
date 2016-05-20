@@ -149,11 +149,13 @@ print(interp.result)
     print(" after subscript assignment of typed values: xarray as String = \(try xarray.get() as String)")
     print("Testing generator")
     var list = ""
-    for s in xarray {
-        if list == "" {
-            list = "{" + s
-        } else {
-            list = list + ", " + s
+    for obj in xarray {
+        if let s: String = try? obj.get() {
+            if list == "" {
+                list = "{" + s
+            } else {
+                list = list + ", " + s
+            }
         }
     }
     print (list + "}")

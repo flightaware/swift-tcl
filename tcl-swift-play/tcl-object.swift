@@ -862,7 +862,8 @@ public class TclObj: SequenceType {
             return element;
         }
     }
-    
+}
+/*
     public func generate() -> AnyGenerator<String> {
         var next = 0
         return AnyGenerator<String> {
@@ -932,4 +933,4 @@ public class TclObj: SequenceType {
     }
 }
 
-
+*/
