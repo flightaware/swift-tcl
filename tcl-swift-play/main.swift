@@ -149,23 +149,21 @@ print(interp.result)
     print(" after subscript assignment of typed values: xarray as String = \(try xarray.get() as String)")
     print("Testing generator")
     var list = ""
+    var sum = 0.0
+    var count = 0
     for obj in xarray {
-        if let s: String = try? obj.get() {
+        if let v: Double = try? obj.get() {
             if list == "" {
-                list = "{" + s
+                list = "{" + String(v)
             } else {
-                list = list + ", " + s
+                list = list + ", " + String(v)
             }
+            sum += v
+            count += 1
         }
     }
-    print (list + "}")
-    
-    var intlist = TclObj([1, 2, 3, 4], Interp: interp)
-    for element in intlist {
-        if let i: Int = try? element.get() {
-            print("Got '\(i)'")
-        }
-    }
+    list += "}"
+    print("sum of \(list) is \(sum), average is \(sum / Double(count))")
 
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("Testing array type on \(testdict)")
