@@ -65,8 +65,7 @@ public class TclObj {
     
     func set(set: Set<String>) {
         for element in set {
-            let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (string, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (element, -1))
         }
     }
     
@@ -102,8 +101,7 @@ public class TclObj {
     
     func set(array: [String]) {
         for element in array {
-            let string = element.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (string, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (element, -1))
         }
     }
     
@@ -139,10 +137,8 @@ public class TclObj {
     
     func set(dictionary: [String: String]) {
         dictionary.forEach {
-            let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
-            let valueString = $0.1.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (valueString, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.1, -1))
         }
     }
     
@@ -154,8 +150,7 @@ public class TclObj {
 
     func set(dictionary: [String: Int]) {
         dictionary.forEach {
-            let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj ($0.1))
         }
     }
@@ -168,8 +163,7 @@ public class TclObj {
     
     func set(dictionary: [String: Double]) {
         dictionary.forEach {
-            let keyString = $0.0.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (keyString, -1))
+            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj ($0.1))
         }
     }
@@ -197,7 +191,7 @@ public class TclObj {
     }
     
     func set(value: String) {
-        Tcl_SetStringObj (obj, value.cStringUsingEncoding(NSUTF8StringEncoding) ?? [], -1)
+        Tcl_SetStringObj (obj, value, -1)
     }
     
     // getInt - return the Tcl object as an Int or nil
@@ -317,8 +311,7 @@ public class TclObj {
     
     // lappend - append a String to the Tcl object list
     public func lappend (value: String) throws {
-        let cString = value.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-        try self.lappend(Tcl_NewStringObj (cString, -1))
+        try self.lappend(Tcl_NewStringObj (value, -1))
     }
     
     // lappend - append a Bool to the Tcl object list

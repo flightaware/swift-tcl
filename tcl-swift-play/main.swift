@@ -147,7 +147,7 @@ print(interp.result)
     xarray[1...4] = [1, 2, 3, 4]
     xarray[5] = 5.0
     print(" after subscript assignment of typed values: xarray as String = \(try xarray.get() as String)")
-    
+
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("Testing array type on \(testdict)")
     if let character = try? TclArray("character", Interp: interp, fromDict: testdict) {
@@ -170,24 +170,24 @@ print(interp.result)
     } else {
         print("Could not initialize array from dictionary.")
     }
-    
+
     print("digging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")
     print("auto_path is '\(autoPath)'")
-    
+
     let tclVersion: Double = try! interp.getVar("tcl_version")
     print("Tcl version is \(tclVersion)")
     print("")
-    
+
     print("sticking something extra into the tcl_platform array")
     try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
-    
+
     do {try interp.rawEval("array get tcl_platform")}
     var dict: [String:String] = try! interp.resultObj.get()
     print(dict)
     var version = dict["osVersion"]!
     print("Your OS is \(dict["os"]!), running version \(version)")
-    
+
     var machine: String = interp.getVar("tcl_platform", elementName: "machine")!
     var byteOrder: String = interp.getVar("tcl_platform", elementName: "byteOrder")!
     print("Your machine is \(machine) and your byte order is \(byteOrder)")

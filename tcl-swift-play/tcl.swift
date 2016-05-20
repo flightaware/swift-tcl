@@ -42,6 +42,7 @@ enum TclError: ErrorType {
     case ErrorMessage(message: String, errorCode: String) // set error message in interpreter result
     case UnknownReturnCode(code: Int32)
     case NotString(string: String)
+    case NullPointer // Object or string passed to a handler is a null pointer
     case Error // error already set in interpreter result
 }
 
@@ -175,6 +176,8 @@ class TclCommandBlock {
 // tclobjp_to_String - return the value of a Tcl_Obj * as a String or nil
 
 func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) throws -> String {
+    guard tclObjP != nil else { throw TclError.NullPointer }
+
     return String.fromCString(Tcl_GetString(tclObjP!))!
 }
 
@@ -182,7 +185,8 @@ func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) throws -> Strin
 
 func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Int {
     var longVal: CLong = 0
-    
+    guard tclObjP != nil else { throw TclError.NullPointer }
+
     let result = Tcl_GetLongFromObj (interp, tclObjP!, &longVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
@@ -198,6 +202,7 @@ func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMuta
 
 func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Double {
     var doubleVal: Double = 0
+    guard tclObjP != nil else { throw TclError.NullPointer }
     
     let result = Tcl_GetDoubleFromObj (interp, tclObjP!, &doubleVal)
     if (result == TCL_ERROR) {
@@ -215,6 +220,7 @@ func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeM
 
 func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Bool {
     var boolVal: Int32 = 0
+    guard tclObjP != nil else { throw TclError.NullPointer }
     
     let result = Tcl_GetBooleanFromObj (interp, tclObjP!, &boolVal)
     if (result == TCL_ERROR) {
@@ -231,8 +237,7 @@ func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMut
 // string_to_tclobjp - create a Tcl_Obj * from a Swift String
 
 func string_to_tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> {
-    guard let cString = string.cStringUsingEncoding(NSUTF8StringEncoding) else {throw TclError.NotString(string: string)}
-    return Tcl_NewStringObj (cString, -1)
+    return Tcl_NewStringObj (string, -1)
 }
 
 // Protocol for types that Tcl knows
@@ -351,7 +356,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
         try! tcb.Interp.setErrorCode(message.errorCode)
         return TCL_ERROR
     } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
-        Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message.cStringUsingEncoding(NSUTF8StringEncoding) ?? [])
+        Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message)
         return TCL_ERROR
     } catch TclControlFlow.Break {
         return TCL_BREAK
@@ -367,8 +372,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 }
 
 func tcl_springboard(Interp: TclInterp, commandName: String, objv: UnsafeMutablePointer<Tcl_Obj>...) throws {
-	let cCommandName = commandName.cStringUsingEncoding(NSUTF8StringEncoding) ?? []
-	let command = Tcl_NewStringObj (cCommandName, -1)
+	let command = Tcl_NewStringObj (commandName, -1)
 	let vec = TclObj()
 	try vec.lappend(command)
 	try objv.forEach {
