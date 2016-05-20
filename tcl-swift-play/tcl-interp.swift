@@ -106,7 +106,7 @@ public class TclInterp {
     // resultObj - set the interpreter result to the TclObj or return a TclObj based on the interpreter result
     public var resultObj: TclObj {
         get {
-            return TclObj(Tcl_GetObjResult(interp))
+            return TclObj(Tcl_GetObjResult(interp), Interp: self)
         }
         set {
             Tcl_SetObjResult(interp,resultObj.get())
@@ -178,7 +178,7 @@ public class TclInterp {
         
         guard (obj != nil) else {return nil}
         
-        return TclObj(obj)
+        return TclObj(obj, Interp: self)
     }
     
     // getVar - return Tcl variable or array element as an Int or throw an error
@@ -310,11 +310,11 @@ public class TclInterp {
         guard substOutObj != nil else {
             throw TclError.Error
         }
-        return TclObj(substOutObj)
+        return TclObj(substOutObj, Interp: self)
     }
     
     public func subst (substIn: String, flags: SubstFlags = [.All]) throws -> String {
-        let substOutObj: TclObj = try self.subst (TclObj(substIn), flags: flags)
+        let substOutObj: TclObj = try self.subst (TclObj(substIn, Interp: self), flags: flags)
         return try substOutObj.get()
     }
 }

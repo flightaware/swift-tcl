@@ -249,27 +249,27 @@ The object can be new or existing.  For example `var obj = TclObj(5)` creates a 
 
 The TclObj object manages Tcl reference counts so that all this will work.  For example, setting a Tcl array element to a TclObj using `interp.setVar(arrayName, elementName: element, value: obj)`, the element will continue to hold the object even if the TclObj is deleted on the Swift side.
 
-* `var obj = TclObj()`
-* `var obj = TclObj(String)`
-* `var obj = TclObj(Int)`
-* `var obj = TclObj(Double)`
-* `var obj = TclObj(Bool)`
+* `var obj = TclObj(Interp: TclInterp)`
+* `var obj = TclObj(String, Interp: TclInterp)`
+* `var obj = TclObj(Int, Interp: TclInterp)`
+* `var obj = TclObj(Double, Interp: TclInterp)`
+* `var obj = TclObj(Bool, Interp: TclInterp)`
 
 Create a Swift TclObj object that's empty, contains a String, an Int, Double or Bool.
 
-* `var obj = TclObj(Set<String/Int/Double/Bool>)`
+* `var obj = TclObj(Set<String/Int/Double/Bool>, Interp: TclInterp)`
 
 Create a TclObj containing a Tcl List initialized from a Set
 
-* `var obj = TclObj([String/Int/Double/Bool])`
+* `var obj = TclObj([String/Int/Double/Bool], Interp: TclInterp)`
 
 Create a TclObj containing a Tcl List initialized from an array.
 
-* `var obj = TclObj([String: String/Int/Double/Bool])`
+* `var obj = TclObj([String: String/Int/Double/Bool], Interp: TclInterp)`
 
 Create a TclObj containing a Tcl List initialized from an dict, in [array get] format... a list of key/value pairs.
 
-* `internal var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>)`
+* `internal var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp)`
 
 Create a TclObj object encapsulating a UnsafeMutablePointer<Tcl_Obj> aka a Tcl\_Obj \*.
 

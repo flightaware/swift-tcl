@@ -242,7 +242,7 @@ func string_to_tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> 
 
 // Protocol for types that Tcl knows
 protocol TclType {
-    func toTclObj() -> TclObj
+    init? (_ obj: TclObj)
     mutating func fromTclObj(obj: TclObj)
 }
 
@@ -251,10 +251,6 @@ extension String: TclType {
     // initialize string straight from a TclObj!
     public init (_ obj: TclObj) {
         self.init(obj.stringValue)
-    }
-    
-    func toTclObj() -> TclObj {
-        return TclObj(self)
     }
     
     mutating func fromTclObj(obj: TclObj) {
@@ -268,10 +264,6 @@ extension Int: TclType {
         guard obj.intValue != nil else {return nil}
         self.init(obj.intValue!)
     }
-
-    func toTclObj() -> TclObj {
-        return TclObj(self)
-    }
     
     mutating func fromTclObj(obj: TclObj) {
         self = obj.intValue!
@@ -281,11 +273,6 @@ extension Int: TclType {
 extension Double: TclType {
     public init (_ obj: TclObj) {
         self.init(obj.doubleValue!)
-    }
-
-
-    func toTclObj() -> TclObj {
-        return TclObj(self)
     }
     
     mutating func fromTclObj(obj: TclObj) {
@@ -297,10 +284,6 @@ extension Bool: TclType {
     public init? (_ obj: TclObj) {
         guard obj.boolValue != nil else {return nil}
         self.init(obj.boolValue!)
-    }
-
-    func toTclObj() -> TclObj {
-        return TclObj(self)
     }
     
     mutating func fromTclObj(obj: TclObj) {
@@ -373,7 +356,7 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
 
 func tcl_springboard(Interp: TclInterp, commandName: String, objv: UnsafeMutablePointer<Tcl_Obj>...) throws {
 	let command = Tcl_NewStringObj (commandName, -1)
-	let vec = TclObj()
+    let vec = TclObj(Interp: Interp)
 	try vec.lappend(command)
 	try objv.forEach {
 		try vec.lappend ($0)

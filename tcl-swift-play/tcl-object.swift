@@ -15,50 +15,50 @@ import Foundation
 
 public class TclObj: SequenceType {
     let obj: UnsafeMutablePointer<Tcl_Obj>
-    let Interp: TclInterp?
+    let Interp: TclInterp
     let interp: UnsafeMutablePointer<Tcl_Interp>
     
     // various initializers to create a Tcl object from nothing, an int,
     // double, string, Tcl_Obj *, etc
     
     // init - Initialize from a Tcl_Obj *
-    init(_ val: UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp? = nil) {
-        self.Interp = Interp; self.interp = Interp?.interp ?? nil
+    init(_ val: UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp) {
+        self.Interp = Interp; self.interp = Interp.interp
         obj = val
         IncrRefCount(val)
     }
     
     // init - initialize from nothing, get an empty Tcl object
-    public convenience init(Interp: TclInterp? = nil) {
+    public convenience init(Interp: TclInterp) {
         self.init(Tcl_NewObj(), Interp: Interp)
     }
     
     // init - initialize from a Swift Int
-    public convenience init(_ val: Int, Interp: TclInterp? = nil) {
+    public convenience init(_ val: Int, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(val);
     }
     
     // init - initialize from a Swift String
-    public convenience init(_ val: String, Interp: TclInterp? = nil) {
+    public convenience init(_ val: String, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(val);
     }
     
     // init - initialize from a Swift Double
-    public convenience init(_ val: Double, Interp: TclInterp? = nil) {
+    public convenience init(_ val: Double, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(val);
     }
     
     // init - initialize from a Swift Bool
-    public convenience init(_ val: Bool, Interp: TclInterp? = nil) {
+    public convenience init(_ val: Bool, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(val);
     }
     
     // init - init from a set of Strings to a list
-    public convenience init(_ set: Set<String>, Interp: TclInterp? = nil) {
+    public convenience init(_ set: Set<String>, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(set)
     }
@@ -70,7 +70,7 @@ public class TclObj: SequenceType {
     }
     
     // init from a set of Ints to a list
-    public convenience init(_ set: Set<Int>, Interp: TclInterp? = nil) {
+    public convenience init(_ set: Set<Int>, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(set)
     }
@@ -82,7 +82,7 @@ public class TclObj: SequenceType {
     }
     
     // init from a Set of doubles to a list
-    public convenience init(_ set: Set<Double>, Interp: TclInterp? = nil) {
+    public convenience init(_ set: Set<Double>, Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(set)
     }
@@ -94,7 +94,7 @@ public class TclObj: SequenceType {
     }
     
     // init from an Array of Strings to a Tcl list
-    public convenience init(_ array: [String], Interp: TclInterp? = nil) {
+    public convenience init(_ array: [String], Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(array)
     }
@@ -106,7 +106,7 @@ public class TclObj: SequenceType {
     }
     
     // Init from an Array of Int to a Tcl list
-    public convenience init (_ array: [Int], Interp: TclInterp? = nil) {
+    public convenience init (_ array: [Int], Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(array)
     }
@@ -118,7 +118,7 @@ public class TclObj: SequenceType {
     }
     
     // Init from an Array of Double to a Tcl list
-    public convenience init (_ array: [Double], Interp: TclInterp? = nil) {
+    public convenience init (_ array: [Double], Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(array)
     }
@@ -130,7 +130,7 @@ public class TclObj: SequenceType {
     }
     
     // init from a String/String dictionary to a list
-    public convenience init (_ dictionary: [String: String], Interp: TclInterp? = nil) {
+    public convenience init (_ dictionary: [String: String], Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(dictionary)
     }
@@ -143,7 +143,7 @@ public class TclObj: SequenceType {
     }
     
     // init from a String/Int dictionary to a list
-    public convenience init (_ dictionary: [String: Int], Interp: TclInterp? = nil) {
+    public convenience init (_ dictionary: [String: Int], Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(dictionary)
     }
@@ -156,7 +156,7 @@ public class TclObj: SequenceType {
     }
     
     // init from a String/Double dictionary to a list
-    public convenience init (_ dictionary: [String: Double], Interp: TclInterp? = nil) {
+    public convenience init (_ dictionary: [String: Double], Interp: TclInterp) {
         self.init(Interp: Interp)
         self.set(dictionary)
     }
@@ -262,7 +262,7 @@ public class TclObj: SequenceType {
         do {
             return try tclobjp_to_Int(obj, interp: interp)
         } catch {
-            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
+            Interp.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
         }
     }
@@ -271,7 +271,7 @@ public class TclObj: SequenceType {
         do {
             return try tclobjp_to_Double(obj, interp: interp)
         } catch {
-            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
+            Interp.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
         }
     }
@@ -280,7 +280,7 @@ public class TclObj: SequenceType {
         do {
             return try tclobjp_to_Bool(obj, interp: interp)
         } catch {
-            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
+            Interp.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
         }
     }
@@ -289,7 +289,7 @@ public class TclObj: SequenceType {
         do {
             return try tclobjp_to_String(obj)
         } catch {
-            Interp?.addErrorInfo(" while converting \"\(varName)\" argument")
+            Interp.addErrorInfo(" while converting \"\(varName)\" argument")
             throw TclError.Error
         }
     }
@@ -485,7 +485,7 @@ public class TclObj: SequenceType {
         if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
         for i in 0..<Int(objc) {
-            array.append(TclObj(objv[i]))
+            array.append(TclObj(objv[i], Interp: Interp))
         }
         
         return array
@@ -795,7 +795,7 @@ public class TclObj: SequenceType {
     
     // lreplace(range, list) and variants
     func lreplace (range: Range<Int>, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
-        guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
+        guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex), Int32(objv.count), objv) != TCL_ERROR) else { throw TclError.Error }
     }
     
     public func lreplace (range: Range<Int>, list: [TclObj]) throws {
@@ -803,23 +803,23 @@ public class TclObj: SequenceType {
     }
     
     // IMPORTANT NOTE
-    // Orginally used self.lreplace(range, objv: list.map { TclObj($0).map } )
+    // Orginally used self.lreplace(range, objv: list.map { TclObj($0, Interp: Interp).map } )
     // This allocated and deallocated the TclObj for each step of the map, so passing freed memory to Tcl_ListObjReplace above
     // Creating a [ TclObj ] meant that none of the TclObjs are deallocated until lreplace returns.
     public func lreplace (range: Range<Int>, list: [String]) throws {
-        try self.lreplace(range, list: list.map { TclObj($0) })
+        try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func lreplace (range: Range<Int>, list: [Int]) throws {
-        try self.lreplace(range, list: list.map { TclObj($0) })
+        try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func lreplace (range: Range<Int>, list: [Double]) throws {
-        try self.lreplace(range, list: list.map { TclObj($0) })
+        try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func lreplace (range: Range<Int>, list: [Bool]) throws {
-        try self.lreplace(range, list: list.map { TclObj($0) })
+        try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     func linsert (index: Int, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
@@ -831,19 +831,19 @@ public class TclObj: SequenceType {
     }
     
     public func linsert (index: Int, list: [String]) throws {
-        try self.linsert(index, list: list.map { TclObj($0) })
+        try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func linsert (index: Int, list: [Int]) throws {
-        try self.linsert(index, list: list.map { TclObj($0) })
+        try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func linsert (index: Int, list: [Double]) throws {
-        try self.linsert(index, list: list.map { TclObj($0) })
+        try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func linsert (index: Int, list: [Bool]) throws {
-        try self.linsert(index, list: list.map { TclObj($0) })
+        try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
     public func generate() -> AnyGenerator<TclObj> {

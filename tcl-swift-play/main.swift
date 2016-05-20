@@ -27,16 +27,16 @@ print(interp.result)
         print("interpreter failed")
     }
 
-    var xo = TclObj(5)
-    let xy = TclObj("hi mom")
+    var xo = TclObj(5, Interp: interp)
+    let xy = TclObj("hi mom", Interp: interp)
     print(xy.stringValue)
     xy.stringValue = "hi dad"
     print(xy.stringValue)
-    let xz = TclObj(5.5)
+    let xz = TclObj(5.5, Interp: interp)
     if let xz2 = xz.intValue {
         print(xz2)
     }
-    let x5 = TclObj(5)
+    let x5 = TclObj(5, Interp: interp)
     print(x5.doubleValue)
     
 
@@ -116,7 +116,7 @@ print(interp.result)
     
     print("importing a swift array")
     var ints: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 10]
-    var intListObj = TclObj(ints)
+    var intListObj = TclObj(ints, Interp: interp)
     print(ints)
     print(intListObj.stringValue)
     print("")
