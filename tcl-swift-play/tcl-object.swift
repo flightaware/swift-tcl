@@ -508,7 +508,7 @@ public class TclObj {
     }
     
     // lrange returning a TclObj array
-    public func lrange (first: Int, _ last: Int) throws -> [TclObj] {
+    public func lrange (range: Range<Int>) throws -> [TclObj] {
         var array: [TclObj] = []
         
         var objc: Int32 = 0
@@ -516,7 +516,7 @@ public class TclObj {
         
         if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
-        let (start, end) = normalize_range(first, last, Int(objc))
+        let (start, end) = normalize_range(range.startIndex, range.endIndex-1, Int(objc))
         
         for i in start...end {
             array.append(TclObj(objv[i], Interp: Interp))
@@ -525,12 +525,8 @@ public class TclObj {
         return array
     }
     
-    public func lrange(range: Range<Int>) throws -> [TclObj] {
-        return try self.lrange(range.startIndex, range.endIndex)
-    }
-    
     // lrange returning a string array
-    public func lrange (first: Int, _ last: Int) throws -> [String] {
+    public func lrange (range: Range<Int>) throws -> [String] {
         var array: [String] = []
         
         var objc: Int32 = 0
@@ -538,7 +534,7 @@ public class TclObj {
         
         if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
-        let (start, end) = normalize_range(first, last, Int(objc))
+        let (start, end) = normalize_range(range.startIndex, range.endIndex-1, Int(objc))
         
         for i in start...end {
             try array.append(tclobjp_to_String(objv[i]))
@@ -547,12 +543,8 @@ public class TclObj {
         return array
     }
     
-    public func lrange(range: Range<Int>) throws -> [String] {
-        return try self.lrange(range.startIndex, range.endIndex-1)
-    }
-    
     // lrange returning an integer array
-    public func lrange (first: Int, _ last: Int) throws -> [Int] {
+    public func lrange (range: Range<Int>) throws -> [Int] {
         var array: [Int] = []
         
         var objc: Int32 = 0
@@ -560,7 +552,7 @@ public class TclObj {
         
         if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
-        let (start, end) = normalize_range(first, last, Int(objc))
+        let (start, end) = normalize_range(range.startIndex, range.endIndex - 1, Int(objc))
         
         for i in start...end {
             let longVal = try tclobjp_to_Int(objv[i], interp: interp)
@@ -570,12 +562,8 @@ public class TclObj {
         return array
     }
     
-    public func lrange(range: Range<Int>) throws -> [Int] {
-        return try self.lrange(range.startIndex, range.endIndex)
-    }
-    
     // lrange returning a float array
-    public func lrange (first: Int, _ last: Int) throws -> [Double] {
+    public func lrange (range: Range<Int>) throws -> [Double] {
         var array: [Double] = []
         
         var objc: Int32 = 0
@@ -583,7 +571,7 @@ public class TclObj {
         
         if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
-        let (start, end) = normalize_range(first, last, Int(objc))
+        let (start, end) = normalize_range(range.startIndex, range.endIndex - 1, Int(objc))
         
         for i in start...end {
             let doubleVal = try tclobjp_to_Double(objv[i], interp: interp)
@@ -593,12 +581,8 @@ public class TclObj {
         return array
     }
     
-    public func lrange(range: Range<Int>) throws -> [Double] {
-        return try self.lrange(range.startIndex, range.endIndex)
-    }
-    
     // lrange returning a boolean array
-    public func lrange (first: Int, _ last: Int) throws -> [Bool] {
+    public func lrange (range: Range<Int>) throws -> [Bool] {
         var array: [Bool] = []
         
         var objc: Int32 = 0
@@ -606,7 +590,7 @@ public class TclObj {
         
         if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
         
-        let (start, end) = normalize_range(first, last, Int(objc))
+        let (start, end) = normalize_range(range.startIndex, range.endIndex-1, Int(objc))
         
         for i in start...end {
             let boolVal = try tclobjp_to_Bool(objv[i], interp: interp)
@@ -614,10 +598,6 @@ public class TclObj {
         }
         
         return array
-    }
-    
-    public func lrange(range: Range<Int>) throws -> [Bool] {
-        return try self.lrange(range.startIndex, range.endIndex)
     }
 
     // get - copy the tcl object as a list into a String/String dictionary
