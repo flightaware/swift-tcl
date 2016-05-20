@@ -379,9 +379,16 @@ Subscripting the object treats it as a list, exactly like lindex and lrange.
 
 And you can set elements in the object, exactly like linsert.
 
-Finally, a list is a sequence:
+Finally, a list is a sequence. Unfortunately, Swift doesn't support generic protocols, so it can only generate one type. Right now it's a sequence of TclObj:
 
-`for s: String in obj { print("Got '\(s)'") }`
+```swift
+var intlist = TclObj([1, 2, 3, 4], Interp: interp)
+for element in intlist {
+    if let i: Int = try? element.get() {
+        print("Got '\(i)'")
+    }
+}
+```
 
 ## Building
 

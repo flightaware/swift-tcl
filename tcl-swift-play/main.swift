@@ -159,6 +159,13 @@ print(interp.result)
         }
     }
     print (list + "}")
+    
+    var intlist = TclObj([1, 2, 3, 4], Interp: interp)
+    for element in intlist {
+        if let i: Int = try? element.get() {
+            print("Got '\(i)'")
+        }
+    }
 
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("Testing array type on \(testdict)")
