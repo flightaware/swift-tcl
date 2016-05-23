@@ -36,7 +36,7 @@ public class TclArray: SequenceType {
     // init - initialize from string
     public convenience init(_ name: String, Interp: TclInterp, namespace: String? = nil, string: String) throws {
         self.init(name, Interp: Interp, namespace: namespace)
-        try self.set(Interp.object(string).get())
+        try self.set(Interp.newObject(string).get())
     }
 
     // init - initialize from dictionary

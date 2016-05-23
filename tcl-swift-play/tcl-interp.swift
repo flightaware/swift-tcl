@@ -319,33 +319,37 @@ public class TclInterp {
     }
     
     // Wrappers for TclObj
-    public func object() -> TclObj { return TclObj(Interp: self) }
-    public func object(value: Int) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: String) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: Double) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: Bool) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: Set<Int>) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: Set<String>) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: Set<Double>) -> TclObj { return TclObj(value, Interp: self) }
-//  public func object(value: Set<Bool>) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: [Int]) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: [String]) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: [Double]) -> TclObj { return TclObj(value, Interp: self) }
-//  public func object(value: [Bool]) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: [String: Int]) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: [String: String]) -> TclObj { return TclObj(value, Interp: self) }
-    public func object(value: [String: Double]) -> TclObj { return TclObj(value, Interp: self) }
-//  public func object(value: [String: Bool]) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject() -> TclObj { return TclObj(Interp: self) }
+    public func newObject(value: Int) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: String) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: Double) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: Bool) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: Set<Int>) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: Set<String>) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: Set<Double>) -> TclObj { return TclObj(value, Interp: self) }
+//  public func newObject(value: Set<Bool>) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: [Int]) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: [String]) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: [Double]) -> TclObj { return TclObj(value, Interp: self) }
+//  public func newObject(value: [Bool]) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: [String: Int]) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: [String: String]) -> TclObj { return TclObj(value, Interp: self) }
+    public func newObject(value: [String: Double]) -> TclObj { return TclObj(value, Interp: self) }
+//  public func newObject(value: [String: Bool]) -> TclObj { return TclObj(value, Interp: self) }
 
     // Wrappers for TclArray
-    public func array(name: String) -> TclArray { return TclArray(name, Interp: self) }
-    public func array(name: String, namespace: String) -> TclArray { return TclArray(name, Interp: self, namespace: namespace) }
-    public func array(name: String, dict: [String: String]) throws -> TclArray {
+    public func newArray(name: String) -> TclArray { return TclArray(name, Interp: self) }
+    public func newArray(name: String, namespace: String) -> TclArray { return TclArray(name, Interp: self, namespace: namespace) }
+    public func newArray(name: String, dict: [String: String]) throws -> TclArray {
         return try TclArray(name, Interp: self, dict: dict)
     }
-    public func array(name: String, dict: [String: String], namespace: String) throws -> TclArray {
+    public func newArray(name: String, dict: [String: String], namespace: String) throws -> TclArray {
         return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
     }
-
-
+    public func newArray(name: String, string: String) throws -> TclArray {
+        return try TclArray(name, Interp: self, dict: dict)
+    }
+    public func newArray(name: String, string: String, namespace: String) throws -> TclArray {
+        return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
+    }
 }
