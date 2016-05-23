@@ -172,20 +172,26 @@ public class TclArray: SequenceType {
         var next = 0
 
         return AnyGenerator<(String, String)> {
-            let length = nameList.count
-            if next >= length {
-                return nil
+            var value: String? = nil
+            var name: String? = nil
+            // looping over name list in case someone unset an array element behind my back
+            while value == nil {
+                if next >= nameList.count {
+                    return nil
+                }
+                name = nameList[next]
+                next += 1
+                
+                // name can never be nil here necause it's just been assigned from nameList which is a [String]
+                if let tmp: String? = try? self.getValue(name!)?.get() {
+                    value = tmp
+                }
             }
-            let name = nameList[next]
-            guard let value: String? = try? self.getValue(name)?.get() else {
-                return nil
+            // At this point I believe it is impossible for name to be nil but I'm checking anyway
+            if name != nil && value != nil {
+                return (name!, value!);
             }
-            if value == nil {
-                return nil
-            }
-            next += 1
-            return (name, value!);
+            return nil
         }
     }
-
 }
