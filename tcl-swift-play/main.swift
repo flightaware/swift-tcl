@@ -184,6 +184,11 @@ print(interp.result)
 
         print("subst test")
         print(try interp.subst("character(name) = $character(name)"))
+        
+        print("generator test")
+        for (key, value) in character {
+            print("character[\"\(key)\"] = \(value)")
+        }
     } else {
         print("Could not initialize array from dictionary.")
     }
