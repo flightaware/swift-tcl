@@ -27,16 +27,16 @@ print(interp.result)
         print("interpreter failed")
     }
 
-    var xo = TclObj(5, Interp: interp)
-    let xy = TclObj("hi mom", Interp: interp)
+    var xo = interp.object(5)
+    let xy = interp.object("hi mom")
     print(xy.stringValue)
     xy.stringValue = "hi dad"
     print(xy.stringValue)
-    let xz = TclObj(5.5, Interp: interp)
+    let xz = interp.object(5.5)
     if let xz2 = xz.intValue {
         print(xz2)
     }
-    let x5 = TclObj(5, Interp: interp)
+    let x5 = interp.object(5)
     print(x5.doubleValue)
     
 
@@ -116,14 +116,14 @@ print(interp.result)
     
     print("importing a swift array")
     var ints: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 10]
-    var intListObj = TclObj(ints, Interp: interp)
+    var intListObj = interp.object(ints)
     print(ints)
     print(intListObj.stringValue)
     print("")
 
     let sarray = ["zero","one","two","three","four"]
     print("Testing ranges and indexes on \(sarray)")
-    let xarray = TclObj(sarray, Interp: interp)
+    let xarray = interp.object(sarray)
     print(" xarray.lrange(1...3) = \(try? xarray.lrange(1...3) as [String])")
     print(" xarray.lrange(-3 ... -1) = \(try? xarray.lrange(-3 ... -1) as [String])")
     print(" xarray.lindex(1) = \(try? xarray.lindex(1) as String)")
@@ -167,7 +167,7 @@ print(interp.result)
 
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("Testing array type on \(testdict)")
-    if let character = try? TclArray("character", Interp: interp, fromDict: testdict) {
+    if let character = try? interp.array("character", dict: testdict) {
         print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
         print("character[\"name\"] as String = \(character["name"] as String?)")
         print("character.names() = \(try character.names())")

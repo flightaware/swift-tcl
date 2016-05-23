@@ -317,4 +317,35 @@ public class TclInterp {
         let substOutObj: TclObj = try self.subst (TclObj(substIn, Interp: self), flags: flags)
         return try substOutObj.get()
     }
+    
+    // Wrappers for TclObj
+    public func object() -> TclObj { return TclObj(Interp: self) }
+    public func object(value: Int) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: String) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: Double) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: Bool) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: Set<Int>) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: Set<String>) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: Set<Double>) -> TclObj { return TclObj(value, Interp: self) }
+//  public func object(value: Set<Bool>) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: [Int]) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: [String]) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: [Double]) -> TclObj { return TclObj(value, Interp: self) }
+//  public func object(value: [Bool]) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: [String: Int]) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: [String: String]) -> TclObj { return TclObj(value, Interp: self) }
+    public func object(value: [String: Double]) -> TclObj { return TclObj(value, Interp: self) }
+//  public func object(value: [String: Bool]) -> TclObj { return TclObj(value, Interp: self) }
+
+    // Wrappers for TclArray
+    public func array(name: String) -> TclArray { return TclArray(name, Interp: self) }
+    public func array(name: String, namespace: String) -> TclArray { return TclArray(name, Interp: self, namespace: namespace) }
+    public func array(name: String, dict: [String: String]) throws -> TclArray {
+        return try TclArray(name, Interp: self, dict: dict)
+    }
+    public func array(name: String, dict: [String: String], namespace: String) throws -> TclArray {
+        return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
+    }
+
+
 }

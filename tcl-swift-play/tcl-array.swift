@@ -34,7 +34,7 @@ public class TclArray {
     }
 
     // init - initialize from dictionary
-    public convenience init(_ name: String, Interp: TclInterp, namespace: String? = nil, fromDict dict: [String: String]) throws {
+    public convenience init(_ name: String, Interp: TclInterp, namespace: String? = nil, dict: [String: String]) throws {
         self.init(name, Interp: Interp, namespace: namespace)
         try self.set(dict)
     }
