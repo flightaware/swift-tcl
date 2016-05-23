@@ -245,31 +245,31 @@ Append a message to the error information
 
 The TclObj class gives Swift access to Tcl objects.  A TclObj can be wrapped around any C-level Tcl Object (Tcl\_Obj \*) and its methods use to access and manipulate the object.
 
-The object can be new or existing.  For example `var obj = TclObj(5)` creates a new Tcl object with an integer representation and a value of 5 while `var obj = interp.resultObj` wraps an existing Tcl\_Obj object as a Swift TclObj.
+The object can be new or existing.  For example `var obj = interp.newObj(5)` creates a new Tcl object with an integer representation and a value of 5 while `var obj = interp.resultObj` wraps an existing Tcl\_Obj object as a Swift TclObj.
 
 The TclObj object manages Tcl reference counts so that all this will work.  For example, setting a Tcl array element to a TclObj using `interp.setVar(arrayName, elementName: element, value: obj)`, the element will continue to hold the object even if the TclObj is deleted on the Swift side.
 
-* `var obj = TclObj(Interp: TclInterp)`
-* `var obj = TclObj(String, Interp: TclInterp)`
-* `var obj = TclObj(Int, Interp: TclInterp)`
-* `var obj = TclObj(Double, Interp: TclInterp)`
-* `var obj = TclObj(Bool, Interp: TclInterp)`
+* `var obj = interp.newObj()`
+* `var obj = interp.newObj(String)`
+* `var obj = interp.newObj(Int)`
+* `var obj = interp.newObj(Double)`
+* `var obj = interp.newObj(Bool)`
 
 Create a Swift TclObj object that's empty, contains a String, an Int, Double or Bool.
 
-* `var obj = TclObj(Set<String/Int/Double/Bool>, Interp: TclInterp)`
+* `var obj = interp.newObj(Set<String/Int/Double/Bool>)`
 
 Create a TclObj containing a Tcl List initialized from a Set
 
-* `var obj = TclObj([String/Int/Double/Bool], Interp: TclInterp)`
+* `var obj = interp.newObj([String/Int/Double/Bool])`
 
 Create a TclObj containing a Tcl List initialized from an array.
 
-* `var obj = TclObj([String: String/Int/Double/Bool], Interp: TclInterp)`
+* `var obj = interp.newObj([String: String/Int/Double/Bool])`
 
 Create a TclObj containing a Tcl List initialized from an dict, in [array get] format... a list of key/value pairs.
 
-* `internal var obj = TclObj(UnsafeMutablePointer<Tcl_Obj>, Interp: TclInterp)`
+* `internal var obj = interp.newObj(UnsafeMutablePointer<Tcl_Obj>)`
 
 Create a TclObj object encapsulating a UnsafeMutablePointer<Tcl_Obj> aka a Tcl\_Obj \*.
 
@@ -367,10 +367,10 @@ Insert the array into the object, replacing the specified range.
 
 Return the number of elements in the list contained in the TclObj or throws an error if the value in the TclObj cannot be represented as a list.
 
-* `var TclObj? s = obj[index]`
-* `var String? s = obj[index]`
-* `var [TclObj]? s = obj[start...end]`
-* `var [String]? s = obj[start...end]`
+* `var s: TclObj? = obj[index]`
+* `var s: String? = obj[index]`
+* `var s: [TclObj]? = obj[start...end]`
+* `var s: [String]? = obj[start...end]`
 
 Subscripting the object treats it as a list, exactly like lindex and lrange.
 
@@ -382,11 +382,37 @@ And you can set elements in the object, exactly like linsert.
 Finally, a list is a sequence. Unfortunately, Swift doesn't support generic protocols, so it can only generate one type. Right now it's a sequence of TclObj:
 
 ```swift
-var intlist = TclObj([1, 2, 3, 4], Interp: interp)
+var intlist = interp.newObj([1, 2, 3, 4])
 for element in intlist {
     if let i: Int = try? element.get() {
         print("Got '\(i)'")
     }
+}
+```
+
+## The TclArray class
+
+The TclArray convenience class gives Swift access to Tcl arrays.  A TclArray encapsulates an interpreter and an array name.
+
+* `var a = interp.newArray(name: String)`
+* `var a = interp.newArray(name: String, dict: [String: String])`
+* `var a = interp.newArray(name: String, string: String)`
+
+A TclArray can be converted into or out of a Swift [String: String] dictionary.
+
+* `var d: [String: String] = array.get()`
+* `array.set(d)`
+
+Members of the array can be extracted or modified:
+
+* `var s: String = array["name"]`
+* `array["name"] = "new value"`
+
+The array is a sequence:
+
+```swift
+for (name, value) in array {
+    print("array(\(name)) = \(value)")
 }
 ```
 

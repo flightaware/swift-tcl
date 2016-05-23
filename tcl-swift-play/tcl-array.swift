@@ -159,7 +159,7 @@ public class TclArray: SequenceType {
         }
     }
     
-    // Generator for maps, forEach, etc... returns a tuple, so $0.0 is the key, $0.1 is the value
+    // Generator for maps, forEach, etc... returns a tuple
     public func generate() -> AnyGenerator<(String, String)> {
         var nameList: [String]
         // A bit of Optional parkour because it's a little to complex for a guard, I think
