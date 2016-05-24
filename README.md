@@ -23,7 +23,7 @@ Swift Tcl defines a *TclInterp* class in Swift that provides methods for creatin
 ```swift
 let interp = TclInterp()
 
-interp.eval("puts {Hello, World.}")
+interp.rawEval("puts {Hello, World.}")
 ```
 
 It also defines a *TclObj* class that can convert between Swift data types such as Int, Double, String, Swift Arrays, Sets, and Dictionaries and Tcl object representations of equivalent types.
@@ -53,7 +53,7 @@ var machine: String = try interp.getVar("tcl_platform", elementName: "machine")
 In this example we import Tcl's global _tcl_platform_ array into a Swift dictionary:
 
 ```swift
-try interp.eval("array get tcl_platform")
+try interp.rawEval("array get tcl_platform")
 var dict: [String:String] = try interp.resultObj.toDictionary()
 ```
 
@@ -106,7 +106,7 @@ func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> D
 }
 ```
 
-In the above example invoking `try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")` emits **distance from KIAH to KSEA is 1874.5897193432174** while `try interp.eval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")` produces a Tcl traceback that looks like
+In the above example invoking `try interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")` emits **distance from KIAH to KSEA is 1874.5897193432174** while `try interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")` produces a Tcl traceback that looks like
 
 ```
 expected floating-point number but got "crash" while converting "lat2" argument
@@ -129,6 +129,14 @@ Evaluate Tcl code in the Tcl interpreter. Return value is the result of the code
 * `try interp.RawEval(code: String)`
 
 Evaluate the code, don't return anything.
+
+* `var tclList: String = interp.list(list: [String])`
+
+Safely create a Tcl list from an array of Swift strings.
+
+* `try interp.RawEval(code: [String])`
+
+Safer version of rawEval that accepts a string array and converts it to a Tcl list before evaluating it, avoiding potential issues from trying to quote Tcl code ad-hoc in swift.
 
 You can control whether or not error are printed by manipulating the *printErrors* variable, which currently defaults to true and will include the traceback.
 

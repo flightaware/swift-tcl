@@ -39,7 +39,10 @@ print(interp.result)
     let x5 = interp.newObject(5)
     print(x5.doubleValue)
     
-
+    // List test
+    try interp.rawEval(["set", "a", "{illegal {string"])
+    try interp.rawEval("puts [list a = $a]")
+    
     func foo (interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
         return ""
