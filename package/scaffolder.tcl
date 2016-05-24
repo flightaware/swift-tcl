@@ -59,15 +59,12 @@ proc gen {proc} {
 		array set myHints $hints($proc)
 	}
 
-	set string "func $proc ("
-	set firstPass 1
+	set swift_name tcl::$proc
+	regsub -all "::*" $swift_name "_" swift_name
+	set string "\n// $swift_name\n// Wrapper for $proc\nfunc $swift_name (springboardInterp: TclInterp"
 
 	foreach arg $args {
-		if {$firstPass} {
-			set firstPass 0
-		} else {
-			append string ", "
-		}
+		append string ", "
 
 		if {![info default $proc $arg default]} {
 			unset -nocomplain default
@@ -97,17 +94,21 @@ proc gen {proc} {
 		}
 	}
 
+	append string ") throws"
+
 	if {[info exists myHints(->)]} {
 		append string " -> $myHints(->)"
+		set return_type "$myHints(->)"
 	} else {
 		if {[does_proc_return_something $proc]} {
 			append string " -> String"
+			set return_type "String"
 		}
 	}
 
-	append string ") {\n"
+	append string " {\n"
 
-	set springboard "    return tcl_springboard(springboardInterp, \"$proc\""
+	set springboard "    try tcl_springboard(springboardInterp, \"$proc\""
 	foreach arg $args {
 		append springboard ", "
 
@@ -132,7 +133,13 @@ proc gen {proc} {
 
 	append springboard ")"
 
-	append string "$springboard\n}"
+	append string "$springboard\n"
+
+	if [info exists return_type] {
+		append string "    return try springboardInterp.getResult()\n"
+	}
+
+	append string "}"
 
 	return $string
 }
