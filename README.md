@@ -396,11 +396,13 @@ The TclArray convenience class gives Swift access to Tcl arrays.  A TclArray enc
 
 * `var a = interp.newArray(name: String)`
 * `var a = interp.newArray(name: String, dict: [String: String])`
+* `var a = interp.newArray(name: String, dict: [String: TclObj])`
 * `var a = interp.newArray(name: String, string: String)`
 
-A TclArray can be converted into or out of a Swift [String: String] dictionary.
+A TclArray can be converted into or out of a Swift dictionary.
 
 * `var d: [String: String] = array.get()`
+* `var d: [String: TclObj] = array.get()`
 * `array.set(d)`
 
 Members of the array can be extracted or modified:
@@ -408,11 +410,11 @@ Members of the array can be extracted or modified:
 * `var s: String = array["name"]`
 * `array["name"] = "new value"`
 
-The array is a sequence:
+The array is a sequence of (String, TclObj):
 
 ```swift
 for (name, value) in array {
-    print("array(\(name)) = \(value)")
+    try print("array(\(name)) = \(value.get() as String)")
 }
 ```
 

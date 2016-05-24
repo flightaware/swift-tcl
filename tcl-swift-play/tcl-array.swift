@@ -29,14 +29,14 @@ public class TclArray: SequenceType {
         }
     }
     
-    func set(dict: [String : String]) throws {
+    public func set(dict: [String : String]) throws {
         try Interp.dictionaryToArray(name, dictionary: dict)
     }
     
     // init - initialize from string
     public convenience init(_ name: String, Interp: TclInterp, namespace: String? = nil, string: String) throws {
         self.init(name, Interp: Interp, namespace: namespace)
-        try self.set(Interp.newObject(string).get())
+        try self.set(Interp.newObject(string).get() as [String: TclObj])
     }
 
     // init - initialize from dictionary
@@ -45,51 +45,73 @@ public class TclArray: SequenceType {
         try self.set(dict)
     }
     
+    // init - initialize from dictionary
+    public convenience init(_ name: String, Interp: TclInterp, namespace: String? = nil, dict: [String: TclObj]) throws {
+        self.init(name, Interp: Interp, namespace: namespace)
+        try self.set(dict)
+    }
+    
+    public func set(dict: [String : TclObj]) throws {
+        try Interp.dictionaryToArray(name, dictionary: dict)
+    }
+    
     // names - generate a list of names for the keys in the array.
     // This is ugly because there doesn't seem to be a C API for enumerating arrays
-    func names() throws -> [String]? {
+    public func names() throws -> [String]? {
         let cmd = TclObj("array names", Interp: Interp)
         do { try cmd.lappend(self.name) } catch { return nil }
         let res: TclObj = try Interp.eval(cmd.get())
         return try res.get()
     }
     
-    // get - return a dict
-    func get() throws -> [String: String] {
-        var dict: [String: String] = [:]
-        try self.names()?.forEach {
-            if let val: String = try self.getValue($0)?.get() {
-                dict[$0] = val
+    // get - return a dict [String: String]
+    public func get() throws -> [String: String] {
+        let old: [String: TclObj] = self.get()
+        var new: [String: String] = [:]
+        for (key, obj) in old {
+            try new[key] = obj.get()
+        }
+        return new
+    }
+    
+    // get - return a dict [String: TclObj]
+    public func get() -> [String: TclObj] {
+        var dict: [String: TclObj] = [:]
+        if let names = try? self.names() {
+            names!.forEach {
+                if let val: TclObj = self.getValue($0) {
+                    dict[$0] = val
+                }
             }
         }
         return dict
     }
     
-    func getValue(key: String) -> TclObj? {
+    public func getValue(key: String) -> TclObj? {
         return Interp.getVar(name, elementName: key)
     }
     
-    func setValue(key: String, obj: TclObj) throws {
+    public func setValue(key: String, obj: TclObj) throws {
         try Interp.setVar(name, elementName: key, obj: obj)
     }
     
-    func setValue(key: String, value: String) throws {
+    public func setValue(key: String, value: String) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
     
-    func setValue(key: String, value: Int) throws {
+    public func setValue(key: String, value: Int) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
     
-    func setValue(key: String, value: Double) throws {
+    public func setValue(key: String, value: Double) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
     
-    func setValue(key: String, value: Bool) throws {
+    public func setValue(key: String, value: Bool) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
 
-    subscript (key: String) -> TclObj? {
+    public subscript (key: String) -> TclObj? {
         get {
             return getValue(key)
         }
@@ -103,7 +125,7 @@ public class TclArray: SequenceType {
         }
     }
     
-    subscript (key: String) -> String? {
+    public subscript (key: String) -> String? {
         get {
             return getValue(key)?.stringValue
         }
@@ -117,7 +139,7 @@ public class TclArray: SequenceType {
         }
     }
     
-    subscript (key: String) -> Int? {
+    public subscript (key: String) -> Int? {
         get {
             return getValue(key)?.intValue
         }
@@ -131,7 +153,7 @@ public class TclArray: SequenceType {
         }
     }
     
-    subscript (key: String) -> Double? {
+    public subscript (key: String) -> Double? {
         get {
             return getValue(key)?.doubleValue
         }
@@ -145,7 +167,7 @@ public class TclArray: SequenceType {
         }
     }
     
-    subscript (key: String) -> Bool? {
+    public subscript (key: String) -> Bool? {
         get {
             return getValue(key)?.boolValue
         }
@@ -160,19 +182,19 @@ public class TclArray: SequenceType {
     }
     
     // Generator for maps, forEach, etc... returns a tuple
-    public func generate() -> AnyGenerator<(String, String)> {
+    public func generate() -> AnyGenerator<(String, TclObj)> {
         var nameList: [String]
         // A bit of Optional parkour because it's a little to complex for a guard, I think
         if let tmp = try? self.names() {
             nameList = tmp!
         } else {
             // Can't initialize the generator, so return a dummy generator that always returns nil
-            return AnyGenerator<(String, String)> { return nil }
+            return AnyGenerator<(String, TclObj)> { return nil }
         }
         var next = 0
 
-        return AnyGenerator<(String, String)> {
-            var value: String? = nil
+        return AnyGenerator<(String, TclObj)> {
+            var value: TclObj? = nil
             var name: String? = nil
             // looping over name list in case someone unset an array element behind my back
             while value == nil {
@@ -183,9 +205,7 @@ public class TclArray: SequenceType {
                 next += 1
                 
                 // name can never be nil here necause it's just been assigned from nameList which is a [String]
-                if let tmp: String? = try? self.getValue(name!)?.get() {
-                    value = tmp
-                }
+                value = self.getValue(name!)
             }
             // At this point I believe it is impossible for name to be nil but I'm checking anyway
             if name != nil && value != nil {

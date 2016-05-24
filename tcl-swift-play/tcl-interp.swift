@@ -224,7 +224,12 @@ public class TclInterp {
         }
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified Int
+    // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
+    public func setVar(varName: String, elementName: String? = nil, value: TclObj, flags: VariableFlags = []) throws {
+        return try self.setVar(varName, elementName: elementName, value: value.obj, flags: flags)
+    }
+    
+    // setVar - set a variable or array element in the Tcl interpreter to the specified String
     public func setVar(varName: String, elementName: String? = nil, value: String, flags: VariableFlags = []) throws {
         let obj = try string_to_tclobjp(value)
         return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
@@ -251,6 +256,13 @@ public class TclInterp {
     // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
     public func setVar(varName: String, elementName: String? = nil, obj: TclObj, flags: VariableFlags = []) throws {
         return try self.setVar(varName, elementName: elementName, value: obj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
+    }
+    
+    // dictionaryToArray - set a String/TclObj dictionary into a Tcl array
+    public func dictionaryToArray (arrayName: String, dictionary: [String: TclObj], flags: VariableFlags = []) throws {
+        try dictionary.forEach {
+            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+        }
     }
     
     // dictionaryToArray - set a String/String dictionary into a Tcl array
@@ -344,6 +356,12 @@ public class TclInterp {
         return try TclArray(name, Interp: self, dict: dict)
     }
     public func newArray(name: String, dict: [String: String], namespace: String) throws -> TclArray {
+        return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
+    }
+    public func newArray(name: String, dict: [String: TclObj]) throws -> TclArray {
+        return try TclArray(name, Interp: self, dict: dict)
+    }
+    public func newArray(name: String, dict: [String: TclObj], namespace: String) throws -> TclArray {
         return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
     }
     public func newArray(name: String, string: String) throws -> TclArray {

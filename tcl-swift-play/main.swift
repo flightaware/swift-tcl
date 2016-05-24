@@ -147,7 +147,7 @@ print(interp.result)
     xarray[1...4] = [1, 2, 3, 4]
     xarray[5] = 5.0
     print(" after subscript assignment of typed values: xarray as String = \(try xarray.get() as String)")
-    print("Testing generator")
+    print("\nTesting generator")
     var list = ""
     var sum = 0.0
     var count = 0
@@ -166,34 +166,34 @@ print(interp.result)
     print("sum of \(list) is \(sum), average is \(sum / Double(count))")
 
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
-    print("Testing array type on \(testdict)")
+    print("\nTesting array type on \(testdict)")
     if let character = try? interp.newArray("character", dict: testdict) {
         print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
         print("character[\"name\"] as String = \(character["name"] as String?)")
         print("character.names() = \(try character.names())")
-        print("character.get() = \(try character.get())")
+        print("character.get() = \(try character.get() as [String: String])")
 
-        print("Modifying character")
+        print("\nModifying character")
         character["name"] = "Nick Wilde"
         character["animal"] = "fox"
         character["role"] = "cop"
         character["movie"] = "Zootopia"
         print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
         print("character.names() = \(try character.names())")
-        print("character.get() = \(try character.get())")
+        print("character.get() = \(try character.get() as [String: String])")
 
-        print("subst test")
+        print("\nsubst test")
         print(try interp.subst("character(name) = $character(name)"))
         
-        print("generator test")
+        print("\ngenerator test")
         for (key, value) in character {
-            print("character[\"\(key)\"] = \(value)")
+            try print("character[\"\(key)\"] = \(value.get() as String)")
         }
     } else {
         print("Could not initialize array from dictionary.")
     }
 
-    print("digging variables out of the Tcl interpreter")
+    print("\ndigging variables out of the Tcl interpreter")
     var autoPath: String = try! interp.getVar("auto_path")
     print("auto_path is '\(autoPath)'")
 
