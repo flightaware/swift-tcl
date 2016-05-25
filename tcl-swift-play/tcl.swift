@@ -354,13 +354,3 @@ func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl
     return TCL_OK
 }
 
-func tcl_springboard(Interp: TclInterp, commandName: String, objv: UnsafeMutablePointer<Tcl_Obj>...) throws {
-    let vec = Interp.newObject()
-	try vec.lappend(commandName)
-	try objv.forEach {
-		try vec.lappend ($0)
-	}
-	Tcl_EvalObjEx (Interp.interp, vec.get(), 0);
-	
-}
-

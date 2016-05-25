@@ -63,6 +63,7 @@ proc gen {proc} {
 	regsub -all "::*" $swift_name "_" swift_name
 	set string "\n// $swift_name\n// Wrapper for $proc\nfunc $swift_name (springboardInterp: TclInterp"
 
+puts stderr $args
 	foreach arg $args {
 		append string ", "
 
@@ -108,38 +109,22 @@ proc gen {proc} {
 
 	append string " {\n"
 
-	set springboard "    try tcl_springboard(springboardInterp, \"$proc\""
+	set body {}
+	lappend body "let vec = springboardInterp.newObject()"
+	lappend body "try vec.lappend(\"$proc\")"
+
 	foreach arg $args {
-		append springboard ", "
-
-		switch $myTypes($arg) {
-			"String" {
-				append springboard "string_to_tclobjp($arg)"
-			}
-
-			"Int" {
-				append springboard "Tcl_NewLongObj($arg)"
-			}
-
-			"Double" {
-				append springboard "Tcl_NewDoubleObj($arg)"
-			}
-
-			"Bool" {
-				append springboard "Tcl_NewBooleanObj($arg ? 1 : 0)"
-			}
-		}
+		lappend body "try vec.lappend($arg)"
 	}
 
-	append springboard ")"
-
-	append string "$springboard\n"
-
-	if [info exists return_type] {
-		append string "    return try springboardInterp.getResult()\n"
+	lappend body "Tcl_EvalObjEx(springboardInterp.interp, vec.get(), 0)"
+        if [info exists return_type] {
+		lappend body "return try springboardInterp.getResult()"
 	}
-
+	append string "    [join $body "\n    "]\n"
 	append string "}"
+
+		
 
 	return $string
 }

@@ -376,9 +376,9 @@ public class TclInterp {
         return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
     }
     public func newArray(name: String, string: String) throws -> TclArray {
-        return try TclArray(name, Interp: self, dict: dict)
+        return try TclArray(name, Interp: self,  string: string)
     }
     public func newArray(name: String, string: String, namespace: String) throws -> TclArray {
-        return try TclArray(name, Interp: self, namespace: namespace, dict: dict)
+        return try TclArray(name, Interp: self, namespace: namespace, string: string)
     }
 }
