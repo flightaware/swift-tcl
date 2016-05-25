@@ -26,13 +26,14 @@ func impork(Interp: TclInterp) {
     }
 }
 
-
 // tcl_impork
 // Wrapper for impork
-func tcl_impork (springboardInterp: TclInterp, file: String) throws -> String {
+func tcl_impork (springboardInterp: TclInterp, file: String, first: Int = 1, step: Int = 1) throws -> String {
     let vec = springboardInterp.newObject()
     try vec.lappend("impork")
     try vec.lappend(file)
+    try vec.lappend(first)
+    try vec.lappend(step)
     Tcl_EvalObjEx(springboardInterp.interp, vec.get(), 0)
     return try springboardInterp.getResult()
 }

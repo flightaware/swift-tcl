@@ -1,5 +1,5 @@
 
-proc impork {file} {
+proc impork {file {first 1} {step 1}} {
   if [catch {open $file} status] {
     return {}
   }
@@ -7,10 +7,10 @@ proc impork {file} {
   set contents [read $fp]
   close $fp
   set result {}
-  set ln 0
+  set ln $first
   foreach line [split $contents "\n"] {
-    incr ln
     lappend result $ln $line
+    incr ln $step
   }
   return $result
 }
