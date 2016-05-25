@@ -13,7 +13,7 @@ func import_impork(Interp: TclInterp, file: String) throws {
 }
 
 func impork(Interp: TclInterp) {
-    let file: String = "/Users/peter.dasilva/git/swift-tcl/package/impork.tcl" // *cries*
+    let file: String = "../../../../../../../../git/swift-tcl/package/impork.tcl" // *cries*
     do {
         try import_impork(Interp, file: file)
         
