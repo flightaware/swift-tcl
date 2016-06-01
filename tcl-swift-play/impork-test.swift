@@ -8,14 +8,14 @@
 
 import Foundation
 
-func import_impork(Interp: TclInterp, file: String) throws {
+func import_file(Interp: TclInterp, file: String) throws {
     try Interp.rawEval(["source", file])
 }
 
 func impork(Interp: TclInterp) {
     let file: String = "../../../../../../../../git/swift-tcl/package/impork.tcl" // *cries*
     do {
-        try import_impork(Interp, file: file)
+        try import_file(Interp, file: file)
         
         let array = try Interp.newArray("imporked", string: tcl_impork(Interp, file: file))
         for (num, line) in array {

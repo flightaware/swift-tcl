@@ -29,15 +29,15 @@ print(interp.result)
 
     var xo = interp.newObject(5)
     let xy = interp.newObject("hi mom")
-    print(xy.stringValue)
-    xy.stringValue = "hi dad"
-    print(xy.stringValue)
+    print(try xy.get() as String)
+    xy.set("hi dad")
+    print(try xy.get() as String)
     let xz = interp.newObject(5.5)
-    if let xz2 = xz.intValue {
+    if let xz2: Int = try? xz.get() {
         print(xz2)
     }
     let x5 = interp.newObject(5)
-    print(x5.doubleValue)
+    try print(x5.get() as Double)
     
     // List test
     try interp.rawEval(["set", "a", "{illegal {string"])
@@ -51,7 +51,7 @@ print(interp.result)
     func avg (interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
         for obj in objv {
-            guard let val = obj.doubleValue else {continue}
+            guard let val: Double = try? obj.get() else {continue}
             sum += val
         }
         return(sum / Double(objv.count))
@@ -121,7 +121,7 @@ print(interp.result)
     var ints: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 10]
     var intListObj = interp.newObject(ints)
     print(ints)
-    print(intListObj.stringValue)
+    print(try intListObj.get() as String)
     print("")
 
     let sarray = ["zero","one","two","three","four"]
@@ -132,7 +132,7 @@ print(interp.result)
     print(" xarray.lindex(1) = \(try? xarray.lindex(1) as String)")
     print(" xarray.lindex(-1) = \(try? xarray.lindex(-1) as String)")
     print("Testing subscripts")
-    print(" xarray[0].stringValue = \(xarray[0]?.stringValue)")
+    print(" xarray[0] = \(xarray[0] as String?)")
     print(" xarray[0...2] = \(xarray[0...2] as [String]?)")
     print(" xarray as String = \(try xarray.get() as String)")
     try xarray.linsert(5, list: ["five"])
@@ -171,7 +171,6 @@ print(interp.result)
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("\nTesting array type on \(testdict)")
     if let character = try? interp.newArray("character", dict: testdict) {
-        print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
         print("character[\"name\"] as String = \(character["name"] as String?)")
         print("character.names() = \(try character.names())")
         print("character.get() = \(try character.get() as [String: String])")
@@ -181,7 +180,7 @@ print(interp.result)
         character["animal"] = "fox"
         character["role"] = "cop"
         character["movie"] = "Zootopia"
-        print("character[\"name\"]?.stringValue = \(character["name"]?.stringValue)")
+        print("character[\"name\"] as String = \(character["name"] as String?)")
         print("character.names() = \(try character.names())")
         print("character.get() = \(try character.get() as [String: String])")
 
