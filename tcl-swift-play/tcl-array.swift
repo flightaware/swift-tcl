@@ -127,7 +127,11 @@ public class TclArray: SequenceType {
     
     public subscript (key: String) -> String? {
         get {
-            return getValue(key)?.stringValue
+            do {
+                return try getValue(key)?.get()
+            } catch {
+                return nil
+            }
         }
         set {
             if let string = newValue {
@@ -141,7 +145,11 @@ public class TclArray: SequenceType {
     
     public subscript (key: String) -> Int? {
         get {
-            return getValue(key)?.intValue
+            do {
+                return try getValue(key)?.get()
+            } catch {
+                return nil
+            }
         }
         set {
             if let int = newValue {
@@ -155,7 +163,11 @@ public class TclArray: SequenceType {
     
     public subscript (key: String) -> Double? {
         get {
-            return getValue(key)?.doubleValue
+            do {
+                return try getValue(key)?.get()
+            } catch {
+                return nil
+            }
         }
         set {
             if let double = newValue {
@@ -169,7 +181,11 @@ public class TclArray: SequenceType {
     
     public subscript (key: String) -> Bool? {
         get {
-            return getValue(key)?.boolValue
+            do {
+                return try getValue(key)?.get()
+            } catch {
+                return nil
+            }
         }
         set {
             if let bool = newValue {
