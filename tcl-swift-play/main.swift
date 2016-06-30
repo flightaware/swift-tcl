@@ -13,7 +13,7 @@ print("Hello, World!")
 
 let interp = TclInterp()
 
-    if let result: String = try? interp.eval("puts {Hey stinky}; return hijinks") {
+    if let result: String = try? interp.eval(code: "puts {Hey stinky}; return hijinks") {
         print("interpreter returned '\(result)'")
     } else {
         print("interpreter failed")
@@ -21,7 +21,7 @@ let interp = TclInterp()
 
 print(interp.result)
     
-    if let result: Int = try? interp.eval("expr 1 + 4") {
+    if let result: Int = try? interp.eval(code: "expr 1 + 4") {
         print("interpreter returned '\(result)'")
     } else {
         print("interpreter failed")

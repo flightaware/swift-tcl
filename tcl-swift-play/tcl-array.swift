@@ -60,7 +60,7 @@ public class TclArray: Sequence {
     public func names() throws -> [String]? {
         let cmd = TclObj("array names", Interp: Interp)
         do { try cmd.lappend(self.name) } catch { return nil }
-        let res: TclObj = try Interp.eval(cmd.get())
+        let res: TclObj = try Interp.eval(code: cmd.get())
         return try res.get()
     }
     
