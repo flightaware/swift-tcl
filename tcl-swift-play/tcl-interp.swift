@@ -162,7 +162,7 @@ public class TclInterp {
     // setErrorCode - set the Tcl error code
     
     public func setErrorCode(_ val: String) throws {
-        Tcl_SetObjErrorCode (interp, try string_to_tclobjp(val))
+        Tcl_SetObjErrorCode (interp, try tclobjp(string: val))
     }
     
     // addErrorInfo() - append a message to the error information
@@ -242,7 +242,7 @@ public class TclInterp {
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified String
     public func setVar(_ varName: String, elementName: String? = nil, value: String, flags: VariableFlags = []) throws {
-        let obj = try string_to_tclobjp(value)
+        let obj = try tclobjp(string: value)
         return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
     }
     

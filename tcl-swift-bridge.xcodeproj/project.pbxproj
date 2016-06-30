@@ -116,7 +116,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = FlightAware;
 				TargetAttributes = {
 					CB30DB8C1CB5898400F53FF5 = {
@@ -269,6 +269,7 @@
 				);
 				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
