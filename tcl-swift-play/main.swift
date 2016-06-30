@@ -102,10 +102,10 @@ print(interp.result)
             throw TclError.wrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
 
-        let lat1: Double = try objv[0].getArg("lat1")
-        let lon1: Double = try objv[1].getArg("lon1")
-        let lat2: Double = try objv[2].getArg("lat2")
-        let lon2: Double = try objv[3].getArg("lon2")
+        let lat1: Double = try objv[0].getAsArg(named: "lat1")
+        let lon1: Double = try objv[1].getAsArg(named: "lon1")
+        let lat2: Double = try objv[2].getAsArg(named: "lat2")
+        let lon2: Double = try objv[3].getAsArg(named: "lon2")
             
         let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
         return distance

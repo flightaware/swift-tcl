@@ -258,7 +258,7 @@ public class TclObj: Sequence {
         return obj
     }
     
-    public func getArg(_ varName: String) throws -> Int {
+    public func getAsArg(named varName: String) throws -> Int {
         do {
             return try tclobjp_to_Int(obj, interp: interp)
         } catch {
@@ -267,7 +267,7 @@ public class TclObj: Sequence {
         }
     }
     
-    public func getArg(_ varName: String) throws -> Double {
+    public func getAsArg(named varName: String) throws -> Double {
         do {
             return try tclobjp_to_Double(obj, interp: interp)
         } catch {
@@ -276,7 +276,7 @@ public class TclObj: Sequence {
         }
     }
     
-    public func getArg(_ varName: String) throws -> Bool {
+    public func getAsArg(named varName: String) throws -> Bool {
         do {
             return try tclobjp_to_Bool(obj, interp: interp)
         } catch {
@@ -285,7 +285,7 @@ public class TclObj: Sequence {
         }
     }
     
-    public func getArg(_ varName: String) throws -> String {
+    public func getAsArg(named varName: String) throws -> String {
         do {
             return try tclobjp_to_String(obj)
         } catch {
