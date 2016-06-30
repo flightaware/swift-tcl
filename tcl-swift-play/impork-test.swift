@@ -8,11 +8,11 @@
 
 import Foundation
 
-func import_file(Interp: TclInterp, file: String) throws {
+func import_file(_ Interp: TclInterp, file: String) throws {
     try Interp.rawEval(["source", file])
 }
 
-func impork(Interp: TclInterp) {
+func impork(_ Interp: TclInterp) {
     let file: String = "../../../../../../../../git/swift-tcl/package/impork.tcl" // *cries*
     do {
         try import_file(Interp, file: file)
@@ -28,7 +28,7 @@ func impork(Interp: TclInterp) {
 
 // tcl_impork
 // Wrapper for impork
-func tcl_impork (springboardInterp: TclInterp, file: String, first: Int = 1, step: Int = 1) throws -> String {
+func tcl_impork (_ springboardInterp: TclInterp, file: String, first: Int = 1, step: Int = 1) throws -> String {
     let vec = springboardInterp.newObject()
     try vec.lappend("impork")
     try vec.lappend(file)

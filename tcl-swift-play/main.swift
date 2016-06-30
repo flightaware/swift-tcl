@@ -43,12 +43,12 @@ print(interp.result)
     try interp.rawEval(["set", "a", "{illegal {string"])
     try interp.rawEval("puts [list a = $a]")
     
-    func foo (interp: TclInterp, objv: [TclObj]) -> String {
+    func foo (_ interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
         return ""
     }
     
-    func avg (interp: TclInterp, objv: [TclObj]) -> Double {
+    func avg (_ interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
         for obj in objv {
             guard let val: Double = try? obj.get() else {continue}
@@ -72,11 +72,11 @@ print(interp.result)
     
     let EARTH_RADIUS_MILES = 3963.0
     
-    func fa_degrees_radians (degrees: Double) -> Double {
+    func fa_degrees_radians (_ degrees: Double) -> Double {
         return (degrees * M_PI / 180);
     }
 
-    func fa_latlongs_to_distance (lat1: Double, lon1: Double, lat2: Double, lon2:Double) -> Double {
+    func fa_latlongs_to_distance (_ lat1: Double, lon1: Double, lat2: Double, lon2:Double) -> Double {
         let dLat = fa_degrees_radians (lat2 - lat1)
         let dLon = fa_degrees_radians (lon2 - lon1)
 
@@ -96,9 +96,9 @@ print(interp.result)
         return distance
     }
     
-    func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
+    func fa_latlongs_to_distance_cmd (_ interp: TclInterp, objv: [TclObj]) throws -> Double {
         if (objv.count != 4) {
-            throw TclError.WrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
+            throw TclError.wrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
 
         let lat1: Double = try objv[0].getArg("lat1")

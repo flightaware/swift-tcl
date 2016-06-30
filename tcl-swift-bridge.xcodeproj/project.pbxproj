@@ -121,6 +121,7 @@
 				TargetAttributes = {
 					CB30DB8C1CB5898400F53FF5 = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -253,6 +254,7 @@
 				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -267,6 +269,7 @@
 				);
 				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

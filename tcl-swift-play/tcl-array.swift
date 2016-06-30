@@ -13,7 +13,7 @@ import Foundation
 
 // TclArray - Tcl object class
 
-public class TclArray: SequenceType {
+public class TclArray: Sequence {
     let name: String
     let Interp: TclInterp
     let interp: UnsafeMutablePointer<Tcl_Interp>
@@ -29,7 +29,7 @@ public class TclArray: SequenceType {
         }
     }
     
-    public func set(dict: [String : String]) throws {
+    public func set(_ dict: [String : String]) throws {
         try Interp.dictionaryToArray(name, dictionary: dict)
     }
     
@@ -51,7 +51,7 @@ public class TclArray: SequenceType {
         try self.set(dict)
     }
     
-    public func set(dict: [String : TclObj]) throws {
+    public func set(_ dict: [String : TclObj]) throws {
         try Interp.dictionaryToArray(name, dictionary: dict)
     }
     
@@ -87,27 +87,27 @@ public class TclArray: SequenceType {
         return dict
     }
     
-    public func getValue(key: String) -> TclObj? {
+    public func getValue(_ key: String) -> TclObj? {
         return Interp.getVar(name, elementName: key)
     }
     
-    public func setValue(key: String, obj: TclObj) throws {
+    public func setValue(_ key: String, obj: TclObj) throws {
         try Interp.setVar(name, elementName: key, obj: obj)
     }
     
-    public func setValue(key: String, value: String) throws {
+    public func setValue(_ key: String, value: String) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
     
-    public func setValue(key: String, value: Int) throws {
+    public func setValue(_ key: String, value: Int) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
     
-    public func setValue(key: String, value: Double) throws {
+    public func setValue(_ key: String, value: Double) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
     
-    public func setValue(key: String, value: Bool) throws {
+    public func setValue(_ key: String, value: Bool) throws {
         try Interp.setVar(name, elementName: key, value: value)
     }
 
@@ -198,18 +198,18 @@ public class TclArray: SequenceType {
     }
     
     // Generator for maps, forEach, etc... returns a tuple
-    public func generate() -> AnyGenerator<(String, TclObj)> {
+    public func makeIterator() -> AnyIterator<(String, TclObj)> {
         var nameList: [String]
         // A bit of Optional parkour because it's a little to complex for a guard, I think
         if let tmp = try? self.names() {
             nameList = tmp!
         } else {
             // Can't initialize the generator, so return a dummy generator that always returns nil
-            return AnyGenerator<(String, TclObj)> { return nil }
+            return AnyIterator<(String, TclObj)> { return nil }
         }
         var next = 0
 
-        return AnyGenerator<(String, TclObj)> {
+        return AnyIterator<(String, TclObj)> {
             var value: TclObj? = nil
             var name: String? = nil
             // looping over name list in case someone unset an array element behind my back

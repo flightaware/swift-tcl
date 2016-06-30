@@ -13,7 +13,7 @@ import Foundation
 
 // TclObj - Tcl object class
 
-public class TclObj: SequenceType {
+public class TclObj: Sequence {
     let obj: UnsafeMutablePointer<Tcl_Obj>
     let Interp: TclInterp
     let interp: UnsafeMutablePointer<Tcl_Interp>
@@ -63,7 +63,7 @@ public class TclObj: SequenceType {
         self.set(set)
     }
     
-    public func set(set: Set<String>) {
+    public func set(_ set: Set<String>) {
         for element in set {
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (element, -1))
         }
@@ -75,7 +75,7 @@ public class TclObj: SequenceType {
         self.set(set)
     }
     
-    public func set(set: Set<Int>) {
+    public func set(_ set: Set<Int>) {
         for element in set {
             Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (element))
         }
@@ -87,7 +87,7 @@ public class TclObj: SequenceType {
         self.set(set)
     }
     
-    public func set(set: Set<Double>) {
+    public func set(_ set: Set<Double>) {
         for element in set {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
         }
@@ -99,7 +99,7 @@ public class TclObj: SequenceType {
         self.set(array)
     }
     
-    public func set(array: [String]) {
+    public func set(_ array: [String]) {
         for element in array {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (element, -1))
         }
@@ -111,7 +111,7 @@ public class TclObj: SequenceType {
         self.set(array)
     }
     
-    public func set(array: [Int]) {
+    public func set(_ array: [Int]) {
         array.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj($0))
         }
@@ -123,7 +123,7 @@ public class TclObj: SequenceType {
         self.set(array)
     }
     
-    public func set(array: [Double]) {
+    public func set(_ array: [Double]) {
         array.forEach {
             Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
         }
@@ -135,7 +135,7 @@ public class TclObj: SequenceType {
         self.set(dictionary)
     }
     
-    public func set(dictionary: [String: String]) {
+    public func set(_ dictionary: [String: String]) {
         dictionary.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.1, -1))
@@ -148,7 +148,7 @@ public class TclObj: SequenceType {
         self.set(dictionary)
     }
 
-    public func set(dictionary: [String: Int]) {
+    public func set(_ dictionary: [String: Int]) {
         dictionary.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj ($0.1))
@@ -161,7 +161,7 @@ public class TclObj: SequenceType {
         self.set(dictionary)
     }
     
-    public func set(dictionary: [String: Double]) {
+    public func set(_ dictionary: [String: Double]) {
         dictionary.forEach {
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
             Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj ($0.1))
@@ -190,7 +190,7 @@ public class TclObj: SequenceType {
         return try tclobjp_to_String(obj)
     }
     
-    public func set(value: String) {
+    public func set(_ value: String) {
         Tcl_SetStringObj (obj, value, -1)
     }
     
@@ -210,7 +210,7 @@ public class TclObj: SequenceType {
         return try tclobjp_to_Int(obj)
     }
 
-    public func set(val: Int) {
+    public func set(_ val: Int) {
         Tcl_SetLongObj (obj, val)
     }
 
@@ -230,7 +230,7 @@ public class TclObj: SequenceType {
         return try tclobjp_to_Double(obj)
     }
     
-    public func set(val: Double) {
+    public func set(_ val: Double) {
         Tcl_SetDoubleObj (obj, val)
     }
     
@@ -249,7 +249,7 @@ public class TclObj: SequenceType {
         return try tclobjp_to_Bool(obj)
     }
 
-    public func set(val: Bool) {
+    public func set(_ val: Bool) {
         Tcl_SetBooleanObj (obj, val ? 1 : 0)
     }
 
@@ -258,75 +258,75 @@ public class TclObj: SequenceType {
         return obj
     }
     
-    public func getArg(varName: String) throws -> Int {
+    public func getArg(_ varName: String) throws -> Int {
         do {
             return try tclobjp_to_Int(obj, interp: interp)
         } catch {
             Interp.addErrorInfo(" while converting \"\(varName)\" argument")
-            throw TclError.Error
+            throw TclError.error
         }
     }
     
-    public func getArg(varName: String) throws -> Double {
+    public func getArg(_ varName: String) throws -> Double {
         do {
             return try tclobjp_to_Double(obj, interp: interp)
         } catch {
             Interp.addErrorInfo(" while converting \"\(varName)\" argument")
-            throw TclError.Error
+            throw TclError.error
         }
     }
     
-    public func getArg(varName: String) throws -> Bool {
+    public func getArg(_ varName: String) throws -> Bool {
         do {
             return try tclobjp_to_Bool(obj, interp: interp)
         } catch {
             Interp.addErrorInfo(" while converting \"\(varName)\" argument")
-            throw TclError.Error
+            throw TclError.error
         }
     }
     
-    public func getArg(varName: String) throws -> String {
+    public func getArg(_ varName: String) throws -> String {
         do {
             return try tclobjp_to_String(obj)
         } catch {
             Interp.addErrorInfo(" while converting \"\(varName)\" argument")
-            throw TclError.Error
+            throw TclError.error
         }
     }
 
     // lappend - append a Tcl_Obj * to the Tcl object list
-    func lappend (value: UnsafeMutablePointer<Tcl_Obj>) throws {
-        guard (Tcl_ListObjAppendElement (interp, obj, value) != TCL_ERROR) else {throw TclError.Error}
+    func lappend (_ value: UnsafeMutablePointer<Tcl_Obj>) throws {
+        guard (Tcl_ListObjAppendElement (interp, obj, value) != TCL_ERROR) else {throw TclError.error}
     }
     
     // lappend - append an Int to the Tcl object list
-    public func lappend (value: Int) throws {
+    public func lappend (_ value: Int) throws {
         try self.lappend (Tcl_NewLongObj (value))
     }
     
     // lappend - append a Double to the Tcl object list
-    public func lappend (value: Double) throws {
+    public func lappend (_ value: Double) throws {
         try self.lappend (Tcl_NewDoubleObj (value))
     }
     
     // lappend - append a String to the Tcl object list
-    public func lappend (value: String) throws {
+    public func lappend (_ value: String) throws {
         try self.lappend(Tcl_NewStringObj (value, -1))
     }
     
     // lappend - append a Bool to the Tcl object list
-    public func lappend (value: Bool) throws {
+    public func lappend (_ value: Bool) throws {
         try self.lappend (Tcl_NewBooleanObj (value ? 1 : 0))
     }
     
     // lappend - append a tclObj to the Tcl object list
-    public func lappend (value: TclObj) throws {
+    public func lappend (_ value: TclObj) throws {
         try self.lappend(value)
     }
     
     // lappend - append an array of Int to the Tcl object list
     // (flattens them out)
-    public func lappend (array: [Int]) throws {
+    public func lappend (_ array: [Int]) throws {
         try array.forEach {
             try self.lappend($0)
         }
@@ -334,7 +334,7 @@ public class TclObj: SequenceType {
     
     // lappend - append an array of Double to the Tcl object list
     // (flattens them out)
-    public func lappend (array: [Double]) throws {
+    public func lappend (_ array: [Double]) throws {
         try array.forEach {
             try self.lappend($0)
         }
@@ -342,7 +342,7 @@ public class TclObj: SequenceType {
     
     // lappend - append an array of String to the Tcl object list
     // (flattens them out)
-    public func lappend (array: [String]) throws {
+    public func lappend (_ array: [String]) throws {
         try array.forEach {
             try self.lappend($0)
         }
@@ -352,14 +352,14 @@ public class TclObj: SequenceType {
     public func llength () throws -> Int {
         var count: Int32 = 0
         if (Tcl_ListObjLength(interp, obj, &count) == TCL_ERROR) {
-            throw TclError.Error
+            throw TclError.error
         }
         return Int(count)
     }
     
     // lindex - return the nth element treating obj as a list, if possible, and return a Tcl_Obj *
-    func lindex (index: Int) throws -> UnsafeMutablePointer<Tcl_Obj>? {
-        var tmpObj: UnsafeMutablePointer<Tcl_Obj> = nil
+    func lindex (_ index: Int) throws -> UnsafeMutablePointer<Tcl_Obj>? {
+        var tmpObj: UnsafeMutablePointer<Tcl_Obj>? = nil
         var index = index;
         if(index < 0) {
             if let count = try? self.llength() {
@@ -367,40 +367,40 @@ public class TclObj: SequenceType {
             }
         }
         if Tcl_ListObjIndex(interp, obj, Int32(index), &tmpObj) == TCL_ERROR {
-            throw TclError.Error
+            throw TclError.error
         }
         return tmpObj
     }
     
     // lindex returning a TclObj object or nil
-    public func lindex (index: Int) throws -> TclObj? {
+    public func lindex (_ index: Int) throws -> TclObj? {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         return TclObj(tmpObj!, Interp: Interp)
     }
     
     // lindex returning an Int or nil
-    public func lindex (index: Int) throws -> Int {
+    public func lindex (_ index: Int) throws -> Int {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
         return try tclobjp_to_Int(tmpObj, interp: interp)
     }
     
     // lindex returning a Double or nil
-    public func lindex (index: Int) throws -> Double {
+    public func lindex (_ index: Int) throws -> Double {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
         return try tclobjp_to_Double(tmpObj, interp: interp)
     }
     
     // lindex returning a String or nil
-    public func lindex (index: Int) throws -> String {
+    public func lindex (_ index: Int) throws -> String {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
         return try tclobjp_to_String(tmpObj)
     }
     
     // lindex returning a Bool or nil
-    public func lindex (index: Int) throws -> Bool {
+    public func lindex (_ index: Int) throws -> Bool {
         let tmpObj: UnsafeMutablePointer<Tcl_Obj>? = try self.lindex(index)
         
         return try tclobjp_to_Bool(tmpObj, interp: interp)
@@ -411,13 +411,13 @@ public class TclObj: SequenceType {
         var dictionary: [String: TclObj] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        for i in 0.stride(to: objc-1, by: 2) {
-            let keyString = try tclobjp_to_String(objv[i])
-            dictionary[keyString] = TclObj(objv[i+1], Interp: Interp)
+        for i in stride(from: 0, to: Int(objc)-1, by: 2) {
+            let keyString = try tclobjp_to_String(objv![i])
+            dictionary[keyString] = TclObj(objv![i+1]!, Interp: Interp)
         }
         return dictionary
     }
@@ -427,12 +427,12 @@ public class TclObj: SequenceType {
         var array: [String] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
         for i in 0..<Int(objc) {
-            try array.append(tclobjp_to_String(objv[i]))
+            try array.append(tclobjp_to_String(objv![i]))
         }
         
         return array
@@ -443,12 +443,12 @@ public class TclObj: SequenceType {
         var array: [Int] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
         for i in 0..<Int(objc) {
-            let longVal = try tclobjp_to_Int(objv[i], interp: interp)
+            let longVal = try tclobjp_to_Int(objv![i], interp: interp)
             array.append(longVal)
         }
         
@@ -460,12 +460,12 @@ public class TclObj: SequenceType {
         var array: [Double] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
         for i in 0..<Int(objc) {
-            let doubleVal = try tclobjp_to_Double(objv[i], interp: interp)
+            let doubleVal = try tclobjp_to_Double(objv![i], interp: interp)
             array.append(doubleVal)
             
         }
@@ -480,26 +480,26 @@ public class TclObj: SequenceType {
         var array: [TclObj] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
         for i in 0..<Int(objc) {
-            array.append(TclObj(objv[i], Interp: Interp))
+            array.append(TclObj((objv?[i])!, Interp: Interp))
         }
         
         return array
     }
     
     // Utility function for lrange
-    private func normalize_range(first: Int, _ last: Int, _ count: Int) -> ( Int, Int) {
+    private func normalize_range(_ first: Int, _ last: Int, _ count: Int) -> ( Int, Int) {
         var start: Int = first
         var end: Int = last
         
-        if start < 0 { start = max(0, count + start) }
+        if start < 0 { start = Swift.max(0, count + start) }
         else if start >= count { start = count - 1 }
         
-        if end < 0 { end = max(0, count + end) }
+        if end < 0 { end = Swift.max(0, count + end) }
         else if end >= count { end = count  - 1}
         
         if end < start { end = start }
@@ -508,54 +508,54 @@ public class TclObj: SequenceType {
     }
     
     // lrange returning a TclObj array
-    public func lrange (range: Range<Int>) throws -> [TclObj] {
+    public func lrange (_ range: CountableClosedRange<Int>) throws -> [TclObj] {
         var array: [TclObj] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        let (start, end) = normalize_range(range.startIndex, range.endIndex-1, Int(objc))
+        let (start, end) = normalize_range(range.lowerBound, range.upperBound-1, Int(objc))
         
         for i in start...end {
-            array.append(TclObj(objv[i], Interp: Interp))
+            array.append(TclObj((objv?[i])!, Interp: Interp))
         }
         
         return array
     }
     
     // lrange returning a string array
-    public func lrange (range: Range<Int>) throws -> [String] {
+    public func lrange (_ range: CountableClosedRange<Int>) throws -> [String] {
         var array: [String] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        let (start, end) = normalize_range(range.startIndex, range.endIndex-1, Int(objc))
+        let (start, end) = normalize_range(range.lowerBound, range.upperBound-1, Int(objc))
         
         for i in start...end {
-            try array.append(tclobjp_to_String(objv[i]))
+            try array.append(tclobjp_to_String(objv![i]))
         }
         
         return array
     }
     
     // lrange returning an integer array
-    public func lrange (range: Range<Int>) throws -> [Int] {
+    public func lrange (_ range: CountableClosedRange<Int>) throws -> [Int] {
         var array: [Int] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        let (start, end) = normalize_range(range.startIndex, range.endIndex - 1, Int(objc))
+        let (start, end) = normalize_range(range.lowerBound, range.upperBound - 1, Int(objc))
         
         for i in start...end {
-            let longVal = try tclobjp_to_Int(objv[i], interp: interp)
+            let longVal = try tclobjp_to_Int(objv![i], interp: interp)
             array.append(longVal)
         }
         
@@ -563,18 +563,18 @@ public class TclObj: SequenceType {
     }
     
     // lrange returning a float array
-    public func lrange (range: Range<Int>) throws -> [Double] {
+    public func lrange (_ range: CountableClosedRange<Int>) throws -> [Double] {
         var array: [Double] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        let (start, end) = normalize_range(range.startIndex, range.endIndex - 1, Int(objc))
+        let (start, end) = normalize_range(range.lowerBound, range.upperBound - 1, Int(objc))
         
         for i in start...end {
-            let doubleVal = try tclobjp_to_Double(objv[i], interp: interp)
+            let doubleVal = try tclobjp_to_Double(objv![i], interp: interp)
             array.append(doubleVal)
         }
     
@@ -582,18 +582,18 @@ public class TclObj: SequenceType {
     }
     
     // lrange returning a boolean array
-    public func lrange (range: Range<Int>) throws -> [Bool] {
+    public func lrange (_ range: CountableClosedRange<Int>) throws -> [Bool] {
         var array: [Bool] = []
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        let (start, end) = normalize_range(range.startIndex, range.endIndex-1, Int(objc))
+        let (start, end) = normalize_range(range.lowerBound, range.upperBound-1, Int(objc))
         
         for i in start...end {
-            let boolVal = try tclobjp_to_Bool(objv[i], interp: interp)
+            let boolVal = try tclobjp_to_Bool(objv![i], interp: interp)
             array.append(boolVal)
         }
         
@@ -605,13 +605,13 @@ public class TclObj: SequenceType {
         var dictionary: [String: String] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        for i in 0.stride(to: Int(objc-1), by: 2) {
-            let keyString = try tclobjp_to_String(objv[i])
-            let valueString = try tclobjp_to_String(objv[i+1])
+        for i in stride(from: 0, to: Int(objc-1), by: 2) {
+            let keyString = try tclobjp_to_String(objv![i])
+            let valueString = try tclobjp_to_String(objv![i+1])
             
             dictionary[keyString] = valueString
         }
@@ -623,13 +623,13 @@ public class TclObj: SequenceType {
         var dictionary: [String: Int] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        for i in 0.stride(to: Int(objc-1), by: 2) {
-            let keyString = try tclobjp_to_String(objv[i])
-            let val = try tclobjp_to_Int(objv[i+1])
+        for i in stride(from: 0, to: Int(objc-1), by: 2) {
+            let keyString = try tclobjp_to_String(objv![i])
+            let val = try tclobjp_to_Int(objv![i+1])
             dictionary[keyString] = val
         }
         return dictionary
@@ -640,13 +640,13 @@ public class TclObj: SequenceType {
         var dictionary: [String: Double] = [:]
         
         var objc: Int32 = 0
-        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>> = nil
+        var objv: UnsafeMutablePointer<UnsafeMutablePointer<Tcl_Obj>?>? = nil
         
-        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.Error}
+        if Tcl_ListObjGetElements(interp, obj, &objc, &objv) == TCL_ERROR {throw TclError.error}
         
-        for i in 0.stride(to: Int(objc-1), by: 2) {
-            let keyString = try tclobjp_to_String(objv[i])
-            let val = try tclobjp_to_Double(objv[i+1])
+        for i in stride(from: 0, to: Int(objc-1), by: 2) {
+            let keyString = try tclobjp_to_String(objv![i])
+            let val = try tclobjp_to_Double(objv![i+1])
             
             dictionary[keyString] = val
         }
@@ -667,7 +667,7 @@ public class TclObj: SequenceType {
         }
     }
     
-    public subscript(range: Range<Int>) -> [TclObj]? {
+    public subscript(range: CountableClosedRange<Int>) -> [TclObj]? {
         get {
             if let result : [TclObj] = try? self.lrange(range) {
                 return result
@@ -695,7 +695,7 @@ public class TclObj: SequenceType {
         }
     }
   
-    public subscript(range: Range<Int>) -> [String]? {
+    public subscript(range: CountableClosedRange<Int>) -> [String]? {
         get {
             if let result : [String] = try? self.lrange(range) {
                 return result
@@ -723,7 +723,7 @@ public class TclObj: SequenceType {
         }
     }
     
-    public subscript(range: Range<Int>) -> [Double]? {
+    public subscript(range: CountableClosedRange<Int>) -> [Double]? {
         get {
             if let result : [Double] = try? self.lrange(range) {
                 return result
@@ -751,7 +751,7 @@ public class TclObj: SequenceType {
         }
     }
     
-    public subscript(range: Range<Int>) -> [Int]? {
+    public subscript(range: CountableClosedRange<Int>) -> [Int]? {
         get {
             if let result : [Int] = try? self.lrange(range) {
                 return result
@@ -779,7 +779,7 @@ public class TclObj: SequenceType {
         }
     }
     
-    public subscript(range: Range<Int>) -> [Bool]? {
+    public subscript(range: CountableClosedRange<Int>) -> [Bool]? {
         get {
             if let result : [Bool] = try? self.lrange(range) {
                 return result
@@ -794,11 +794,11 @@ public class TclObj: SequenceType {
     }
     
     // lreplace(range, list) and variants
-    func lreplace (range: Range<Int>, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
-        guard (Tcl_ListObjReplace (interp, obj, Int32(range.startIndex), Int32(range.endIndex-range.startIndex), Int32(objv.count), objv) != TCL_ERROR) else { throw TclError.Error }
+    func lreplace (_ range: CountableClosedRange<Int>, objv: [UnsafeMutablePointer<Tcl_Obj>?]) throws {
+        guard (Tcl_ListObjReplace (interp, obj, Int32(range.lowerBound), Int32(range.upperBound-range.lowerBound), Int32(objv.count), objv) != TCL_ERROR) else { throw TclError.error }
     }
     
-    public func lreplace (range: Range<Int>, list: [TclObj]) throws {
+    public func lreplace (_ range: CountableClosedRange<Int>, list: [TclObj]) throws {
         try self.lreplace(range, objv: list.map { $0.obj })
     }
     
@@ -806,49 +806,49 @@ public class TclObj: SequenceType {
     // Orginally used self.lreplace(range, objv: list.map { TclObj($0, Interp: Interp).map } )
     // This allocated and deallocated the TclObj for each step of the map, so passing freed memory to Tcl_ListObjReplace above
     // Creating a [ TclObj ] meant that none of the TclObjs are deallocated until lreplace returns.
-    public func lreplace (range: Range<Int>, list: [String]) throws {
+    public func lreplace (_ range: CountableClosedRange<Int>, list: [String]) throws {
         try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func lreplace (range: Range<Int>, list: [Int]) throws {
+    public func lreplace (_ range: CountableClosedRange<Int>, list: [Int]) throws {
         try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func lreplace (range: Range<Int>, list: [Double]) throws {
+    public func lreplace (_ range: CountableClosedRange<Int>, list: [Double]) throws {
         try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func lreplace (range: Range<Int>, list: [Bool]) throws {
+    public func lreplace (_ range: CountableClosedRange<Int>, list: [Bool]) throws {
         try self.lreplace(range, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    func linsert (index: Int, objv: [UnsafeMutablePointer<Tcl_Obj>]) throws {
-        guard (Tcl_ListObjReplace (interp, obj, Int32(index), Int32(0), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.Error}
+    func linsert (_ index: Int, objv: [UnsafeMutablePointer<Tcl_Obj>?]) throws {
+        guard (Tcl_ListObjReplace (interp, obj, Int32(index), Int32(0), Int32(objv.count), objv) != TCL_ERROR) else {throw TclError.error}
     }
     
-    public func linsert (index: Int, list: [TclObj]) throws {
+    public func linsert (_ index: Int, list: [TclObj]) throws {
         try self.linsert(index, objv: list.map { $0.obj })
     }
     
-    public func linsert (index: Int, list: [String]) throws {
+    public func linsert (_ index: Int, list: [String]) throws {
         try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func linsert (index: Int, list: [Int]) throws {
+    public func linsert (_ index: Int, list: [Int]) throws {
         try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func linsert (index: Int, list: [Double]) throws {
+    public func linsert (_ index: Int, list: [Double]) throws {
         try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func linsert (index: Int, list: [Bool]) throws {
+    public func linsert (_ index: Int, list: [Bool]) throws {
         try self.linsert(index, list: list.map { TclObj($0, Interp: Interp) })
     }
     
-    public func generate() -> AnyGenerator<TclObj> {
+    public func makeIterator() -> AnyIterator<TclObj> {
         var next = 0
-        return AnyGenerator<TclObj> {
+        return AnyIterator<TclObj> {
             guard let length = try? self.llength() else {
                 return nil
             }
