@@ -40,8 +40,8 @@ print(interp.result)
     try print(x5.get() as Double)
     
     // List test
-    try interp.rawEval(["set", "a", "{illegal {string"])
-    try interp.rawEval("puts [list a = $a]")
+    try interp.rawEval(list: ["set", "a", "{illegal {string"])
+    try interp.rawEval(code: "puts [list a = $a]")
     
     func foo (_ interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
@@ -60,15 +60,15 @@ print(interp.result)
     interp.create_command("foo", foo)
     
     do {
-        try interp.rawEval("foo")
+        try interp.rawEval(code: "foo")
     }
     
     interp.create_command("avg", avg)
     do {
-        try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
+        try interp.rawEval(code: "puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
     
-    try interp.rawEval("puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
+    try interp.rawEval(code: "puts \"the average is [avg 1 2 3 4 5 foo 7 8 9 10 77]\"")
     
     let EARTH_RADIUS_MILES = 3963.0
     
@@ -115,7 +115,7 @@ print(interp.result)
 
     
     do {
-        try interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")
+        try interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 47.4498889 -122.3117778]\"")
     }
     
     print("importing a swift array")
@@ -207,7 +207,7 @@ print(interp.result)
     print("sticking something extra into the tcl_platform array")
     try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
 
-    do {try interp.rawEval("array get tcl_platform")}
+    do {try interp.rawEval(code: "array get tcl_platform")}
     var dict: [String:String] = try! interp.resultObj.get()
     print(dict)
     var version = dict["osVersion"]!
@@ -219,8 +219,8 @@ print(interp.result)
     print("")
 
     print("intentionally calling a swift extension with a bad argument")
-    let _ = try? interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
-    let _ = try? interp.rawEval("puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444]\"")
+    let _ = try? interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
+    let _ = try? interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444]\"")
     
     // Testing generated Tcl code
     print("")

@@ -38,7 +38,7 @@ public class TclInterp {
     //
     // Returns void, throws a TclError or TclResultCode
     //
-    public func rawEval(_ code: String, caller: String = #function) throws {
+    public func rawEval(code: String, caller: String = #function) throws {
         let ret = Tcl_Eval(interp, code)
         
         switch ret {
@@ -66,40 +66,40 @@ public class TclInterp {
     }
 
     // Utility function to concatenate a list of strings into a Tcl list.
-    public func list(_ list: [String]) throws -> String {
+    public func list(from list: [String]) throws -> String {
         let obj: TclObj = self.newObject(list)
         return try obj.get()
     }
     
     // Safer way to call rawEval, passing a list of strings
-    public func rawEval(_ list: [String], caller: String = #function) throws {
-        try rawEval(self.list(list), caller: caller)
+    public func rawEval(list: [String], caller: String = #function) throws {
+        try rawEval(code: self.list(from: list), caller: caller)
     }
     
     // eval - evaluate the string via the Tcl Interpreter, return the Tcl result of the
     // evaluation. Throws TclError or TclControlFlow.
     public func eval(_ code: String, caller: String = #function) throws -> String {
-        try self.rawEval(code, caller: caller)
+        try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
     public func eval(_ code: String, caller: String = #function) throws -> Int {
-        try self.rawEval(code, caller: caller)
+        try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
     public func eval(_ code: String, caller: String = #function) throws -> Double {
-        try self.rawEval(code, caller: caller)
+        try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
     public func eval(_ code: String, caller: String = #function) throws -> Bool {
-        try self.rawEval(code, caller: caller)
+        try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
     public func eval(_ code: String, caller: String = #function) throws -> TclObj {
-        try self.rawEval(code, caller: caller)
+        try self.rawEval(code: code, caller: caller)
         return self.resultObj
     }
     

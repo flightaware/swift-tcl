@@ -9,7 +9,7 @@
 import Foundation
 
 func import_file(_ Interp: TclInterp, file: String) throws {
-    try Interp.rawEval(["source", file])
+    try Interp.rawEval(list: ["source", file])
 }
 
 func impork(_ Interp: TclInterp) {
