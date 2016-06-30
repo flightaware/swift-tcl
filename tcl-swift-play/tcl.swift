@@ -234,7 +234,7 @@ func tclobjp_to_Bool (_ tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeM
     return boolVal == 0 ? true : false
 }
 
-// string_to_tclobjp - create a Tcl_Obj * from a Swift String
+// tclobjp(string:) - create a Tcl_Obj * from a Swift String
 
 func tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> {
     return Tcl_NewStringObj (string, -1)
