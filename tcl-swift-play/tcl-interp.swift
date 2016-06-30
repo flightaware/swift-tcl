@@ -78,27 +78,27 @@ public class TclInterp {
     
     // eval - evaluate the string via the Tcl Interpreter, return the Tcl result of the
     // evaluation. Throws TclError or TclControlFlow.
-    public func eval(_ code: String, caller: String = #function) throws -> String {
+    public func eval(code: String, caller: String = #function) throws -> String {
         try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
-    public func eval(_ code: String, caller: String = #function) throws -> Int {
+    public func eval(code: String, caller: String = #function) throws -> Int {
         try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
-    public func eval(_ code: String, caller: String = #function) throws -> Double {
+    public func eval(code: String, caller: String = #function) throws -> Double {
         try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
-    public func eval(_ code: String, caller: String = #function) throws -> Bool {
+    public func eval(code: String, caller: String = #function) throws -> Bool {
         try self.rawEval(code: code, caller: caller)
         return try self.getResult()
     }
     
-    public func eval(_ code: String, caller: String = #function) throws -> TclObj {
+    public func eval(code: String, caller: String = #function) throws -> TclObj {
         try self.rawEval(code: code, caller: caller)
         return self.resultObj
     }
