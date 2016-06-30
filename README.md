@@ -134,7 +134,7 @@ Evaluate the code, don't return anything.
 
 Safely create a Tcl list from an array of Swift strings.
 
-* `try interp.RawEval(code: [String])`
+* `try interp.RawEval(list: [String])`
 
 Safer version of rawEval that accepts a string array and converts it to a Tcl list before evaluating it, avoiding potential issues from trying to quote Tcl code ad-hoc in swift.
 
