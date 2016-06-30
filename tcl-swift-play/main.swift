@@ -84,12 +84,13 @@ print(interp.result)
         let lat1 = fa_degrees_radians (lat1)
         let lat2 = fa_degrees_radians (lat2)
         
-        let a = sin (dLat / 2) * sin (dLat / 2) + sin (dLon / 2) * sin (dLon / 2) * cos (lat1) * cos (lat2)
+        let sin2 = sin (dLat / 2) * sin (dLat / 2)
+        let a = sin2 + sin (dLon / 2) * sin (dLon / 2) * cos (lat1) * cos (lat2)
         let c = 2 * atan2 (sqrt (a), sqrt (1 - a))
         var distance = EARTH_RADIUS_MILES * c
         
         // if result was not a number
-        if (isnan(distance)) {
+        if (distance.isNaN) {
             distance = 0
         }
         
