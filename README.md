@@ -42,9 +42,9 @@ let tclVersion: Double = try interp.get(variable: "tcl_version")
 print("Tcl version is \(tclVersion)")
 ```
 
-Y'see how getVar just gave you the data type you asked for with no funny business?  How cool is that?  Also note how we use *try* because getVar will fail if the variable doesn't exist.
+Y'see how get just gave you the data type you asked for with no funny business?  How cool is that?  Also note how we use *try* because get will fail if the variable doesn't exist.
 
-Likewise TclInterp's getVar can fetch elements out of an array:
+Likewise TclInterp's get can fetch elements out of an array:
 
 ```swift
 var machine: String = try interp.get(variable: "tcl_platform", element: "machine")
