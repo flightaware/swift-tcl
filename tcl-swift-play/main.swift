@@ -57,13 +57,13 @@ print(interp.result)
         return(sum / Double(objv.count))
     }
     
-    interp.create_command("foo", foo)
+    interp.createCommand(named: "foo", using: foo)
     
     do {
         try interp.rawEval(code: "foo")
     }
     
-    interp.create_command("avg", avg)
+    interp.createCommand(named: "avg", using: avg)
     do {
         try interp.rawEval(code: "puts \"the average is [avg 1 2 3 4 5 6 7 8 9 10 77]\"")
     }
@@ -111,7 +111,7 @@ print(interp.result)
         return distance
     }
     
-    interp.create_command("fa_latlongs_to_distance", fa_latlongs_to_distance_cmd)
+    interp.createCommand(named: "fa_latlongs_to_distance", using: fa_latlongs_to_distance_cmd)
 
     
     do {

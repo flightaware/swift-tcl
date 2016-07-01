@@ -803,7 +803,7 @@ public class TclObj: Sequence {
     }
     
     // IMPORTANT NOTE
-    // Orginally used self.lreplace(range, objv: list.map { TclObj($0, Interp: Interp).map } )
+    // Orginally used self.lreplace(range, objv: list.map { TclObj($0, Interp: Interp).obj } )
     // This allocated and deallocated the TclObj for each step of the map, so passing freed memory to Tcl_ListObjReplace above
     // Creating a [ TclObj ] meant that none of the TclObjs are deallocated until lreplace returns.
     public func lreplace (_ range: CountableClosedRange<Int>, list: [String]) throws {

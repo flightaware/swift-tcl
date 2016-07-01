@@ -83,7 +83,7 @@ func avg (interp: TclInterp, objv: [TclObj]) -> Double {
 	return(sum / Double(objv.count))
 }
 
-interp.create_command("avg", avg)
+interp.createCommand(named: "avg", using: avg)
 ```
 
 Errors trying to convert Tcl objects to a data type such as trying to convert an alphanumeric string to a Double are thrown by the underlying helper functions and caught by Swift Tcl if you don't catch them in your Swift code.  You get nice native error messages.
@@ -175,7 +175,7 @@ Get the Interpreter result as the corresponding type.
 
 ### Registering commands
 
-* `interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
+* `interp.createCommand(named: String, using: SwiftTclFuncType)`
 
 Create a new command in the Tcl interpreter with the specified name: when the name is invoked from Tcl the corresponding Swift function will be invoked to perform the command. The Swift function should be of type (tclInterp, [TclObj]) -> Type, where Type can be String, Double, Int, or Bool. Eg:
 
