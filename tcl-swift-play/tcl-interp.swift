@@ -52,11 +52,11 @@ public class TclInterp {
             self.addErrorInfo(" called from Swift '\(caller)'")
             if printErrors {
                 print("Error: \(self.result)")
-                let errorInfo: String = try self.getVar("errorInfo")
+                let errorInfo: String = try self.get(variable: "errorInfo")
                 print(errorInfo)
             }
             
-            let errorCode = self.getVar("errorCode") ?? ""
+            let errorCode = self.get(variable: "errorCode") ?? ""
             throw TclError.errorMessage(message: self.result, errorCode: errorCode)
         case TCL_OK:
             break
@@ -175,7 +175,7 @@ public class TclInterp {
     // UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil if it doesn't exist.
     // if elementName is specified, var is an element of an array, otherwise var is a variable
     
-    private func getVar(_ varName: String, elementName: String? = nil, flags: VariableFlags = []) -> UnsafeMutablePointer<Tcl_Obj> {
+    private func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) -> UnsafeMutablePointer<Tcl_Obj> {
         if (elementName == nil) {
             return Tcl_GetVar2Ex(interp, varName, nil, flags.rawValue)
         } else {
@@ -184,8 +184,8 @@ public class TclInterp {
     }
     
     // getVar - return a Tcl variable or  in a TclObj object, or nil
-    public func getVar(_ varName: String, elementName: String? = nil, flags: VariableFlags = []) -> TclObj? {
-        let obj: UnsafeMutablePointer<Tcl_Obj>? = self.getVar(varName, elementName: elementName, flags: flags)
+    public func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) -> TclObj? {
+        let obj: UnsafeMutablePointer<Tcl_Obj>? = self.get(variable: varName, element: elementName, flags: flags)
         
         guard (obj != nil) else {return nil}
         
@@ -193,30 +193,30 @@ public class TclInterp {
     }
     
     // getVar - return Tcl variable or array element as an Int or throw an error
-    public func getVar(_ varName: String, elementName: String? = nil, flags: VariableFlags = []) throws -> Int {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.getVar(varName, elementName: elementName, flags: flags)
+    public func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) throws -> Int {
+        let obj: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: varName, element: elementName, flags: flags)
         
         return try tclobjp_to_Int(obj)
     }
     
     // getVar - return a var as a Double, or throw an error if unable
-    public func getVar(_ arrayName: String, elementName: String? = nil) throws -> Double {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+    public func get(variable arrayName: String, element elementName: String? = nil) throws -> Double {
+        let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
         
         return try tclobjp_to_Double(objp)
     }
     
     // getVar - return a TclObj containing var as a String or throw an error if unable
     // the error seems unlikely but could be like a UTF-8 conversion error or something.
-    public func getVar(_ arrayName: String, elementName: String? = nil) throws -> String {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+    public func get(variable arrayName: String, element elementName: String? = nil) throws -> String {
+        let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
         
         return try tclobjp_to_String(objp)
     }
     
     // getVar - return a TclObj containing var as a String, or nil
-    public func getVar(_ arrayName: String, elementName: String? = nil)  -> String? {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.getVar(arrayName, elementName: elementName)
+    public func get(variable arrayName: String, element elementName: String? = nil)  -> String? {
+        let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
         
         do {
             return try tclobjp_to_String(objp)
@@ -228,7 +228,7 @@ public class TclInterp {
     // setVar - set a variable or array element in the Tcl interpreter
     // from an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *)
     // returns true or false based on whether it succeeded or not
-    func setVar(_ varName: String, elementName: String? = nil, value: UnsafeMutablePointer<Tcl_Obj>, flags: VariableFlags = []) throws {
+    func set(variable varName: String, element elementName: String? = nil, value: UnsafeMutablePointer<Tcl_Obj>, flags: VariableFlags = []) throws {
         let ret = Tcl_SetVar2Ex(interp, varName, elementName!, value, flags.rawValue)
         if ret == nil {
             throw TclError.error
@@ -236,64 +236,64 @@ public class TclInterp {
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
-    public func setVar(_ varName: String, elementName: String? = nil, value: TclObj, flags: VariableFlags = []) throws {
-        return try self.setVar(varName, elementName: elementName, value: value.obj, flags: flags)
+    public func set(variable varName: String, element elementName: String? = nil, value: TclObj, flags: VariableFlags = []) throws {
+        return try self.set(variable: varName, element: elementName, value: value.obj, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified String
-    public func setVar(_ varName: String, elementName: String? = nil, value: String, flags: VariableFlags = []) throws {
+    public func set(variable varName: String, element elementName: String? = nil, value: String, flags: VariableFlags = []) throws {
         let obj = try tclobjp(string: value)
-        return try self.setVar(varName, elementName: elementName, value: obj, flags: flags)
+        return try self.set(variable: varName, element: elementName, value: obj, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Int
-    public func setVar(_ varName: String, elementName: String? = nil, value: Int, flags: VariableFlags = []) throws {
+    public func set(variable varName: String, element elementName: String? = nil, value: Int, flags: VariableFlags = []) throws {
         let obj = Tcl_NewIntObj(Int32(value))
-        return try self.setVar(varName, elementName: elementName, value: obj!, flags: flags)
+        return try self.set(variable: varName, element: elementName, value: obj!, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Bool
-    public func setVar(_ varName: String, elementName: String? = nil, value: Bool, flags: VariableFlags = []) throws {
+    public func set(variable varName: String, element elementName: String? = nil, value: Bool, flags: VariableFlags = []) throws {
         let obj = Tcl_NewBooleanObj(value ? 1 : 0)
-        return try self.setVar(varName, elementName: elementName, value: obj!, flags: flags)
+        return try self.set(variable: varName, element: elementName, value: obj!, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified Double
-    public func setVar(_ varName: String, elementName: String? = nil, value: Double, flags: VariableFlags = []) throws {
+    public func set(variable varName: String, element elementName: String? = nil, value: Double, flags: VariableFlags = []) throws {
         let obj = Tcl_NewDoubleObj(value)
-        return try self.setVar(varName, elementName: elementName, value: obj!, flags: flags)
+        return try self.set(variable: varName, element: elementName, value: obj!, flags: flags)
     }
     
     // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
-    public func setVar(_ varName: String, elementName: String? = nil, obj: TclObj, flags: VariableFlags = []) throws {
-        return try self.setVar(varName, elementName: elementName, value: obj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
+    public func set(variable varName: String, element elementName: String? = nil, obj: TclObj, flags: VariableFlags = []) throws {
+        return try self.set(variable: varName, element: elementName, value: obj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
     }
     
     // dictionaryToArray - set a String/TclObj dictionary into a Tcl array
-    public func dictionaryToArray (_ arrayName: String, dictionary: [String: TclObj], flags: VariableFlags = []) throws {
+    public func set (array arrayName: String, from dictionary: [String: TclObj], flags: VariableFlags = []) throws {
         try dictionary.forEach {
-            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
         }
     }
     
     // dictionaryToArray - set a String/String dictionary into a Tcl array
-    public func dictionaryToArray (_ arrayName: String, dictionary: [String: String], flags: VariableFlags = []) throws {
+    public func set(array arrayName: String, from dictionary: [String: String], flags: VariableFlags = []) throws {
         try dictionary.forEach {
-            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
         }
     }
     
     // dictionaryToArray - set a String/Int dictionary into a Tcl array
-    public func dictionaryToArray (_ arrayName: String, dictionary: [String: Int], flags: VariableFlags = []) throws {
+    public func set(array arrayName: String, from dictionary: [String: Int], flags: VariableFlags = []) throws {
         try dictionary.forEach {
-            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
         }
     }
     
     // dictionaryToArray - set a String/Double dictionary into a Tcl array
-    public func dictionaryToArray (_ arrayName: String, dictionary: [String: Double], flags: VariableFlags = []) throws {
+    public func set (array arrayName: String, dictionary: [String: Double], flags: VariableFlags = []) throws {
         try dictionary.forEach {
-            try setVar(arrayName, elementName: $0.0, value: $0.1, flags: flags)
+            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
         }
     }
     

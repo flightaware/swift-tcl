@@ -197,15 +197,15 @@ print(interp.result)
     }
 
     print("\ndigging variables out of the Tcl interpreter")
-    var autoPath: String = try! interp.getVar("auto_path")
+    var autoPath: String = try! interp.get(variable: "auto_path")
     print("auto_path is '\(autoPath)'")
 
-    let tclVersion: Double = try! interp.getVar("tcl_version")
+    let tclVersion: Double = try! interp.get(variable: "tcl_version")
     print("Tcl version is \(tclVersion)")
     print("")
 
     print("sticking something extra into the tcl_platform array")
-    try! interp.setVar("tcl_platform", elementName: "swift", value: "enabled")
+    try! interp.set(variable: "tcl_platform", element: "swift", value: "enabled")
 
     do {try interp.rawEval(code: "array get tcl_platform")}
     var dict: [String:String] = try! interp.resultObj.get()
@@ -213,8 +213,8 @@ print(interp.result)
     var version = dict["osVersion"]!
     print("Your OS is \(dict["os"]!), running version \(version)")
 
-    var machine: String = interp.getVar("tcl_platform", elementName: "machine")!
-    var byteOrder: String = interp.getVar("tcl_platform", elementName: "byteOrder")!
+    var machine: String = interp.get(variable: "tcl_platform", element: "machine")!
+    var byteOrder: String = interp.get(variable: "tcl_platform", element: "byteOrder")!
     print("Your machine is \(machine) and your byte order is \(byteOrder)")
     print("")
 

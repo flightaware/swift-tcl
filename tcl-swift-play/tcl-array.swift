@@ -30,7 +30,7 @@ public class TclArray: Sequence {
     }
     
     public func set(_ dict: [String : String]) throws {
-        try Interp.dictionaryToArray(name, dictionary: dict)
+        try Interp.set(array: name, from: dict)
     }
     
     // init - initialize from string
@@ -52,7 +52,7 @@ public class TclArray: Sequence {
     }
     
     public func set(_ dict: [String : TclObj]) throws {
-        try Interp.dictionaryToArray(name, dictionary: dict)
+        try Interp.set(array: name, from: dict)
     }
     
     // names - generate a list of names for the keys in the array.
@@ -88,27 +88,27 @@ public class TclArray: Sequence {
     }
     
     public func getValue(_ key: String) -> TclObj? {
-        return Interp.getVar(name, elementName: key)
+        return Interp.get(variable: name, element: key)
     }
     
     public func setValue(_ key: String, obj: TclObj) throws {
-        try Interp.setVar(name, elementName: key, obj: obj)
+        try Interp.set(variable: name, element: key, obj: obj)
     }
     
     public func setValue(_ key: String, value: String) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+        try Interp.set(variable: name, element: key, value: value)
     }
     
     public func setValue(_ key: String, value: Int) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+        try Interp.set(variable: name, element: key, value: value)
     }
     
     public func setValue(_ key: String, value: Double) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+        try Interp.set(variable: name, element: key, value: value)
     }
     
     public func setValue(_ key: String, value: Bool) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+        try Interp.set(variable: name, element: key, value: value)
     }
 
     public subscript (key: String) -> TclObj? {
