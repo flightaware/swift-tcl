@@ -662,7 +662,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? [newValue!] : []
+            var list: [TclObj]
+            if let value = newValue {
+                list = [value]
+            } else {
+                list = []
+            }
             do { try lreplace(index...index, list: list) } catch { }
         }
     }
@@ -676,7 +681,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? newValue! : []
+            var list: [TclObj]
+            if let value = newValue {
+                list = value
+            } else {
+                list = []
+            }
             do { try lreplace(range, list: list) } catch { }
         }
     }
@@ -690,7 +700,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? [newValue!] : []
+            var list: [String]
+            if let value = newValue {
+                list = [value]
+            } else {
+                list = []
+            }
             do { try lreplace(index...index, list: list) } catch { }
         }
     }
@@ -704,7 +719,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? newValue! : []
+            var list: [String]
+            if let value = newValue {
+                list = value
+            } else {
+                list = []
+            }
             do { try lreplace(range, list: list) } catch { }
         }
     }
@@ -718,7 +738,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? [newValue!] : []
+            var list: [Double]
+            if let value = newValue {
+                list = [value]
+            } else {
+                list = []
+            }
             do { try lreplace(index...index, list: list) } catch { }
         }
     }
@@ -732,7 +757,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? newValue! : []
+            var list: [Double]
+            if let value = newValue {
+                list = value
+            } else {
+                list = []
+            }
             do { try lreplace(range, list: list) } catch { }
         }
     }
@@ -746,7 +776,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? [newValue!] : []
+            var list: [Int]
+            if let value = newValue {
+                list = [value]
+            } else {
+                list = []
+            }
             do { try lreplace(index...index, list: list) } catch { }
         }
     }
@@ -760,7 +795,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? newValue! : []
+            var list: [Int]
+            if let value = newValue {
+                list = value
+            } else {
+                list = []
+            }
             do { try lreplace(range, list: list) } catch { }
         }
     }
@@ -774,7 +814,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? [newValue!] : []
+            var list: [Bool]
+            if let value = newValue {
+                list = [value]
+            } else {
+                list = []
+            }
             do { try lreplace(index...index, list: list) } catch { }
         }
     }
@@ -788,7 +833,12 @@ public class TclObj: SequenceType {
             }
         }
         set {
-            let list = newValue != nil ? newValue! : []
+            var list: [Bool]
+            if let value = newValue {
+                list = value
+            } else {
+                list = []
+            }
             do { try lreplace(range, list: list) } catch { }
         }
     }

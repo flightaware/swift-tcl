@@ -176,10 +176,10 @@ public class TclInterp {
     // if elementName is specified, var is an element of an array, otherwise var is a variable
     
     private func getVar(varName: String, elementName: String? = nil, flags: VariableFlags = []) -> UnsafeMutablePointer<Tcl_Obj> {
-        if (elementName == nil) {
-            return Tcl_GetVar2Ex(interp, varName, nil, flags.rawValue)
+        if let elementName = elementName {
+            return Tcl_GetVar2Ex(interp, varName, elementName, flags.rawValue)
         } else {
-            return Tcl_GetVar2Ex(interp, varName, elementName!, flags.rawValue)
+            return Tcl_GetVar2Ex(interp, varName, nil, flags.rawValue)
         }
     }
     

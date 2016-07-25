@@ -183,11 +183,11 @@ func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) throws -> Strin
 
 // tclobjp_to_Int - return the value of a Tcl_Obj * as an Int or nil
 
-func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Int {
+func tclobjp_to_Int (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Int {
     var longVal: CLong = 0
-    guard tclObjP != nil else { throw TclError.NullPointer }
+    guard let tclObjP = possiblyNullPointer else { throw TclError.NullPointer }
 
-    let result = Tcl_GetLongFromObj (interp, tclObjP!, &longVal)
+    let result = Tcl_GetLongFromObj (interp, tclObjP, &longVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
             throw TclError.ErrorMessage(message: "expected integer", errorCode: "TCL VALUE NUMBER")
@@ -200,11 +200,11 @@ func tclobjp_to_Int (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMuta
 
 // tclobjp_to_Double - return the value of a Tcl_Obj * as a Double or nil
 
-func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Double {
+func tclobjp_to_Double (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Double {
     var doubleVal: Double = 0
-    guard tclObjP != nil else { throw TclError.NullPointer }
+    guard let tclObjP = possiblyNullPointer else { throw TclError.NullPointer }
     
-    let result = Tcl_GetDoubleFromObj (interp, tclObjP!, &doubleVal)
+    let result = Tcl_GetDoubleFromObj (interp, tclObjP, &doubleVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
             throw TclError.ErrorMessage(message: "expected double", errorCode: "TCL VALUE NUMBER")
@@ -218,11 +218,11 @@ func tclobjp_to_Double (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeM
 
 // tclobjp_to_Bool - return the value of a Tcl_Obj * as a Bool or nil
 
-func tclobjp_to_Bool (tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Bool {
+func tclobjp_to_Bool (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Bool {
     var boolVal: Int32 = 0
-    guard tclObjP != nil else { throw TclError.NullPointer }
+    guard let tclObjP = possiblyNullPointer else { throw TclError.NullPointer }
     
-    let result = Tcl_GetBooleanFromObj (interp, tclObjP!, &boolVal)
+    let result = Tcl_GetBooleanFromObj (interp, tclObjP, &boolVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
             throw TclError.ErrorMessage(message: "expected boolean", errorCode: "TCL VALUE NUMBER")
@@ -261,8 +261,8 @@ extension String: TclType {
 extension Int: TclType {
     // var foo: Int = someTclObj; failable initializer
     public init? (_ obj: TclObj) {
-        guard obj.intValue != nil else {return nil}
-        self.init(obj.intValue!)
+        guard let value = obj.intValue else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(obj: TclObj) {
@@ -271,8 +271,9 @@ extension Int: TclType {
 }
 
 extension Double: TclType {
-    public init (_ obj: TclObj) {
-        self.init(obj.doubleValue!)
+    public init? (_ obj: TclObj) {
+        guard let value = obj.doubleValue else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(obj: TclObj) {
@@ -282,8 +283,8 @@ extension Double: TclType {
 
 extension Bool: TclType {
     public init? (_ obj: TclObj) {
-        guard obj.boolValue != nil else {return nil}
-        self.init(obj.boolValue!)
+        guard let value = obj.boolValue else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(obj: TclObj) {
