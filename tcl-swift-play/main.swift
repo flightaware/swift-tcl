@@ -225,3 +225,57 @@ print(interp.result)
     print("")
     print("Testing generated Swift wrapper")
     impork(interp)
+    
+    print ("Performance test")
+    func loop_in_tcl() {
+        do {
+            try interp.rawEval("set seen 0; for {set i 0} {$i < 10000000} {incr i} { if {$i == 999999} { set seen 1 } }; puts $seen");
+        } catch {
+            
+        }
+    }
+    let t0 = clock()
+    loop_in_tcl()
+    print("Tcl:   \(clock() - t0)µs")
+    
+    func loop_in_swift() {
+        var i = 0
+        var seen = false
+        while i < 10000000 {
+            if i == 999999 {
+                seen = true
+            }
+            i += 1
+        }
+        print(seen)
+    }
+    let t1 = clock()
+    loop_in_swift()
+    print("Swift: \(clock() - t1)µs")
+    
+    func randomSwiftString(length: Int = 6) -> String {
+        let letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        var string = ""
+        for _ in 0..<length {
+            let j = Int(drand48() * 26)
+            string += letters[j]
+        }
+        return string
+    }
+    try interp.rawEval("proc randomString {length} { set letters ABCDEFGHIJKLMNOPQRSTUVWXYZ; set string {}; for {set i 0} {$i < $length} {incr i} { set j [expr {int(rand() * 26)}]; append string [string index $letters $j]; }; return $string; }")
+    
+    func randomTclStrings(length: Int, count: Int) throws -> String {
+        return try interp.eval("for {set i 0} {$i < \(count)} {incr i} {randomString \(length)}")
+    }
+    
+    let t2 = clock()
+    for i in 1...1000000 {
+        randomSwiftString(6)
+    }
+    print("Swift string: \(clock() - t2)µs")
+    let t3 = clock()
+    try randomTclStrings(6, count: 1000000)
+    print("Tcl string:   \(clock() - t3)µs")
+
+    
+
