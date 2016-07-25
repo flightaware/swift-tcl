@@ -43,11 +43,11 @@ public class TclInterp {
         
         switch ret {
         case TCL_RETURN:
-            throw TclControlFlow.return
+            throw TclControlFlow.tcl_return
         case TCL_BREAK:
-            throw TclControlFlow.break
+            throw TclControlFlow.tcl_break
         case TCL_CONTINUE:
-            throw TclControlFlow.continue
+            throw TclControlFlow.tcl_continue
         case TCL_ERROR:
             self.addErrorInfo(" called from Swift '\(caller)'")
             if printErrors {
