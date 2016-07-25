@@ -248,9 +248,9 @@ protocol TclType {
 
 // extend Swift objects to satisfy protocol TclType
 extension String: TclType {
-    // initialize string straight from a TclObj!
-    public init (_ obj: TclObj) {
-        self.init(obj.stringValue)
+    public init? (_ obj: TclObj) {
+        guard let value: String = try? obj.get() else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(_ obj: TclObj) {
@@ -259,10 +259,9 @@ extension String: TclType {
 }
 
 extension Int: TclType {
-    // var foo: Int = someTclObj; failable initializer
     public init? (_ obj: TclObj) {
-        guard obj.intValue != nil else {return nil}
-        self.init(obj.intValue!)
+        guard let value: Int = try? obj.get() else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(_ obj: TclObj) {
@@ -271,8 +270,9 @@ extension Int: TclType {
 }
 
 extension Double: TclType {
-    public init (_ obj: TclObj) {
-        self.init(obj.doubleValue!)
+    public init? (_ obj: TclObj) {
+        guard let value: Double = try? obj.get() else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(_ obj: TclObj) {
@@ -282,8 +282,8 @@ extension Double: TclType {
 
 extension Bool: TclType {
     public init? (_ obj: TclObj) {
-        guard let val = obj.boolValue else {return nil}
-        self.init(val)
+        guard let value: Bool = try? obj.get() else {return nil}
+        self.init(value)
     }
     
     mutating func fromTclObj(_ obj: TclObj) {
