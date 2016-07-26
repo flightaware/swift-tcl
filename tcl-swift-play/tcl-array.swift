@@ -57,9 +57,9 @@ public class TclArray: Sequence {
     
     // names - generate a list of names for the keys in the array.
     // This is ugly because there doesn't seem to be a C API for enumerating arrays
-    public func names() throws -> [String]? {
+    public func names() throws -> [String] {
         let cmd = TclObj("array names", Interp: Interp)
-        do { try cmd.lappend(self.name) } catch { return nil }
+        try cmd.lappend(self.name)
         let res: TclObj = try Interp.eval(code: cmd.get())
         return try res.get()
     }
@@ -78,7 +78,7 @@ public class TclArray: Sequence {
     public func get() -> [String: TclObj] {
         var dict: [String: TclObj] = [:]
         if let names = try? self.names() {
-            names!.forEach {
+            names.forEach {
                 if let val: TclObj = self.getValue($0) {
                     dict[$0] = val
                 }
@@ -199,14 +199,11 @@ public class TclArray: Sequence {
     
     // Generator for maps, forEach, etc... returns a tuple
     public func makeIterator() -> AnyIterator<(String, TclObj)> {
-        var nameList: [String]
-        // A bit of Optional parkour because it's a little to complex for a guard, I think
-        if let tmp = try? self.names() {
-            nameList = tmp!
-        } else {
+        guard let nameList = try? self.names() else {
             // Can't initialize the generator, so return a dummy generator that always returns nil
             return AnyIterator<(String, TclObj)> { return nil }
         }
+
         var next = 0
 
         return AnyIterator<(String, TclObj)> {
