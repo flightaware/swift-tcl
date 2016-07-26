@@ -22,10 +22,10 @@ public class TclArray: Sequence {
     public init(_ name: String, Interp: TclInterp, namespace: String? = nil) {
         self.Interp = Interp;
         self.interp = Interp.interp
-        if namespace == nil {
-            self.name = name;
+        if let ns = namespace {
+            self.name = ns + "::" + name;
         } else {
-            self.name = namespace! + "::" + name;
+            self.name = name;
         }
     }
     
