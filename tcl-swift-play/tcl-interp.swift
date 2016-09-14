@@ -301,22 +301,22 @@ public class TclInterp {
     // NB - this is kludgey, too much replication with variants
     public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningTclReturn) {
         let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
-        let ptr = Unmanaged.passRetained(cmdBlock).toOpaque()
-        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, ptr, nil)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningDouble) {
         let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
-        let ptr = Unmanaged.passRetained(cmdBlock).toOpaque()
-        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, ptr, nil)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningString) {
         let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
-        let ptr = Unmanaged.passRetained(cmdBlock).toOpaque()
-        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, ptr, nil)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     func subst (_ substInTclObj: TclObj, flags: SubstFlags = [.All]) throws -> TclObj {
@@ -332,7 +332,7 @@ public class TclInterp {
         return try substOutObj.get()
     }
     
-    // Wrappers for TclObj
+    // Wrappers for TclObj - this is kludgey
     public func newObject() -> TclObj { return TclObj(Interp: self) }
     public func newObject(_ value: Int) -> TclObj { return TclObj(value, Interp: self) }
     public func newObject(_ value: String) -> TclObj { return TclObj(value, Interp: self) }
