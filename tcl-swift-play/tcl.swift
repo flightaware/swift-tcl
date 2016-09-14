@@ -37,7 +37,7 @@ public enum SwiftTclFunctionType {
     case tclObj(SwiftTclFuncReturningTclObj)
 }
 
-enum TclError: ErrorProtocol {
+enum TclError: Error {
     case wrongNumArgs(nLeadingArguments: Int, message: String)
     case errorMessage(message: String, errorCode: String) // set error message in interpreter result
     case unknownReturnCode(code: Int32)
@@ -46,7 +46,7 @@ enum TclError: ErrorProtocol {
     case error // error already set in interpreter result
 }
 
-enum TclControlFlow: ErrorProtocol {
+enum TclControlFlow: Error {
     case tcl_return
     case tcl_break
     case tcl_continue
@@ -88,32 +88,32 @@ class TclCommandBlock {
     let swiftTclCallFunction: SwiftTclFunctionType
     let Interp: TclInterp
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclReturn) {
+    init(myInterp: TclInterp, function: @escaping SwiftTclFuncReturningTclReturn) {
         Interp = myInterp
         swiftTclCallFunction = .tclReturn(function)
     }
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningInt) {
+    init(myInterp: TclInterp, function: @escaping SwiftTclFuncReturningInt) {
         Interp = myInterp
         swiftTclCallFunction = .int(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningDouble) {
+    init(myInterp: TclInterp, function: @escaping SwiftTclFuncReturningDouble) {
         Interp = myInterp
         swiftTclCallFunction = .double(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningString) {
+    init(myInterp: TclInterp, function: @escaping SwiftTclFuncReturningString) {
         Interp = myInterp
         swiftTclCallFunction = .string(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningBool) {
+    init(myInterp: TclInterp, function: @escaping SwiftTclFuncReturningBool) {
         Interp = myInterp
         swiftTclCallFunction = .bool(function)
     }
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclObj) {
+    init(myInterp: TclInterp, function: @escaping SwiftTclFuncReturningTclObj) {
         Interp = myInterp
         swiftTclCallFunction = .tclObj(function)
     }
@@ -295,7 +295,7 @@ extension Bool: TclType {
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 //   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
 func swift_tcl_bridger (clientData: ClientData?, interp: UnsafeMutablePointer<Tcl_Interp>?, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>?>?) -> Int32 {
-    let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData!).pointee
+    let tcb = Unmanaged<TclCommandBlock>.fromOpaque(clientData!).takeUnretainedValue()
     
     // construct an array containing the arguments
     // (go from 1 not 0 because we don't include the obj containing the command name)
