@@ -106,7 +106,8 @@ public class TclInterp {
     // resultString - grab the interpreter result as a string
     public var result: String {
         get {
-            return (String(cString: Tcl_GetString(Tcl_GetObjResult(interp))))
+            guard let rawString = Tcl_GetString(Tcl_GetObjResult(interp)) else { return "" }
+            return (String(cString: rawString))
         }
         set {
             let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_NewStringObj(newValue, -1)
