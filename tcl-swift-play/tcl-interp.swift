@@ -64,16 +64,10 @@ public class TclInterp {
             throw TclError.unknownReturnCode(code:ret)
         }
     }
-
-    // Utility function to concatenate a list of strings into a Tcl list.
-    public func list(from list: [String]) -> TclObj {
-        let obj: TclObj = self.newObject(list)
-        return obj;
-    }
     
     // Safer way to call rawEval, passing a list of strings
     public func rawEval(list: [String], caller: String = #function) throws {
-        try rawEval(code: self.list(from: list), caller: caller)
+        try rawEval(code: TclObj(list, Interp: self), caller: caller)
     }
 
     // Usual way to call rawEval, passing a string
