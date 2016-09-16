@@ -298,29 +298,29 @@ public class TclInterp {
     
     // set(array:..., from:...) - set a String/TclObj dictionary into a Tcl array
     public func set (array arrayName: String, from dictionary: [String: TclObj], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
     // set(array:..., from:...) - set a String/String dictionary into a Tcl array
     public func set(array arrayName: String, from dictionary: [String: String], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
     // set(array:..., from:...) - set a String/Int dictionary into a Tcl array
     public func set(array arrayName: String, from dictionary: [String: Int], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
     // set(array:..., from:...) - set a String/Double dictionary into a Tcl array
     public func set (array arrayName: String, dictionary: [String: Double], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     

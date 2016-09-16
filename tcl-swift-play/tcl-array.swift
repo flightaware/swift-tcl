@@ -78,9 +78,9 @@ public class TclArray: Sequence {
     public func get() -> [String: TclObj] {
         var dict: [String: TclObj] = [:]
         if let names = try? self.names() {
-            names.forEach {
-                if let val: TclObj = self.getValue($0) {
-                    dict[$0] = val
+            for name in names {
+                if let val: TclObj = self.getValue(name) {
+                    dict[name] = val
                 }
             }
         }

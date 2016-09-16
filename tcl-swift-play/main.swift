@@ -222,6 +222,36 @@ print(interp.result)
     let _ = try? interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
     let _ = try? interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444]\"")
     
+    // Comparing speed of operations.
+    var a: [String] = []
+    for i in 1...100000 {
+        a += [String(i)]
+    }
+    
+    let timer = stopwatch()
+    var i = 0
+    var s: String = ""
+    for e in a {
+        s = e
+        i += 1
+    }
+    print("Took \(timer.mark())s final \(i)\(s)")
+    
+    timer.reset()
+    a.forEach {
+        s = $0
+        i += 1
+    }
+    print("Took \(timer.mark())s final \(i)\(s)")
+    
+    timer.reset()
+    for e in a {
+        s = e
+        i += 1
+    }
+    print("Took \(timer.mark())s final \(i)\(s)")
+
+    
     // Testing generated Tcl code
     print("")
     print("Testing generated Swift wrapper")
