@@ -89,7 +89,7 @@ public class TclObj: Sequence {
     
     public func set(_ set: Set<Double>) {
         for element in set {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewDoubleObj (element))
         }
     }
     
@@ -101,7 +101,7 @@ public class TclObj: Sequence {
     
     public func set(_ array: [String]) {
         for element in array {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (element, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (element, -1))
         }
     }
     
@@ -113,7 +113,7 @@ public class TclObj: Sequence {
     
     public func set(_ array: [Int]) {
         for element in array {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj(element))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj(element))
         }
     }
     
@@ -125,7 +125,7 @@ public class TclObj: Sequence {
     
     public func set(_ array: [Double]) {
         for element in array {
-            Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj(element))
+            Tcl_ListObjAppendElement(interp, obj, Tcl_NewDoubleObj(element))
         }
     }
     
@@ -137,8 +137,8 @@ public class TclObj: Sequence {
     
     public func set(_ dictionary: [String: String]) {
         for (key, val) in dictionary {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (key, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (val, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (key, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (val, -1))
         }
     }
     
@@ -150,8 +150,8 @@ public class TclObj: Sequence {
 
     public func set(_ dictionary: [String: Int]) {
         for (key, val) in dictionary {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (key, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj (val))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (key, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (val))
         }
     }
     
@@ -163,8 +163,8 @@ public class TclObj: Sequence {
     
     public func set(_ dictionary: [String: Double]) {
         for (key, val) in dictionary {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (key, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (val))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (key, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewDoubleObj (val))
         }
     }
     
