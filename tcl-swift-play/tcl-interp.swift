@@ -22,7 +22,12 @@ public class TclInterp {
         interp = Tcl_CreateInterp()
         Tcl_Init(interp)
     }
-    
+        
+    // init - wrap an already created interpreter with a TclInterp class
+    public init(interp: UnsafeMutablePointer<Tcl_Interp>) {
+        self.interp = interp;
+    }
+
     // deinit - upon deletion of this object, delete the corresponding
     // Tcl interpreter
     deinit {
