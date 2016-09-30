@@ -15,23 +15,30 @@ import Foundation
 
 public class TclInterp {
     let interp: UnsafeMutablePointer<Tcl_Interp>
+    let ownInterpreter: Bool
     public var printErrors = true
     
     // init - create and initialize a full Tcl interpreter
-    public init() {
+    public init(printErrors: Bool = true) {
+        self.printErrors = printErrors
         interp = Tcl_CreateInterp()
         Tcl_Init(interp)
+        ownInterpreter = true
     }
         
     // init - wrap an already created interpreter with a TclInterp class
-    public init(interp: UnsafeMutablePointer<Tcl_Interp>) {
+    public init(interp: UnsafeMutablePointer<Tcl_Interp>, printErrors: Bool = true) {
+        self.printErrors = printErrors
         self.interp = interp;
+        ownInterpreter = false
     }
 
     // deinit - upon deletion of this object, delete the corresponding
     // Tcl interpreter
     deinit {
-        Tcl_DeleteInterp (interp)
+        if ownInterpreter {
+            Tcl_DeleteInterp (interp)
+        }
     }
     
     // getRawInterpPtr - return Tcl_Interp *
@@ -332,21 +339,35 @@ public class TclInterp {
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     // NB - this is kludgey, too much replication with variants
     public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningTclReturn) {
-        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
         let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
         Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningDouble) {
-        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
         let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
         Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningString) {
-        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
+    }
+    
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningInt) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
+    }
+    
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningBool) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
         let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
         Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }

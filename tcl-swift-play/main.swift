@@ -50,7 +50,7 @@ print(interp.result)
     
     func avg (_ interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
-        for obj in objv {
+        for obj in objv[1...objv.count-1] {
             guard let val: Double = try? obj.get() else {continue}
             sum += val
         }
@@ -98,14 +98,14 @@ print(interp.result)
     }
     
     func fa_latlongs_to_distance_cmd (_ interp: TclInterp, objv: [TclObj]) throws -> Double {
-        if (objv.count != 4) {
+        if (objv.count != 5) {
             throw TclError.wrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
 
-        let lat1: Double = try objv[0].getAsArg(named: "lat1")
-        let lon1: Double = try objv[1].getAsArg(named: "lon1")
-        let lat2: Double = try objv[2].getAsArg(named: "lat2")
-        let lon2: Double = try objv[3].getAsArg(named: "lon2")
+        let lat1: Double = try objv[1].getAsArg(named: "lat1")
+        let lon1: Double = try objv[2].getAsArg(named: "lon1")
+        let lat2: Double = try objv[3].getAsArg(named: "lat2")
+        let lon2: Double = try objv[4].getAsArg(named: "lon2")
             
         let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
         return distance
