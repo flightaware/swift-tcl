@@ -372,6 +372,13 @@ public class TclInterp {
         Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningTclObj) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
+    }
+
     func subst (_ substInTclObj: TclObj, flags: SubstFlags = [.All]) throws -> TclObj {
         let substOutObj = Tcl_SubstObj (interp, substInTclObj.obj, flags.rawValue)
         guard let result = substOutObj else {
