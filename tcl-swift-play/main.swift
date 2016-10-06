@@ -50,11 +50,13 @@ print(interp.result)
     
     func avg (interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
+        var num = 0
         for obj in objv[1...objv.count-1] {
             guard let val: Double = try? obj.get() else {continue}
             sum += val
+            num += 1
         }
-        return(sum / Double(objv.count))
+        return(sum / Double(num))
     }
     
     interp.createCommand(named: "foo", using: foo)
