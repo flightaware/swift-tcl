@@ -43,12 +43,12 @@ print(interp.result)
     try interp.rawEval(list: ["set", "a", "{illegal {string"])
     try interp.rawEval(code: "puts [list a = $a]")
     
-    func foo (_ interp: TclInterp, objv: [TclObj]) -> String {
+    func foo (interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
         return ""
     }
     
-    func avg (_ interp: TclInterp, objv: [TclObj]) -> Double {
+    func avg (interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
         for obj in objv[1...objv.count-1] {
             guard let val: Double = try? obj.get() else {continue}
@@ -97,7 +97,7 @@ print(interp.result)
         return distance
     }
     
-    func fa_latlongs_to_distance_cmd (_ interp: TclInterp, objv: [TclObj]) throws -> Double {
+    func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
         if (objv.count != 5) {
             throw TclError.wrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
