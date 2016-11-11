@@ -39,7 +39,20 @@ print(interp.result)
     let x5 = interp.newObject(5)
     try print(x5.get() as Double)
     
-    // List test
+    var stooges = interp.newObject("Larry Curly Moe")
+    for stooge in stooges {
+        if let name = stooge.stringValue {
+            print(name)
+        }
+    }
+    
+    var brothers = interp.newObject(["Groucho", "Harpo", "Chico"])
+    try brothers.lappend("Karl")
+    if let julius:String = brothers[0] {
+        print("Julius is \(julius)")
+    }
+    
+    // List eval test
     try interp.rawEval(list: ["set", "a", "{illegal {string"])
     try interp.rawEval(code: "puts [list a = $a]")
     
