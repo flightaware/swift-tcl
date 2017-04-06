@@ -37,7 +37,7 @@ public enum SwiftTclFunctionType {
     case tclObj(SwiftTclFuncReturningTclObj)
 }
 
-enum TclError: ErrorProtocol {
+enum TclError: Error {
     case wrongNumArgs(nLeadingArguments: Int, message: String)
     case errorMessage(message: String, errorCode: String) // set error message in interpreter result
     case unknownReturnCode(code: Int32)
@@ -46,7 +46,7 @@ enum TclError: ErrorProtocol {
     case error // error already set in interpreter result
 }
 
-enum TclControlFlow: ErrorProtocol {
+enum TclControlFlow: Error {
     case tcl_return
     case tcl_break
     case tcl_continue
@@ -86,39 +86,32 @@ public struct SubstFlags : OptionSet {
 // TclCommandBlock - when creating a Tcl command -> Swift
 class TclCommandBlock {
     let swiftTclCallFunction: SwiftTclFunctionType
-    let Interp: TclInterp
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclReturn) {
-        Interp = myInterp
+    init(function: @escaping SwiftTclFuncReturningTclReturn) {
         swiftTclCallFunction = .tclReturn(function)
     }
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningInt) {
-        Interp = myInterp
+    init(function: @escaping SwiftTclFuncReturningInt) {
         swiftTclCallFunction = .int(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningDouble) {
-        Interp = myInterp
+    init(function: @escaping SwiftTclFuncReturningDouble) {
         swiftTclCallFunction = .double(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningString) {
-        Interp = myInterp
+    init(function: @escaping SwiftTclFuncReturningString) {
         swiftTclCallFunction = .string(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningBool) {
-        Interp = myInterp
+    init(function: @escaping SwiftTclFuncReturningBool) {
         swiftTclCallFunction = .bool(function)
     }
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclObj) {
-        Interp = myInterp
+    init(function: @escaping SwiftTclFuncReturningTclObj) {
         swiftTclCallFunction = .tclObj(function)
     }
 
-    func invoke(objv: [TclObj]) throws -> TclReturn {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> TclReturn {
         switch swiftTclCallFunction {
         case .tclReturn(let function):
             return try function(Interp, objv)
@@ -127,7 +120,7 @@ class TclCommandBlock {
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> Int {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> Int {
         switch swiftTclCallFunction {
         case .int(let function):
             return try function(Interp, objv)
@@ -136,7 +129,7 @@ class TclCommandBlock {
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> Double {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> Double {
         switch swiftTclCallFunction {
         case .double(let function):
             return try function(Interp, objv)
@@ -145,7 +138,7 @@ class TclCommandBlock {
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> String {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> String {
         switch swiftTclCallFunction {
         case .string(let function):
             return try function(Interp, objv)
@@ -154,7 +147,7 @@ class TclCommandBlock {
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> Bool {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> Bool {
         switch swiftTclCallFunction {
         case .bool(let function):
             return try function(Interp, objv)
@@ -163,7 +156,7 @@ class TclCommandBlock {
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> TclObj {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> TclObj {
         switch swiftTclCallFunction {
         case .tclObj(let function):
             return try function(Interp, objv)
@@ -295,48 +288,50 @@ extension Bool: TclType {
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 //   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
 func swift_tcl_bridger (clientData: ClientData?, interp: UnsafeMutablePointer<Tcl_Interp>?, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>?>?) -> Int32 {
-    let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData!).pointee
+    let Interp = TclInterp(interp: interp!, printErrors: false)
+    let tcb = Unmanaged<TclCommandBlock>.fromOpaque(clientData!).takeUnretainedValue()
     
     // construct an array containing the arguments
-    // (go from 1 not 0 because we don't include the obj containing the command name)
     var objvec = [TclObj]()
-    for i in 1..<Int(objc) {
-        objvec.append(TclObj(objv![i]!, Interp: tcb.Interp))
+    if let objv = objv {
+        for i in 0..<Int(objc) {
+            objvec.append(TclObj(objv[i]!, Interp: Interp))
+        }
     }
     
     // invoke the Swift implementation of the Tcl command and return the value it returns
     do {
         switch tcb.swiftTclCallFunction {
         case .tclReturn:
-            let ret: TclReturn = try tcb.invoke(objv: objvec)
+            let ret: TclReturn = try tcb.invoke(Interp: Interp, objv: objvec)
             return ret.rawValue
             
         case .string:
-            let result: String = try tcb.invoke(objv: objvec)
-            tcb.Interp.result = result
+            let result: String = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.result = result
             
         case .double:
-            let result: Double = try tcb.invoke(objv: objvec)
-            tcb.Interp.setResult(result)
+            let result: Double = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.setResult(result)
             
         case .int:
-            let result: Int = try tcb.invoke(objv: objvec)
-            tcb.Interp.setResult(result)
+            let result: Int = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.setResult(result)
             
         case .bool:
-            let result: Bool = try tcb.invoke(objv: objvec)
-            tcb.Interp.setResult(result)
+            let result: Bool = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.setResult(result)
             
         case .tclObj:
-            let result: TclObj = try tcb.invoke(objv: objvec)
-            tcb.Interp.resultObj = result
+            let result: TclObj = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.resultObj = result
 
         }
     } catch TclError.error {
         return TCL_ERROR
     } catch TclError.errorMessage(let message) {
-        tcb.Interp.result = message.message
-        try! tcb.Interp.setErrorCode(message.errorCode)
+        Interp.result = message.message
+        try! Interp.setErrorCode(message.errorCode)
         return TCL_ERROR
     } catch TclError.wrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message)
@@ -348,7 +343,7 @@ func swift_tcl_bridger (clientData: ClientData?, interp: UnsafeMutablePointer<Tc
     } catch TclControlFlow.tcl_return {
         return TCL_RETURN
     } catch (let error) {
-        tcb.Interp.result = "unknown error type \(error)"
+        Interp.result = "unknown error type \(error)"
         return TCL_ERROR
     }
     return TCL_OK

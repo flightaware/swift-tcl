@@ -89,7 +89,7 @@ public class TclObj: Sequence {
     
     public func set(_ set: Set<Double>) {
         for element in set {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj (element))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewDoubleObj (element))
         }
     }
     
@@ -101,7 +101,7 @@ public class TclObj: Sequence {
     
     public func set(_ array: [String]) {
         for element in array {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj (element, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (element, -1))
         }
     }
     
@@ -112,8 +112,8 @@ public class TclObj: Sequence {
     }
     
     public func set(_ array: [Int]) {
-        array.forEach {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj($0))
+        for element in array {
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj(element))
         }
     }
     
@@ -124,8 +124,8 @@ public class TclObj: Sequence {
     }
     
     public func set(_ array: [Double]) {
-        array.forEach {
-            Tcl_ListObjAppendElement(nil, obj, Tcl_NewDoubleObj($0))
+        for element in array {
+            Tcl_ListObjAppendElement(interp, obj, Tcl_NewDoubleObj(element))
         }
     }
     
@@ -136,9 +136,9 @@ public class TclObj: Sequence {
     }
     
     public func set(_ dictionary: [String: String]) {
-        dictionary.forEach {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.1, -1))
+        for (key, val) in dictionary {
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (key, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (val, -1))
         }
     }
     
@@ -149,9 +149,9 @@ public class TclObj: Sequence {
     }
 
     public func set(_ dictionary: [String: Int]) {
-        dictionary.forEach {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewLongObj ($0.1))
+        for (key, val) in dictionary {
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (key, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewLongObj (val))
         }
     }
     
@@ -162,9 +162,9 @@ public class TclObj: Sequence {
     }
     
     public func set(_ dictionary: [String: Double]) {
-        dictionary.forEach {
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewStringObj ($0.0, -1))
-            Tcl_ListObjAppendElement (nil, obj, Tcl_NewDoubleObj ($0.1))
+        for (key, val) in dictionary {
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewStringObj (key, -1))
+            Tcl_ListObjAppendElement (interp, obj, Tcl_NewDoubleObj (val))
         }
     }
     
@@ -327,24 +327,24 @@ public class TclObj: Sequence {
     // lappend - append an array of Int to the Tcl object list
     // (flattens them out)
     public func lappend (_ array: [Int]) throws {
-        try array.forEach {
-            try self.lappend($0)
+        for element in array {
+            try self.lappend(element)
         }
     }
     
     // lappend - append an array of Double to the Tcl object list
     // (flattens them out)
     public func lappend (_ array: [Double]) throws {
-        try array.forEach {
-            try self.lappend($0)
+        for element in array {
+            try self.lappend(element)
         }
     }
     
     // lappend - append an array of String to the Tcl object list
     // (flattens them out)
     public func lappend (_ array: [String]) throws {
-        try array.forEach {
-            try self.lappend($0)
+        for element in array {
+            try self.lappend(element)
         }
     }
     

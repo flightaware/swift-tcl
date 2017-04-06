@@ -15,18 +15,30 @@ import Foundation
 
 public class TclInterp {
     let interp: UnsafeMutablePointer<Tcl_Interp>
+    let ownInterpreter: Bool
     public var printErrors = true
     
     // init - create and initialize a full Tcl interpreter
-    public init() {
+    public init(printErrors: Bool = true) {
+        self.printErrors = printErrors
         interp = Tcl_CreateInterp()
         Tcl_Init(interp)
+        ownInterpreter = true
     }
-    
+        
+    // init - wrap an already created interpreter with a TclInterp class
+    public init(interp: UnsafeMutablePointer<Tcl_Interp>, printErrors: Bool = true) {
+        self.printErrors = printErrors
+        self.interp = interp;
+        ownInterpreter = false
+    }
+
     // deinit - upon deletion of this object, delete the corresponding
     // Tcl interpreter
     deinit {
-        Tcl_DeleteInterp (interp)
+        if ownInterpreter {
+            Tcl_DeleteInterp (interp)
+        }
     }
     
     // getRawInterpPtr - return Tcl_Interp *
@@ -38,8 +50,8 @@ public class TclInterp {
     //
     // Returns void, throws a TclError or TclResultCode
     //
-    public func rawEval(code: String, caller: String = #function) throws {
-        let ret = Tcl_Eval(interp, code)
+    public func rawEval(code: TclObj, caller: String = #function) throws {
+        let ret = Tcl_EvalObj(interp, code.obj)
         
         switch ret {
         case TCL_RETURN:
@@ -64,16 +76,15 @@ public class TclInterp {
             throw TclError.unknownReturnCode(code:ret)
         }
     }
-
-    // Utility function to concatenate a list of strings into a Tcl list.
-    public func list(from list: [String]) throws -> String {
-        let obj: TclObj = self.newObject(list)
-        return try obj.get()
-    }
     
     // Safer way to call rawEval, passing a list of strings
     public func rawEval(list: [String], caller: String = #function) throws {
-        try rawEval(code: self.list(from: list), caller: caller)
+        try rawEval(code: TclObj(list, Interp: self), caller: caller)
+    }
+
+    // Usual way to call rawEval, passing a string
+    public func rawEval(code: String, caller: String = #function) throws {
+        try rawEval(code: TclObj(code, Interp: self), caller: caller)
     }
     
     // eval - evaluate the string via the Tcl Interpreter, return the Tcl result of the
@@ -103,10 +114,38 @@ public class TclInterp {
         return self.resultObj
     }
     
-    // resultString - grab the interpreter result as a string
+    // eval - evaluate a TclObj via the Tcl Interpreter, return the Tcl result of the
+    // evaluation. Throws TclError or TclControlFlow.
+    public func eval(code: TclObj, caller: String = #function) throws -> String {
+        try self.rawEval(code: code, caller: caller)
+        return try self.getResult()
+    }
+    
+    public func eval(code: TclObj, caller: String = #function) throws -> Int {
+        try self.rawEval(code: code, caller: caller)
+        return try self.getResult()
+    }
+    
+    public func eval(code: TclObj, caller: String = #function) throws -> Double {
+        try self.rawEval(code: code, caller: caller)
+        return try self.getResult()
+    }
+    
+    public func eval(code: TclObj, caller: String = #function) throws -> Bool {
+        try self.rawEval(code: code, caller: caller)
+        return try self.getResult()
+    }
+    
+    public func eval(code: TclObj, caller: String = #function) throws -> TclObj {
+        try self.rawEval(code: code, caller: caller)
+        return self.resultObj
+    }
+    
+    // result - grab the interpreter result as a string
     public var result: String {
         get {
-            return (String(cString: Tcl_GetString(Tcl_GetObjResult(interp)))) ?? ""
+            guard let rawString = Tcl_GetString(Tcl_GetObjResult(interp)) else { return "" }
+            return (String(cString: rawString))
         }
         set {
             let obj: UnsafeMutablePointer<Tcl_Obj> = Tcl_NewStringObj(newValue, -1)
@@ -171,7 +210,7 @@ public class TclInterp {
         Tcl_AddObjErrorInfo (interp, message, -1)
     }
     
-    // getVar - return a Tcl variable or array element as an
+    // get(variable:...) - return a Tcl variable or array element as an
     // UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil if it doesn't exist.
     // if elementName is specified, var is an element of an array, otherwise var is a variable
     
@@ -183,7 +222,7 @@ public class TclInterp {
         }
     }
     
-    // getVar - return a Tcl variable or  in a TclObj object, or nil
+    // get(variable:...) - return a Tcl variable or  in a TclObj object, or nil
     public func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) -> TclObj? {
         let obj: UnsafeMutablePointer<Tcl_Obj>? = self.get(variable: varName, element: elementName, flags: flags)
         
@@ -192,21 +231,21 @@ public class TclInterp {
         return TclObj(obj!, Interp: self)
     }
     
-    // getVar - return Tcl variable or array element as an Int or throw an error
+    // get(variable:...) - return Tcl variable or array element as an Int or throw an error
     public func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) throws -> Int {
         let obj: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: varName, element: elementName, flags: flags)
         
         return try tclobjp_to_Int(obj)
     }
     
-    // getVar - return a var as a Double, or throw an error if unable
+    // get(variable:...) - return a var as a Double, or throw an error if unable
     public func get(variable arrayName: String, element elementName: String? = nil) throws -> Double {
         let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
         
         return try tclobjp_to_Double(objp)
     }
     
-    // getVar - return a TclObj containing var as a String or throw an error if unable
+    // get(variable:...) - return a TclObj containing var as a String or throw an error if unable
     // the error seems unlikely but could be like a UTF-8 conversion error or something.
     public func get(variable arrayName: String, element elementName: String? = nil) throws -> String {
         let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
@@ -214,7 +253,7 @@ public class TclInterp {
         return try tclobjp_to_String(objp)
     }
     
-    // getVar - return a TclObj containing var as a String, or nil
+    // get(variable:...) - return a TclObj containing var as a String, or nil
     public func get(variable arrayName: String, element elementName: String? = nil)  -> String? {
         let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
         
@@ -225,7 +264,7 @@ public class TclInterp {
         }
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter
+    // set(variable:...) - set a variable or array element in the Tcl interpreter
     // from an UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *)
     // returns true or false based on whether it succeeded or not
     func set(variable varName: String, element elementName: String? = nil, value: UnsafeMutablePointer<Tcl_Obj>, flags: VariableFlags = []) throws {
@@ -235,105 +274,117 @@ public class TclInterp {
         }
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
+    // set(variable:...) - set a variable or array element in the Tcl interpreter to the specified TclObj
     public func set(variable varName: String, element elementName: String? = nil, value: TclObj, flags: VariableFlags = []) throws {
         return try self.set(variable: varName, element: elementName, value: value.obj, flags: flags)
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified String
+    // set(variable:...) - set a variable or array element in the Tcl interpreter to the specified String
     public func set(variable varName: String, element elementName: String? = nil, value: String, flags: VariableFlags = []) throws {
         let obj = try tclobjp(string: value)
         return try self.set(variable: varName, element: elementName, value: obj, flags: flags)
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified Int
+    // set(variable:...) - set a variable or array element in the Tcl interpreter to the specified Int
     public func set(variable varName: String, element elementName: String? = nil, value: Int, flags: VariableFlags = []) throws {
         let obj = Tcl_NewIntObj(Int32(value))
         return try self.set(variable: varName, element: elementName, value: obj!, flags: flags)
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified Bool
+    // set(variable:...) - set a variable or array element in the Tcl interpreter to the specified Bool
     public func set(variable varName: String, element elementName: String? = nil, value: Bool, flags: VariableFlags = []) throws {
         let obj = Tcl_NewBooleanObj(value ? 1 : 0)
         return try self.set(variable: varName, element: elementName, value: obj!, flags: flags)
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified Double
+    // set(variable:...) - set a variable or array element in the Tcl interpreter to the specified Double
     public func set(variable varName: String, element elementName: String? = nil, value: Double, flags: VariableFlags = []) throws {
         let obj = Tcl_NewDoubleObj(value)
         return try self.set(variable: varName, element: elementName, value: obj!, flags: flags)
     }
     
-    // setVar - set a variable or array element in the Tcl interpreter to the specified TclObj
+    // set(variable:...) - set a variable or array element in the Tcl interpreter to the specified TclObj
     public func set(variable varName: String, element elementName: String? = nil, obj: TclObj, flags: VariableFlags = []) throws {
         return try self.set(variable: varName, element: elementName, value: obj.get() as UnsafeMutablePointer<Tcl_Obj>, flags: flags)
     }
     
-    // dictionaryToArray - set a String/TclObj dictionary into a Tcl array
+    // set(array:..., from:...) - set a String/TclObj dictionary into a Tcl array
     public func set (array arrayName: String, from dictionary: [String: TclObj], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
-    // dictionaryToArray - set a String/String dictionary into a Tcl array
+    // set(array:..., from:...) - set a String/String dictionary into a Tcl array
     public func set(array arrayName: String, from dictionary: [String: String], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
-    // dictionaryToArray - set a String/Int dictionary into a Tcl array
+    // set(array:..., from:...) - set a String/Int dictionary into a Tcl array
     public func set(array arrayName: String, from dictionary: [String: Int], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
-    // dictionaryToArray - set a String/Double dictionary into a Tcl array
+    // set(array:..., from:...) - set a String/Double dictionary into a Tcl array
     public func set (array arrayName: String, dictionary: [String: Double], flags: VariableFlags = []) throws {
-        try dictionary.forEach {
-            try self.set(variable: arrayName, element: $0.0, value: $0.1, flags: flags)
+        for (key, val) in dictionary {
+            try self.set(variable: arrayName, element: key, value: val, flags: flags)
         }
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
     // NB - this is kludgey, too much replication with variants
-    public func createCommand(named name: String, using swiftTclFunction:SwiftTclFuncReturningTclReturn) {
-        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
-        let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
-        let ptr = UnsafeMutablePointer<TclCommandBlock>(allocatingCapacity: 1)
-        ptr.pointee = cmdBlock
-        
-        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, ptr, nil)
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningTclReturn) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
-    public func createCommand(named name: String, using swiftTclFunction:SwiftTclFuncReturningDouble) {
-        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
-        let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
-        let ptr = UnsafeMutablePointer<TclCommandBlock>(allocatingCapacity: 1)
-        ptr.pointee = cmdBlock
-        
-        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, ptr, nil)
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningDouble) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
     // create_command - create a new Tcl command that will be handled by the specified Swift function
-    public func createCommand(named name: String, using swiftTclFunction:SwiftTclFuncReturningString) {
-        let cmdBlock = TclCommandBlock(myInterp: self, function: swiftTclFunction)
-        let _ = Unmanaged.passRetained(cmdBlock) // keep Swift from deleting the object
-        let ptr = UnsafeMutablePointer<TclCommandBlock>(allocatingCapacity: 1)
-        ptr.pointee = cmdBlock
-        
-        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, ptr, nil)
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningString) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
     }
     
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningInt) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
+    }
+    
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningBool) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
+    }
+    
+    // create_command - create a new Tcl command that will be handled by the specified Swift function
+    public func createCommand(named name: String, using swiftTclFunction: @escaping SwiftTclFuncReturningTclObj) {
+        let cmdBlock = TclCommandBlock(function: swiftTclFunction)
+        let clientData = Unmanaged.passRetained(cmdBlock).toOpaque()
+        Tcl_CreateObjCommand(interp, name, swift_tcl_bridger, clientData, nil)
+    }
+
     func subst (_ substInTclObj: TclObj, flags: SubstFlags = [.All]) throws -> TclObj {
         let substOutObj = Tcl_SubstObj (interp, substInTclObj.obj, flags.rawValue)
-        guard substOutObj != nil else {
+        guard let result = substOutObj else {
             throw TclError.error
         }
-        return TclObj(substOutObj!, Interp: self)
+        return TclObj(result, Interp: self)
     }
     
     public func subst (_ substIn: String, flags: SubstFlags = [.All]) throws -> String {
@@ -341,7 +392,7 @@ public class TclInterp {
         return try substOutObj.get()
     }
     
-    // Wrappers for TclObj
+    // Wrappers for TclObj - this is kludgey
     public func newObject() -> TclObj { return TclObj(Interp: self) }
     public func newObject(_ value: Int) -> TclObj { return TclObj(value, Interp: self) }
     public func newObject(_ value: String) -> TclObj { return TclObj(value, Interp: self) }

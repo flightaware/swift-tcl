@@ -39,22 +39,37 @@ print(interp.result)
     let x5 = interp.newObject(5)
     try print(x5.get() as Double)
     
-    // List test
+    var stooges = interp.newObject("Larry Curly Moe")
+    for stooge in stooges {
+        if let name = stooge.stringValue {
+            print(name)
+        }
+    }
+    
+    var brothers = interp.newObject(["Groucho", "Harpo", "Chico"])
+    try brothers.lappend("Karl")
+    if let julius:String = brothers[0] {
+        print("Julius is \(julius)")
+    }
+    
+    // List eval test
     try interp.rawEval(list: ["set", "a", "{illegal {string"])
     try interp.rawEval(code: "puts [list a = $a]")
     
-    func foo (_ interp: TclInterp, objv: [TclObj]) -> String {
+    func foo (interp: TclInterp, objv: [TclObj]) -> String {
         print("foo baby foo baby foo baby foo")
         return ""
     }
     
-    func avg (_ interp: TclInterp, objv: [TclObj]) -> Double {
+    func avg (interp: TclInterp, objv: [TclObj]) -> Double {
         var sum = 0.0
-        for obj in objv {
+        var num = 0
+        for obj in objv[1...objv.count-1] {
             guard let val: Double = try? obj.get() else {continue}
             sum += val
+            num += 1
         }
-        return(sum / Double(objv.count))
+        return(sum / Double(num))
     }
     
     interp.createCommand(named: "foo", using: foo)
@@ -73,7 +88,7 @@ print(interp.result)
     let EARTH_RADIUS_MILES = 3963.0
     
     func fa_degrees_radians (_ degrees: Double) -> Double {
-        return (degrees * M_PI / 180);
+        return (degrees * Double.pi / 180);
     }
 
     func fa_latlongs_to_distance (_ lat1: Double, lon1: Double, lat2: Double, lon2:Double) -> Double {
@@ -97,15 +112,15 @@ print(interp.result)
         return distance
     }
     
-    func fa_latlongs_to_distance_cmd (_ interp: TclInterp, objv: [TclObj]) throws -> Double {
-        if (objv.count != 4) {
+    func fa_latlongs_to_distance_cmd (interp: TclInterp, objv: [TclObj]) throws -> Double {
+        if (objv.count != 5) {
             throw TclError.wrongNumArgs(nLeadingArguments: 0, message: "lat0 lon0 lat1 lon1")
         }
 
-        let lat1: Double = try objv[0].getAsArg(named: "lat1")
-        let lon1: Double = try objv[1].getAsArg(named: "lon1")
-        let lat2: Double = try objv[2].getAsArg(named: "lat2")
-        let lon2: Double = try objv[3].getAsArg(named: "lon2")
+        let lat1: Double = try objv[1].getAsArg(named: "lat1")
+        let lon1: Double = try objv[2].getAsArg(named: "lon1")
+        let lat2: Double = try objv[3].getAsArg(named: "lat2")
+        let lon2: Double = try objv[4].getAsArg(named: "lon2")
             
         let distance = fa_latlongs_to_distance(lat1, lon1: lon1, lat2: lat2, lon2: lon2)
         return distance
@@ -128,10 +143,10 @@ print(interp.result)
     let sarray = ["zero","one","two","three","four"]
     print("Testing ranges and indexes on \(sarray)")
     let xarray = interp.newObject(sarray)
-    print(" xarray.lrange(1...3) = \(try? xarray.lrange(1...3) as [String])")
-    print(" xarray.lrange(-3 ... -1) = \(try? xarray.lrange(-3 ... -1) as [String])")
-    print(" xarray.lindex(1) = \(try? xarray.lindex(1) as String)")
-    print(" xarray.lindex(-1) = \(try? xarray.lindex(-1) as String)")
+    print(" xarray.lrange(1...3) = \(String(describing: try xarray.lrange(1...3) as [String]))")
+    print(" xarray.lrange(-3 ... -1) = \(String(describing: try xarray.lrange(-3 ... -1) as [String]))")
+    print(" xarray.lindex(1) = \(try xarray.lindex(1) as String)")
+    print(" xarray.lindex(-1) = \(try xarray.lindex(-1) as String)")
     print("Testing subscripts")
     print(" xarray[0] = \(xarray[0] as String?)")
     print(" xarray[0...2] = \(xarray[0...2] as [String]?)")
@@ -221,6 +236,36 @@ print(interp.result)
     print("intentionally calling a swift extension with a bad argument")
     let _ = try? interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444 crash -122.3117778]\"")
     let _ = try? interp.rawEval(code: "puts \"distance from KIAH to KSEA is [fa_latlongs_to_distance  29.9844444 -95.3414444]\"")
+    
+    // Comparing speed of operations.
+    var a: [String] = []
+    for i in 1...100000 {
+        a += [String(i)]
+    }
+    
+    let timer = stopwatch()
+    var i = 0
+    var s: String = ""
+    for e in a {
+        s = e
+        i += 1
+    }
+    print("Took \(timer.mark())s final \(i)\(s)")
+    
+    timer.reset()
+    a.forEach {
+        s = $0
+        i += 1
+    }
+    print("Took \(timer.mark())s final \(i)\(s)")
+    
+    timer.reset()
+    for e in a {
+        s = e
+        i += 1
+    }
+    print("Took \(timer.mark())s final \(i)\(s)")
+
     
     // Testing generated Tcl code
     print("")
