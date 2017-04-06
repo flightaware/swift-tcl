@@ -88,7 +88,7 @@ print(interp.result)
     let EARTH_RADIUS_MILES = 3963.0
     
     func fa_degrees_radians (_ degrees: Double) -> Double {
-        return (degrees * M_PI / 180);
+        return (degrees * Double.pi / 180);
     }
 
     func fa_latlongs_to_distance (_ lat1: Double, lon1: Double, lat2: Double, lon2:Double) -> Double {
