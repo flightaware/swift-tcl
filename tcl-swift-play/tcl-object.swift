@@ -254,7 +254,7 @@ public class TclObj: Sequence {
     }
 
     // getObj - return the Tcl object pointer (Tcl_Obj *)
-    func get() -> UnsafeMutablePointer<Tcl_Obj> {
+    public func get() -> UnsafeMutablePointer<Tcl_Obj> {
         return obj
     }
     
