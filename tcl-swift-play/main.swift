@@ -184,6 +184,12 @@ print(interp.result)
     list += "}"
     print("sum of \(list) is \(sum), average is \(sum / Double(count))")
 
+    print("Testing variable access")
+    try interp.rawEval(code: "set fred 1");
+    if let value: String = interp.get(variable: "fred") {
+        print("   Value of 'fred' is \(value)");
+    }
+
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("\nTesting array type on \(testdict)")
     if let character = try? interp.newArray("character", dict: testdict) {
