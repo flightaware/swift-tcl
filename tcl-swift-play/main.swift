@@ -189,6 +189,11 @@ print(interp.result)
     if let value: String = interp.get(variable: "fred") {
         print("   Value of 'fred' is \(value)");
     }
+    if let value: String = interp.get(variable: "barney") {
+        print("   Value of 'barney' is \(value)");
+    } else {
+        print("    There is no 'barney'");
+    }
 
     let testdict = ["name": "Nick", "age": "32", "role": "hustler"]
     print("\nTesting array type on \(testdict)")

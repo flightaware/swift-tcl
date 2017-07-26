@@ -214,12 +214,9 @@ public class TclInterp {
     // UnsafeMutablePointer<Tcl_Obj> (i.e. a Tcl_Obj *), or nil if it doesn't exist.
     // if elementName is specified, var is an element of an array, otherwise var is a variable
     
-    private func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) -> UnsafeMutablePointer<Tcl_Obj> {
-        if (elementName == nil) {
-            return Tcl_GetVar2Ex(interp, varName, nil, flags.rawValue)
-        } else {
-            return Tcl_GetVar2Ex(interp, varName, elementName, flags.rawValue)
-        }
+    private func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) -> UnsafeMutablePointer<Tcl_Obj>? {
+
+        return Tcl_GetVar2Ex(interp, varName, elementName, flags.rawValue)
     }
     
     // get(variable:...) - return a Tcl variable or  in a TclObj object, or nil
@@ -233,14 +230,14 @@ public class TclInterp {
     
     // get(variable:...) - return Tcl variable or array element as an Int or throw an error
     public func get(variable varName: String, element elementName: String? = nil, flags: VariableFlags = []) throws -> Int {
-        let obj: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: varName, element: elementName, flags: flags)
+        let obj: UnsafeMutablePointer<Tcl_Obj>? = self.get(variable: varName, element: elementName, flags: flags)
         
         return try tclobjp_to_Int(obj)
     }
     
     // get(variable:...) - return a var as a Double, or throw an error if unable
     public func get(variable arrayName: String, element elementName: String? = nil) throws -> Double {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
+        let objp: UnsafeMutablePointer<Tcl_Obj>? = self.get(variable: arrayName, element: elementName)
         
         return try tclobjp_to_Double(objp)
     }
@@ -248,14 +245,14 @@ public class TclInterp {
     // get(variable:...) - return a TclObj containing var as a String or throw an error if unable
     // the error seems unlikely but could be like a UTF-8 conversion error or something.
     public func get(variable arrayName: String, element elementName: String? = nil) throws -> String {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
+        let objp: UnsafeMutablePointer<Tcl_Obj>? = self.get(variable: arrayName, element: elementName)
         
         return try tclobjp_to_String(objp)
     }
     
     // get(variable:...) - return a TclObj containing var as a String, or nil
     public func get(variable arrayName: String, element elementName: String? = nil)  -> String? {
-        let objp: UnsafeMutablePointer<Tcl_Obj> = self.get(variable: arrayName, element: elementName)
+        let objp: UnsafeMutablePointer<Tcl_Obj>? = self.get(variable: arrayName, element: elementName)
         
         do {
             return try tclobjp_to_String(objp)
