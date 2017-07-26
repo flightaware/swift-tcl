@@ -13,7 +13,7 @@ import Foundation
 
 // TclArray - Tcl object class
 
-public class TclArray: SequenceType {
+public class TclArray: Sequence {
     let name: String
     let Interp: TclInterp
     let interp: UnsafeMutablePointer<Tcl_Interp>
@@ -22,15 +22,15 @@ public class TclArray: SequenceType {
     public init(_ name: String, Interp: TclInterp, namespace: String? = nil) {
         self.Interp = Interp;
         self.interp = Interp.interp
-        if namespace == nil {
-            self.name = name;
+        if let ns = namespace {
+            self.name = ns + "::" + name;
         } else {
-            self.name = namespace! + "::" + name;
+            self.name = name;
         }
     }
     
-    public func set(dict: [String : String]) throws {
-        try Interp.dictionaryToArray(name, dictionary: dict)
+    public func set(_ dict: [String : String]) throws {
+        try Interp.set(array: name, from: dict)
     }
     
     // init - initialize from string
@@ -51,8 +51,8 @@ public class TclArray: SequenceType {
         try self.set(dict)
     }
     
-    public func set(dict: [String : TclObj]) throws {
-        try Interp.dictionaryToArray(name, dictionary: dict)
+    public func set(_ dict: [String : TclObj]) throws {
+        try Interp.set(array: name, from: dict)
     }
     
     // names - generate a list of names for the keys in the array.
@@ -60,7 +60,7 @@ public class TclArray: SequenceType {
     public func names() throws -> [String] {
         let cmd = TclObj("array names", Interp: Interp)
         try cmd.lappend(self.name)
-        let res: TclObj = try Interp.eval(cmd.get())
+        let res: TclObj = try Interp.eval(code: cmd.get())
         return try res.get()
     }
     
@@ -78,37 +78,37 @@ public class TclArray: SequenceType {
     public func get() -> [String: TclObj] {
         var dict: [String: TclObj] = [:]
         if let names = try? self.names() {
-            names.forEach {
-                if let val: TclObj = self.getValue($0) {
-                    dict[$0] = val
+            for name in names {
+                if let val: TclObj = self.getValue(name) {
+                    dict[name] = val
                 }
             }
         }
         return dict
     }
     
-    public func getValue(key: String) -> TclObj? {
-        return Interp.getVar(name, elementName: key)
+    public func getValue(_ key: String) -> TclObj? {
+        return Interp.get(variable: name, element: key)
     }
     
-    public func setValue(key: String, obj: TclObj) throws {
-        try Interp.setVar(name, elementName: key, obj: obj)
+    public func setValue(_ key: String, obj: TclObj) throws {
+        try Interp.set(variable: name, element: key, obj: obj)
     }
     
-    public func setValue(key: String, value: String) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+    public func setValue(_ key: String, value: String) throws {
+        try Interp.set(variable: name, element: key, value: value)
     }
     
-    public func setValue(key: String, value: Int) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+    public func setValue(_ key: String, value: Int) throws {
+        try Interp.set(variable: name, element: key, value: value)
     }
     
-    public func setValue(key: String, value: Double) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+    public func setValue(_ key: String, value: Double) throws {
+        try Interp.set(variable: name, element: key, value: value)
     }
     
-    public func setValue(key: String, value: Bool) throws {
-        try Interp.setVar(name, elementName: key, value: value)
+    public func setValue(_ key: String, value: Bool) throws {
+        try Interp.set(variable: name, element: key, value: value)
     }
 
     public subscript (key: String) -> TclObj? {
@@ -198,15 +198,15 @@ public class TclArray: SequenceType {
     }
     
     // Generator for maps, forEach, etc... returns a tuple
-    public func generate() -> AnyGenerator<(String, TclObj)> {
+    public func makeIterator() -> AnyIterator<(String, TclObj)> {
         guard let nameList = try? self.names() else {
             // Can't initialize the generator, so return a dummy generator that always returns nil
-            return AnyGenerator<(String, TclObj)> { return nil }
+            return AnyIterator<(String, TclObj)> { return nil }
         }
-        
+
         var next = 0
 
-        return AnyGenerator<(String, TclObj)> {
+        return AnyIterator<(String, TclObj)> {
             var value: TclObj? = nil
             var name: String? = nil
             // looping over name list in case someone unset an array element behind my back

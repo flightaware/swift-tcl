@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9BBE456A1D8C3C92008415D4 /* stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBE45691D8C3C92008415D4 /* stopwatch.swift */; };
 		9BE496851CF5E11B002D643C /* impork-test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE496841CF5E11B002D643C /* impork-test.swift */; };
 		9BEF00231CEB406B00ED067B /* tcl-interp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEF00221CEB406B00ED067B /* tcl-interp.swift */; };
 		9BEF00251CEB40BF00ED067B /* tcl-object.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEF00241CEB40BF00ED067B /* tcl-object.swift */; };
@@ -30,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9BBE45691D8C3C92008415D4 /* stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stopwatch.swift; sourceTree = "<group>"; };
 		9BE496841CF5E11B002D643C /* impork-test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "impork-test.swift"; sourceTree = "<group>"; };
 		9BEF00221CEB406B00ED067B /* tcl-interp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "tcl-interp.swift"; sourceTree = "<group>"; };
 		9BEF00241CEB40BF00ED067B /* tcl-object.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "tcl-object.swift"; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				9BEF00241CEB40BF00ED067B /* tcl-object.swift */,
 				9BEF00261CEBB73700ED067B /* tcl-array.swift */,
 				9BE496841CF5E11B002D643C /* impork-test.swift */,
+				9BBE45691D8C3C92008415D4 /* stopwatch.swift */,
 			);
 			name = "tcl-swift-bridge";
 			path = "tcl-swift-play";
@@ -116,7 +119,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
+<<<<<<< HEAD
 				LastUpgradeCheck = 0800;
+=======
+				LastUpgradeCheck = 0820;
+>>>>>>> swift3
 				ORGANIZATIONNAME = FlightAware;
 				TargetAttributes = {
 					CB30DB8C1CB5898400F53FF5 = {
@@ -154,6 +161,7 @@
 				CB30DB911CB5898400F53FF5 /* main.swift in Sources */,
 				CB574D691CB600FD00B90411 /* tcl.swift in Sources */,
 				9BE496851CF5E11B002D643C /* impork-test.swift in Sources */,
+				9BBE456A1D8C3C92008415D4 /* stopwatch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,7 +267,11 @@
 				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+<<<<<<< HEAD
 				SWIFT_VERSION = 2.3;
+=======
+				SWIFT_VERSION = 3.0;
+>>>>>>> swift3
 			};
 			name = Debug;
 		};
@@ -274,7 +286,12 @@
 				);
 				PRODUCT_NAME = "tcl-swift-bridge";
 				SWIFT_OBJC_BRIDGING_HEADER = "tcl-swift-play/tcl-swift-play-Bridging-Header.h";
+<<<<<<< HEAD
 				SWIFT_VERSION = 2.3;
+=======
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+>>>>>>> swift3
 			};
 			name = Release;
 		};

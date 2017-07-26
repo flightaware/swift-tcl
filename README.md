@@ -35,19 +35,19 @@ Real work can be done with the Tcl interpeter without using TclObj objects at al
 The TclInterp object has methods for accessing and manipulating variables, arrays, evaluating code, etc.  In the examples below a String and a Double are obtained from variables in the Tcl interpreter:
 
 ```swift
-var autoPath: String = try interp.getVar("auto_path")
+var autoPath: String = try interp.get(variable: "auto_path")
 print("auto_path is '\(autoPath)'")
 
-let tclVersion: Double = try interp.getVar("tcl_version")
+let tclVersion: Double = try interp.get(variable: "tcl_version")
 print("Tcl version is \(tclVersion)")
 ```
 
-Y'see how getVar just gave you the data type you asked for with no funny business?  How cool is that?  Also note how we use *try* because getVar will fail if the variable doesn't exist.
+Y'see how get just gave you the data type you asked for with no funny business?  How cool is that?  Also note how we use *try* because get will fail if the variable doesn't exist.
 
-Likewise TclInterp's getVar can fetch elements out of an array:
+Likewise TclInterp's get can fetch elements out of an array:
 
 ```swift
-var machine: String = try interp.getVar("tcl_platform", elementName: "machine")
+var machine: String = try interp.get(variable: "tcl_platform", element: "machine")
 ```
 
 In this example we import Tcl's global _tcl_platform_ array into a Swift dictionary:
@@ -83,7 +83,7 @@ func avg (interp: TclInterp, objv: [TclObj]) -> Double {
 	return(sum / Double(objv.count))
 }
 
-interp.create_command("avg", avg)
+interp.createCommand(named: "avg", using: avg)
 ```
 
 Errors trying to convert Tcl objects to a data type such as trying to convert an alphanumeric string to a Double are thrown by the underlying helper functions and caught by Swift Tcl if you don't catch them in your Swift code.  You get nice native error messages.
@@ -134,7 +134,7 @@ Evaluate the code, don't return anything.
 
 Safely create a Tcl list from an array of Swift strings.
 
-* `try interp.RawEval(code: [String])`
+* `try interp.RawEval(list: [String])`
 
 Safer version of rawEval that accepts a string array and converts it to a Tcl list before evaluating it, avoiding potential issues from trying to quote Tcl code ad-hoc in swift.
 
@@ -175,7 +175,7 @@ Get the Interpreter result as the corresponding type.
 
 ### Registering commands
 
-* `interp.create_command(name: String, SwiftTclFunction:SwiftTclFuncType)`
+* `interp.createCommand(named: String, using: SwiftTclFuncType)`
 
 Create a new command in the Tcl interpreter with the specified name: when the name is invoked from Tcl the corresponding Swift function will be invoked to perform the command. The Swift function should be of type (tclInterp, [TclObj]) -> Type, where Type can be String, Double, Int, or Bool. Eg:
 
@@ -183,35 +183,35 @@ Create a new command in the Tcl interpreter with the specified name: when the na
 
 ### Handling variables.
 
-* `var val: UnsafeMutablePointer<TclObj> = interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
+* `var val: UnsafeMutablePointer<TclObj> = interp.get(variable: String, element: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpreter and return it as a Tcl\_Obj \*.  This is internal and you shouldn't really ever need it.
 
-* `var val: TclObj = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
+* `var val: TclObj = try interp.get(variable: String, element: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpreter and return it as a string or throw an error.
 
-* `var val: Int = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
+* `var val: Int = try interp.get(variable: String, element: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpreter and return it as an Int.  An error is thrown if the object's contents aren't a valid list or if the element can't be converted to an Int.
 
-* `var val: Double = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
-* `var val: String = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
-* `var val: Bool = try interp.getVar(varName: String, elementName: String?, flags: VariableFlags = [])`
+* `var val: Double = try interp.get(variable: String, element: String?, flags: VariableFlags = [])`
+* `var val: String = try interp.get(variable: String, element: String?, flags: VariableFlags = [])`
+* `var val: Bool = try interp.get(variable: String, element: String?, flags: VariableFlags = [])`
 
 Get a variable or array element out of the Tcl interpeter and return it as a Double, String or Bool et al or throw an error.
 
-* `interp.setVar(varName: String, elementName: String?, value: String, flags: VariableFlags = [])`
-* `interp.setVar(varName: String, elementName: String?, value: Int, flags: VariableFlags = [])`
-* `interp.setVar(varName: String, elementName: String?, value: Double, flags: VariableFlags = [])`
-* `interp.setVar(varName: String, elementName: String?, value: Bool, flags: VariableFlags = [])`
-* `interp.setVar(varName: String, elementName: String?, value: TclObj, flags: VariableFlags = [])`
+* `interp.set(variable: varName: String, element: String?, value: String, flags: VariableFlags = [])`
+* `interp.set(variable: varName: String, element: String?, value: Int, flags: VariableFlags = [])`
+* `interp.set(variable: varName: String, element: String?, value: Double, flags: VariableFlags = [])`
+* `interp.set(variable: varName: String, element: String?, value: Bool, flags: VariableFlags = [])`
+* `interp.set(variable: varName: String, element: String?, value: TclObj, flags: VariableFlags = [])`
 
 Set a variable or array element in the Tcl interpeter to be the String, Int, Double, Bool or TclObj that was passed or throw an error if unable.  For instance you might be unable to set an array element when the variable name is a scalar.
 
-* `interp.dictionaryToArray (arrayName: String, dictionary: [String: String], flags: VariableFlags = [])`
-* `interp.dictionaryToArray (arrayName: String, dictionary: [String: Int], flags: VariableFlags = [])`
-* `interp.dictionaryToArray (arrayName: String, dictionary: [String: Double], flags: VariableFlags = [])`
+* `interp.set (array: String, from: [String: String], flags: VariableFlags = [])`
+* `interp.set (array: String, from: [String: Int], flags: VariableFlags = [])`
+* `interp.set (array: String, from: [String: Double], flags: VariableFlags = [])`
 
 Import a Swift Dictionary into a Tcl array.
 
@@ -232,10 +232,10 @@ Flags are an OptionSet. Values are:
 
 ###String substitution
 
-* `interp.subst (substIn: String, flags: SubstFlags) -> String`
-* `interp.subst (substIn: String, flags: SubstFlags) -> TclObj`
+* `interp.subst (String, flags: SubstFlags) -> String`
+* `interp.subst (TclObj, flags: SubstFlags) -> TclObj`
 
-Perform substitution on String in the fashion of the Tcl *subst* command, performing variable substitution, evaluating square-bracketed stuff as embedded Tcl commands and substituting their result, and performing backslash substitution and return the result.
+Perform substitution on String or Tcl object in the fashion of the Tcl *subst* command, performing variable substitution, evaluating square-bracketed stuff as embedded Tcl commands and substituting their result, and performing backslash substitution and return the result.
 
 Flags are an OptionSet of one or more of [.Commands, .Variables, .Backslashes, .All].  [.All] is the default.
  
@@ -255,7 +255,7 @@ The TclObj class gives Swift access to Tcl objects.  A TclObj can be wrapped aro
 
 The object can be new or existing.  For example `var obj = interp.newObj(5)` creates a new Tcl object with an integer representation and a value of 5 while `var obj = interp.resultObj` wraps an existing Tcl\_Obj object as a Swift TclObj.
 
-The TclObj object manages Tcl reference counts so that all this will work.  For example, setting a Tcl array element to a TclObj using `interp.setVar(arrayName, elementName: element, value: obj)`, the element will continue to hold the object even if the TclObj is deleted on the Swift side.
+The TclObj object manages Tcl reference counts so that all this will work.  For example, setting a Tcl array element to a TclObj using `interp.set(variable: arrayName, element: element, value: obj)`, the element will continue to hold the object even if the TclObj is deleted on the Swift side.
 
 * `var obj = interp.newObj()`
 * `var obj = interp.newObj(String)`

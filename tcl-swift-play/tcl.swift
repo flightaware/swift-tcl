@@ -11,11 +11,11 @@
 import Foundation
 
 public enum TclReturn: Int32 {
-    case OK = 0
-    case ERROR = 1
-    case RETURN = 2
-    case BREAK = 3
-    case CONTINUE = 4
+    case tcl_ok = 0
+    case tcl_error = 1
+    case tcl_return = 2
+    case tcl_break = 3
+    case tcl_continue = 4
 }
 
 // Tcl commands functions written in Swift can return Int, Double, String, Bool, TclObj or a TCL_RETURN-type code
@@ -29,30 +29,30 @@ public typealias SwiftTclFuncReturningTclObj = (TclInterp, [TclObj]) throws -> T
 //public typealias Tcl_ObjP = UnsafeMutablePointer<Tcl_Obj>
 
 public enum SwiftTclFunctionType {
-    case TclReturn(SwiftTclFuncReturningTclReturn)
-    case Int(SwiftTclFuncReturningInt)
-    case Double(SwiftTclFuncReturningDouble)
-    case String(SwiftTclFuncReturningString)
-    case Bool(SwiftTclFuncReturningBool)
-    case TclObj(SwiftTclFuncReturningTclObj)
+    case tclReturn(SwiftTclFuncReturningTclReturn)
+    case int(SwiftTclFuncReturningInt)
+    case double(SwiftTclFuncReturningDouble)
+    case string(SwiftTclFuncReturningString)
+    case bool(SwiftTclFuncReturningBool)
+    case tclObj(SwiftTclFuncReturningTclObj)
 }
 
-enum TclError: ErrorType {
-    case WrongNumArgs(nLeadingArguments: Int, message: String)
-    case ErrorMessage(message: String, errorCode: String) // set error message in interpreter result
-    case UnknownReturnCode(code: Int32)
-    case NotString(string: String)
-    case NullPointer // Object or string passed to a handler is a null pointer
-    case Error // error already set in interpreter result
+enum TclError: Error {
+    case wrongNumArgs(nLeadingArguments: Int, message: String)
+    case errorMessage(message: String, errorCode: String) // set error message in interpreter result
+    case unknownReturnCode(code: Int32)
+    case notString(string: String)
+    case nullPointer // Object or string passed to a handler is a null pointer
+    case error // error already set in interpreter result
 }
 
-enum TclControlFlow: ErrorType {
-    case Return
-    case Break
-    case Continue
+enum TclControlFlow: Error {
+    case tcl_return
+    case tcl_break
+    case tcl_continue
 }
 
-public struct VariableFlags : OptionSetType {
+public struct VariableFlags : OptionSet {
     public let rawValue: Int32;
     public init(rawValue : Int32) { self.rawValue = rawValue }
     
@@ -73,7 +73,7 @@ public struct VariableFlags : OptionSetType {
     //static let None               = VariableFlags(rawValue: 0)
 }
 
-public struct SubstFlags : OptionSetType {
+public struct SubstFlags : OptionSet {
     public let rawValue: Int32;
     public init(rawValue : Int32) { self.rawValue = rawValue }
     
@@ -86,86 +86,79 @@ public struct SubstFlags : OptionSetType {
 // TclCommandBlock - when creating a Tcl command -> Swift
 class TclCommandBlock {
     let swiftTclCallFunction: SwiftTclFunctionType
-    let Interp: TclInterp
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclReturn) {
-        Interp = myInterp
-        swiftTclCallFunction = .TclReturn(function)
+    init(function: @escaping SwiftTclFuncReturningTclReturn) {
+        swiftTclCallFunction = .tclReturn(function)
     }
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningInt) {
-        Interp = myInterp
-        swiftTclCallFunction = .Int(function)
+    init(function: @escaping SwiftTclFuncReturningInt) {
+        swiftTclCallFunction = .int(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningDouble) {
-        Interp = myInterp
-        swiftTclCallFunction = .Double(function)
+    init(function: @escaping SwiftTclFuncReturningDouble) {
+        swiftTclCallFunction = .double(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningString) {
-        Interp = myInterp
-        swiftTclCallFunction = .String(function)
+    init(function: @escaping SwiftTclFuncReturningString) {
+        swiftTclCallFunction = .string(function)
     }
 
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningBool) {
-        Interp = myInterp
-        swiftTclCallFunction = .Bool(function)
+    init(function: @escaping SwiftTclFuncReturningBool) {
+        swiftTclCallFunction = .bool(function)
     }
     
-    init(myInterp: TclInterp, function: SwiftTclFuncReturningTclObj) {
-        Interp = myInterp
-        swiftTclCallFunction = .TclObj(function)
+    init(function: @escaping SwiftTclFuncReturningTclObj) {
+        swiftTclCallFunction = .tclObj(function)
     }
 
-    func invoke(objv: [TclObj]) throws -> TclReturn {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> TclReturn {
         switch swiftTclCallFunction {
-        case .TclReturn(let function):
+        case .tclReturn(let function):
             return try function(Interp, objv)
         default:
             abort()
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> Int {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> Int {
         switch swiftTclCallFunction {
-        case .Int(let function):
+        case .int(let function):
             return try function(Interp, objv)
         default:
             abort()
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> Double {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> Double {
         switch swiftTclCallFunction {
-        case .Double(let function):
+        case .double(let function):
             return try function(Interp, objv)
         default:
             abort()
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> String {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> String {
         switch swiftTclCallFunction {
-        case .String(let function):
+        case .string(let function):
             return try function(Interp, objv)
         default:
             abort()
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> Bool {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> Bool {
         switch swiftTclCallFunction {
-        case .Bool(let function):
+        case .bool(let function):
             return try function(Interp, objv)
         default:
             abort()
         }
     }
     
-    func invoke(objv: [TclObj]) throws -> TclObj {
+    func invoke(Interp: TclInterp, objv: [TclObj]) throws -> TclObj {
         switch swiftTclCallFunction {
-        case .TclObj(let function):
+        case .tclObj(let function):
             return try function(Interp, objv)
         default:
             abort()
@@ -175,24 +168,24 @@ class TclCommandBlock {
 
 // tclobjp_to_String - return the value of a Tcl_Obj * as a String or nil
 
-func tclobjp_to_String (tclObjP: UnsafeMutablePointer<Tcl_Obj>?) throws -> String {
-    guard tclObjP != nil else { throw TclError.NullPointer }
+func tclobjp_to_String (_ tclObjP: UnsafeMutablePointer<Tcl_Obj>?) throws -> String {
+    guard let tclObjP = tclObjP else { throw TclError.nullPointer }
 
-    return String.fromCString(Tcl_GetString(tclObjP!))!
+    return String(cString: Tcl_GetString(tclObjP))
 }
 
 // tclobjp_to_Int - return the value of a Tcl_Obj * as an Int or nil
 
-func tclobjp_to_Int (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Int {
+func tclobjp_to_Int (_ tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp>? = nil) throws -> Int {
     var longVal: CLong = 0
-    guard let tclObjP = possiblyNullPointer else { throw TclError.NullPointer }
+    guard let tclObjP = tclObjP else { throw TclError.nullPointer }
 
     let result = Tcl_GetLongFromObj (interp, tclObjP, &longVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
-            throw TclError.ErrorMessage(message: "expected integer", errorCode: "TCL VALUE NUMBER")
+            throw TclError.errorMessage(message: "expected integer", errorCode: "TCL VALUE NUMBER")
         } else {
-            throw TclError.Error
+            throw TclError.error
         }
     }
     return longVal
@@ -200,16 +193,16 @@ func tclobjp_to_Int (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp
 
 // tclobjp_to_Double - return the value of a Tcl_Obj * as a Double or nil
 
-func tclobjp_to_Double (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Double {
+func tclobjp_to_Double (_ tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp>? = nil) throws -> Double {
     var doubleVal: Double = 0
-    guard let tclObjP = possiblyNullPointer else { throw TclError.NullPointer }
+    guard let tclObjP = tclObjP else { throw TclError.nullPointer }
     
     let result = Tcl_GetDoubleFromObj (interp, tclObjP, &doubleVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
-            throw TclError.ErrorMessage(message: "expected double", errorCode: "TCL VALUE NUMBER")
+            throw TclError.errorMessage(message: "expected double", errorCode: "TCL VALUE NUMBER")
         } else {
-            throw TclError.Error
+            throw TclError.error
         }
 
     }
@@ -218,76 +211,75 @@ func tclobjp_to_Double (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, int
 
 // tclobjp_to_Bool - return the value of a Tcl_Obj * as a Bool or nil
 
-func tclobjp_to_Bool (possiblyNullPointer: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp> = nil) throws -> Bool {
+func tclobjp_to_Bool (_ tclObjP: UnsafeMutablePointer<Tcl_Obj>?, interp: UnsafeMutablePointer<Tcl_Interp>? = nil) throws -> Bool {
     var boolVal: Int32 = 0
-    guard let tclObjP = possiblyNullPointer else { throw TclError.NullPointer }
+    guard let tclObjP = tclObjP else { throw TclError.nullPointer }
     
     let result = Tcl_GetBooleanFromObj (interp, tclObjP, &boolVal)
     if (result == TCL_ERROR) {
         if (interp == nil) {
-            throw TclError.ErrorMessage(message: "expected boolean", errorCode: "TCL VALUE NUMBER")
+            throw TclError.errorMessage(message: "expected boolean", errorCode: "TCL VALUE NUMBER")
         } else {
-            throw TclError.Error
+            throw TclError.error
         }
 
     }
     return boolVal == 0 ? true : false
 }
 
-// string_to_tclobjp - create a Tcl_Obj * from a Swift String
+// tclobjp(string:) - create a Tcl_Obj * from a Swift String
 
-func string_to_tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> {
+func tclobjp (string: String) throws -> UnsafeMutablePointer<Tcl_Obj> {
     return Tcl_NewStringObj (string, -1)
 }
 
 // Protocol for types that Tcl knows
 protocol TclType {
     init? (_ obj: TclObj)
-    mutating func fromTclObj(obj: TclObj)
+    mutating func fromTclObj(_ obj: TclObj)
 }
 
 // extend Swift objects to satisfy protocol TclType
 extension String: TclType {
-    // initialize string straight from a TclObj!
-    public init (_ obj: TclObj) {
-        self.init(obj.stringValue)
+    public init? (_ obj: TclObj) {
+        guard let value: String = try? obj.get() else {return nil}
+        self.init(value)
     }
     
-    mutating func fromTclObj(obj: TclObj) {
+    mutating func fromTclObj(_ obj: TclObj) {
         self = obj.stringValue!
     }
 }
 
 extension Int: TclType {
-    // var foo: Int = someTclObj; failable initializer
     public init? (_ obj: TclObj) {
-        guard let value = obj.intValue else {return nil}
+        guard let value: Int = try? obj.get() else {return nil}
         self.init(value)
     }
     
-    mutating func fromTclObj(obj: TclObj) {
+    mutating func fromTclObj(_ obj: TclObj) {
         self = obj.intValue!
     }
 }
 
 extension Double: TclType {
     public init? (_ obj: TclObj) {
-        guard let value = obj.doubleValue else {return nil}
+        guard let value: Double = try? obj.get() else {return nil}
         self.init(value)
     }
     
-    mutating func fromTclObj(obj: TclObj) {
+    mutating func fromTclObj(_ obj: TclObj) {
         self = obj.doubleValue!
     }
 }
 
 extension Bool: TclType {
     public init? (_ obj: TclObj) {
-        guard let value = obj.boolValue else {return nil}
+        guard let value: Bool = try? obj.get() else {return nil}
         self.init(value)
     }
     
-    mutating func fromTclObj(obj: TclObj) {
+    mutating func fromTclObj(_ obj: TclObj) {
         self = obj.boolValue!
     }
 }
@@ -295,61 +287,63 @@ extension Bool: TclType {
 
 // swift_tcl_bridger - this is the trampoline that gets called by Tcl when invoking a created Swift command
 //   this declaration is the Swift equivalent of Tcl_ObjCmdProc *proc
-func swift_tcl_bridger (clientData: ClientData, interp: UnsafeMutablePointer<Tcl_Interp>, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>>) -> Int32 {
-    let tcb = UnsafeMutablePointer<TclCommandBlock>(clientData).memory
+func swift_tcl_bridger (clientData: ClientData?, interp: UnsafeMutablePointer<Tcl_Interp>?, objc: Int32, objv: UnsafePointer<UnsafeMutablePointer<Tcl_Obj>?>?) -> Int32 {
+    let Interp = TclInterp(interp: interp!, printErrors: false)
+    let tcb = Unmanaged<TclCommandBlock>.fromOpaque(clientData!).takeUnretainedValue()
     
     // construct an array containing the arguments
-    // (go from 1 not 0 because we don't include the obj containing the command name)
     var objvec = [TclObj]()
-    for i in 1..<Int(objc) {
-        objvec.append(TclObj(objv[i], Interp: tcb.Interp))
+    if let objv = objv {
+        for i in 0..<Int(objc) {
+            objvec.append(TclObj(objv[i]!, Interp: Interp))
+        }
     }
     
     // invoke the Swift implementation of the Tcl command and return the value it returns
     do {
         switch tcb.swiftTclCallFunction {
-        case .TclReturn:
-            let ret: TclReturn = try tcb.invoke(objvec)
+        case .tclReturn:
+            let ret: TclReturn = try tcb.invoke(Interp: Interp, objv: objvec)
             return ret.rawValue
             
-        case .String:
-            let result: String = try tcb.invoke(objvec)
-            tcb.Interp.result = result
+        case .string:
+            let result: String = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.result = result
             
-        case .Double:
-            let result: Double = try tcb.invoke(objvec)
-            tcb.Interp.setResult(result)
+        case .double:
+            let result: Double = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.setResult(result)
             
-        case .Int:
-            let result: Int = try tcb.invoke(objvec)
-            tcb.Interp.setResult(result)
+        case .int:
+            let result: Int = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.setResult(result)
             
-        case .Bool:
-            let result: Bool = try tcb.invoke(objvec)
-            tcb.Interp.setResult(result)
+        case .bool:
+            let result: Bool = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.setResult(result)
             
-        case .TclObj:
-            let result: TclObj = try tcb.invoke(objvec)
-            tcb.Interp.resultObj = result
+        case .tclObj:
+            let result: TclObj = try tcb.invoke(Interp: Interp, objv: objvec)
+            Interp.resultObj = result
 
         }
-    } catch TclError.Error {
+    } catch TclError.error {
         return TCL_ERROR
-    } catch TclError.ErrorMessage(let message) {
-        tcb.Interp.result = message.message
-        try! tcb.Interp.setErrorCode(message.errorCode)
+    } catch TclError.errorMessage(let message) {
+        Interp.result = message.message
+        try! Interp.setErrorCode(message.errorCode)
         return TCL_ERROR
-    } catch TclError.WrongNumArgs(let nLeadingArguments, let message) {
+    } catch TclError.wrongNumArgs(let nLeadingArguments, let message) {
         Tcl_WrongNumArgs(interp, Int32(nLeadingArguments), objv, message)
         return TCL_ERROR
-    } catch TclControlFlow.Break {
+    } catch TclControlFlow.tcl_break {
         return TCL_BREAK
-    } catch TclControlFlow.Continue {
+    } catch TclControlFlow.tcl_continue {
         return TCL_CONTINUE
-    } catch TclControlFlow.Return {
+    } catch TclControlFlow.tcl_return {
         return TCL_RETURN
     } catch (let error) {
-        tcb.Interp.result = "unknown error type \(error)"
+        Interp.result = "unknown error type \(error)"
         return TCL_ERROR
     }
     return TCL_OK
