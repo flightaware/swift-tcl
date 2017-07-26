@@ -218,7 +218,7 @@ public class TclInterp {
         if (elementName == nil) {
             return Tcl_GetVar2Ex(interp, varName, nil, flags.rawValue)
         } else {
-            return Tcl_GetVar2Ex(interp, varName, nil, flags.rawValue)
+            return Tcl_GetVar2Ex(interp, varName, elementName, flags.rawValue)
         }
     }
     
