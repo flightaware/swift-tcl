@@ -11,7 +11,7 @@ import Tcl8_6
 import SwiftTcl
 
 print("Hello, World!")
-
+print("Starting tests")
 
 let interp = TclInterp()
 

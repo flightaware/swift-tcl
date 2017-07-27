@@ -71,13 +71,13 @@
 
 /* Begin PBXFileReference section */
 		OBJ_11 /* c-stuff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "c-stuff.h"; sourceTree = "<group>"; };
-		OBJ_12 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = "/Users/peter.dasilva/git/swift3/swift-tcl/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap"; sourceTree = "<group>"; };
+		OBJ_12 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = "/Users/peter.dasilva/git/swift-tcl/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap"; sourceTree = "<group>"; };
 		OBJ_14 /* impork-test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "impork-test.swift"; sourceTree = "<group>"; };
 		OBJ_15 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		OBJ_16 /* stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stopwatch.swift; sourceTree = "<group>"; };
 		OBJ_18 /* shim.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = shim.c; sourceTree = "<group>"; };
 		OBJ_20 /* shim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shim.h; sourceTree = "<group>"; };
-		OBJ_21 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = "/Users/peter.dasilva/git/swift3/swift-tcl/Sources/Tcl8_6/include/module.modulemap"; sourceTree = "<group>"; };
+		OBJ_21 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = "/Users/peter.dasilva/git/swift-tcl/Sources/Tcl8_6/include/module.modulemap"; sourceTree = "<group>"; };
 		OBJ_23 /* tcl-array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "tcl-array.swift"; sourceTree = "<group>"; };
 		OBJ_24 /* tcl-interp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "tcl-interp.swift"; sourceTree = "<group>"; };
 		OBJ_25 /* tcl-object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "tcl-object.swift"; sourceTree = "<group>"; };
