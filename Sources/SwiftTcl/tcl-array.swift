@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import Tcl8_6
 
 
 // TclArray - Tcl object class

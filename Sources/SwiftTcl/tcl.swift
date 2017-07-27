@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import Tcl8_6
 
 public enum TclReturn: Int32 {
     case tcl_ok = 0
@@ -37,7 +38,7 @@ public enum SwiftTclFunctionType {
     case tclObj(SwiftTclFuncReturningTclObj)
 }
 
-enum TclError: Error {
+public enum TclError: Error {
     case wrongNumArgs(nLeadingArguments: Int, message: String)
     case errorMessage(message: String, errorCode: String) // set error message in interpreter result
     case unknownReturnCode(code: Int32)

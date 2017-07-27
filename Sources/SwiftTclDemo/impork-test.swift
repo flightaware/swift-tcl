@@ -7,13 +7,16 @@
 //
 
 import Foundation
+import Tcl8_6
+import SwiftTcl
 
 func import_file(_ Interp: TclInterp, file: String) throws {
     try Interp.rawEval(list: ["source", file])
 }
 
 func impork(_ Interp: TclInterp) {
-    let file: String = "../../../../../../../../git/swift-tcl/package/impork.tcl" // *cries*
+//    let file: String = "../../../../../../../../git/swift-tcl/package/impork.tcl" // *cries*
+    let file: String = "./package/impork.tcl" // *cries*
     do {
         try import_file(Interp, file: file)
         

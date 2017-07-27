@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Tcl8_6
+import SwiftTcl
 
 print("Hello, World!")
 

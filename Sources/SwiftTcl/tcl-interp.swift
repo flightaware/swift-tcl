@@ -9,12 +9,13 @@
 //
 
 import Foundation
+import Tcl8_6
 
 // TclInterp - Tcl Interpreter class
 
 
 public class TclInterp {
-    let interp: UnsafeMutablePointer<Tcl_Interp>
+    public let interp: UnsafeMutablePointer<Tcl_Interp>
     let ownInterpreter: Bool
     public var printErrors = true
     

@@ -9,6 +9,8 @@
 //
 
 import Foundation
+import SwiftTcl_c
+import Tcl8_6
 
 
 // TclObj - Tcl object class
