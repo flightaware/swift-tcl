@@ -34,3 +34,8 @@ cd tcl8.6.6/macox
 make
 sudo make -e NATIVE_TCLSH=/usr/local/bin/tclsh8.6 install
 ```
+
+If you need to restore for Tcl8.4 and Tcl8.5 Frameworks from Apple they are in
+```
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tcl.framework
+```
