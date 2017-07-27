@@ -14,3 +14,5 @@ build: Package.swift
 
 SwiftTcl.xcodeproj: Package.swift Makefile
 	swift package -Xlinker -L$(TCLLIBPATH) -Xlinker -ltcl8.6 -Xlinker -ltclstub8.6 generate-xcodeproj
+	@echo "NOTE: You will need to manually set the working directory for the SwiftTclDemo scheme to the root directory of this tree."
+	@echo "Thanks Apple"
