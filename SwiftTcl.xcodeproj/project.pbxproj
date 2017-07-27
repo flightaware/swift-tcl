@@ -1,0 +1,757 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		OBJ_41 /* c-stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* c-stuff.c */; };
+		OBJ_43 /* Tcl8_6.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Tcl8_6.framework */; };
+		OBJ_51 /* impork-test.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* impork-test.swift */; };
+		OBJ_52 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* main.swift */; };
+		OBJ_53 /* stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* stopwatch.swift */; };
+		OBJ_55 /* Tcl8_6.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Tcl8_6.framework */; };
+		OBJ_56 /* SwiftTcl_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* SwiftTcl_c.framework */; };
+		OBJ_57 /* SwiftTcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_34 /* SwiftTcl.framework */; };
+		OBJ_67 /* shim.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* shim.c */; };
+		OBJ_73 /* tcl-array.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* tcl-array.swift */; };
+		OBJ_74 /* tcl-interp.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* tcl-interp.swift */; };
+		OBJ_75 /* tcl-object.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* tcl-object.swift */; };
+		OBJ_76 /* tcl.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* tcl.swift */; };
+		OBJ_78 /* Tcl8_6.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Tcl8_6.framework */; };
+		OBJ_79 /* SwiftTcl_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* SwiftTcl_c.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9B2452381F2A1E8D00935033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_45;
+			remoteInfo = Tcl8_6;
+		};
+		9B2452391F2A1E8D00935033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_45;
+			remoteInfo = Tcl8_6;
+		};
+		9B24523A1F2A1E8D00935033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_35;
+			remoteInfo = SwiftTcl_c;
+		};
+		9B24523B1F2A1E8D00935033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_61;
+			remoteInfo = SwiftTcl;
+		};
+		9B24523C1F2A1E8D00935033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_45;
+			remoteInfo = Tcl8_6;
+		};
+		9B24523D1F2A1E8D00935033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_35;
+			remoteInfo = SwiftTcl_c;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		OBJ_11 /* c-stuff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "c-stuff.h"; sourceTree = "<group>"; };
+		OBJ_12 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = "/Users/peter.dasilva/git/swift3/swift-tcl/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap"; sourceTree = "<group>"; };
+		OBJ_14 /* impork-test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "impork-test.swift"; sourceTree = "<group>"; };
+		OBJ_15 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		OBJ_16 /* stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stopwatch.swift; sourceTree = "<group>"; };
+		OBJ_18 /* shim.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = shim.c; sourceTree = "<group>"; };
+		OBJ_20 /* shim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shim.h; sourceTree = "<group>"; };
+		OBJ_21 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = "/Users/peter.dasilva/git/swift3/swift-tcl/Sources/Tcl8_6/include/module.modulemap"; sourceTree = "<group>"; };
+		OBJ_23 /* tcl-array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "tcl-array.swift"; sourceTree = "<group>"; };
+		OBJ_24 /* tcl-interp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "tcl-interp.swift"; sourceTree = "<group>"; };
+		OBJ_25 /* tcl-object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "tcl-object.swift"; sourceTree = "<group>"; };
+		OBJ_26 /* tcl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tcl.swift; sourceTree = "<group>"; };
+		OBJ_28 /* package */ = {isa = PBXFileReference; lastKnownFileType = folder; path = package; sourceTree = SOURCE_ROOT; };
+		OBJ_29 /* tcl-swift-play */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "tcl-swift-play"; sourceTree = SOURCE_ROOT; };
+		OBJ_31 /* SwiftTcl_c.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftTcl_c.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_32 /* SwiftTclDemo */ = {isa = PBXFileReference; lastKnownFileType = text; path = SwiftTclDemo; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_33 /* Tcl8_6.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Tcl8_6.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_34 /* SwiftTcl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftTcl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		OBJ_9 /* c-stuff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-stuff.c"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		OBJ_42 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_43 /* Tcl8_6.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_55 /* Tcl8_6.framework in Frameworks */,
+				OBJ_56 /* SwiftTcl_c.framework in Frameworks */,
+				OBJ_57 /* SwiftTcl.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_77 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_78 /* Tcl8_6.framework in Frameworks */,
+				OBJ_79 /* SwiftTcl_c.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		OBJ_10 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_11 /* c-stuff.h */,
+				OBJ_12 /* module.modulemap */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		OBJ_13 /* SwiftTclDemo */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_14 /* impork-test.swift */,
+				OBJ_15 /* main.swift */,
+				OBJ_16 /* stopwatch.swift */,
+			);
+			name = SwiftTclDemo;
+			path = Sources/SwiftTclDemo;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_17 /* Tcl8_6 */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_18 /* shim.c */,
+				OBJ_19 /* include */,
+			);
+			name = Tcl8_6;
+			path = Sources/Tcl8_6;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_19 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_20 /* shim.h */,
+				OBJ_21 /* module.modulemap */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		OBJ_22 /* SwiftTcl */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_23 /* tcl-array.swift */,
+				OBJ_24 /* tcl-interp.swift */,
+				OBJ_25 /* tcl-object.swift */,
+				OBJ_26 /* tcl.swift */,
+			);
+			name = SwiftTcl;
+			path = Sources/SwiftTcl;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_27 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Tests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_30 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_31 /* SwiftTcl_c.framework */,
+				OBJ_32 /* SwiftTclDemo */,
+				OBJ_33 /* Tcl8_6.framework */,
+				OBJ_34 /* SwiftTcl.framework */,
+			);
+			name = Products;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		OBJ_5 /*  */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_6 /* Package.swift */,
+				OBJ_7 /* Sources */,
+				OBJ_27 /* Tests */,
+				OBJ_28 /* package */,
+				OBJ_29 /* tcl-swift-play */,
+				OBJ_30 /* Products */,
+			);
+			name = "";
+			sourceTree = "<group>";
+		};
+		OBJ_7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_8 /* SwiftTcl_c */,
+				OBJ_13 /* SwiftTclDemo */,
+				OBJ_17 /* Tcl8_6 */,
+				OBJ_22 /* SwiftTcl */,
+			);
+			name = Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_8 /* SwiftTcl_c */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_9 /* c-stuff.c */,
+				OBJ_10 /* include */,
+			);
+			name = SwiftTcl_c;
+			path = Sources/SwiftTcl_c;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		OBJ_35 /* SwiftTcl_c */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_36 /* Build configuration list for PBXNativeTarget "SwiftTcl_c" */;
+			buildPhases = (
+				OBJ_39 /* ShellScript */,
+				OBJ_40 /* Sources */,
+				OBJ_42 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_44 /* PBXTargetDependency */,
+			);
+			name = SwiftTcl_c;
+			productName = SwiftTcl_c;
+			productReference = OBJ_31 /* SwiftTcl_c.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		OBJ_45 /* Tcl8_6 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_62 /* Build configuration list for PBXNativeTarget "Tcl8_6" */;
+			buildPhases = (
+				OBJ_65 /* ShellScript */,
+				OBJ_66 /* Sources */,
+				OBJ_68 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tcl8_6;
+			productName = Tcl8_6;
+			productReference = OBJ_33 /* Tcl8_6.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		OBJ_46 /* SwiftTclDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_47 /* Build configuration list for PBXNativeTarget "SwiftTclDemo" */;
+			buildPhases = (
+				OBJ_50 /* Sources */,
+				OBJ_54 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_58 /* PBXTargetDependency */,
+				OBJ_59 /* PBXTargetDependency */,
+				OBJ_60 /* PBXTargetDependency */,
+			);
+			name = SwiftTclDemo;
+			productName = SwiftTclDemo;
+			productReference = OBJ_32 /* SwiftTclDemo */;
+			productType = "com.apple.product-type.tool";
+		};
+		OBJ_61 /* SwiftTcl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_69 /* Build configuration list for PBXNativeTarget "SwiftTcl" */;
+			buildPhases = (
+				OBJ_72 /* Sources */,
+				OBJ_77 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_80 /* PBXTargetDependency */,
+				OBJ_81 /* PBXTargetDependency */,
+			);
+			name = SwiftTcl;
+			productName = SwiftTcl;
+			productReference = OBJ_34 /* SwiftTcl.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		OBJ_1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 9999;
+			};
+			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "SwiftTcl" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = OBJ_5 /*  */;
+			productRefGroup = OBJ_30 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				OBJ_35 /* SwiftTcl_c */,
+				OBJ_46 /* SwiftTclDemo */,
+				OBJ_45 /* Tcl8_6 */,
+				OBJ_61 /* SwiftTcl */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		OBJ_39 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${PROJECT_TEMP_DIR}/SymlinkLibs\"\nln -sf \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${PROJECT_TEMP_DIR}/SymlinkLibs/lib${EXECUTABLE_NAME}.dylib\"\n";
+		};
+		OBJ_65 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${PROJECT_TEMP_DIR}/SymlinkLibs\"\nln -sf \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${PROJECT_TEMP_DIR}/SymlinkLibs/lib${EXECUTABLE_NAME}.dylib\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		OBJ_40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_41 /* c-stuff.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_50 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_51 /* impork-test.swift in Sources */,
+				OBJ_52 /* main.swift in Sources */,
+				OBJ_53 /* stopwatch.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_66 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_67 /* shim.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_72 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_73 /* tcl-array.swift in Sources */,
+				OBJ_74 /* tcl-interp.swift in Sources */,
+				OBJ_75 /* tcl-object.swift in Sources */,
+				OBJ_76 /* tcl.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		OBJ_44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_45 /* Tcl8_6 */;
+			targetProxy = 9B2452381F2A1E8D00935033 /* PBXContainerItemProxy */;
+		};
+		OBJ_58 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_45 /* Tcl8_6 */;
+			targetProxy = 9B2452391F2A1E8D00935033 /* PBXContainerItemProxy */;
+		};
+		OBJ_59 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_35 /* SwiftTcl_c */;
+			targetProxy = 9B24523A1F2A1E8D00935033 /* PBXContainerItemProxy */;
+		};
+		OBJ_60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_61 /* SwiftTcl */;
+			targetProxy = 9B24523B1F2A1E8D00935033 /* PBXContainerItemProxy */;
+		};
+		OBJ_80 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_45 /* Tcl8_6 */;
+			targetProxy = 9B24523C1F2A1E8D00935033 /* PBXContainerItemProxy */;
+		};
+		OBJ_81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_35 /* SwiftTcl_c */;
+			targetProxy = 9B24523D1F2A1E8D00935033 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		OBJ_3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L/usr/local/Cellar/tcl-tk/8.6.6_2/lib",
+					"-ltcl8.6",
+					"-ltclstub8.6",
+				);
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		OBJ_37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = NO;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/SwiftTcl_c/include",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/SwiftTcl_c_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_TEMP_DIR)/SymlinkLibs/";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L/usr/local/Cellar/tcl-tk/8.6.6_2/lib",
+					"-ltcl8.6",
+					"-ltclstub8.6",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "SwiftTcl-c";
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = SwiftTcl_c;
+			};
+			name = Debug;
+		};
+		OBJ_38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = NO;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/SwiftTcl_c/include",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/SwiftTcl_c_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_TEMP_DIR)/SymlinkLibs/";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L/usr/local/Cellar/tcl-tk/8.6.6_2/lib",
+					"-ltcl8.6",
+					"-ltclstub8.6",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "SwiftTcl-c";
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = SwiftTcl_c;
+			};
+			name = Release;
+		};
+		OBJ_4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L/usr/local/Cellar/tcl-tk/8.6.6_2/lib",
+					"-ltcl8.6",
+					"-ltclstub8.6",
+				);
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		OBJ_48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+					"$(SRCROOT)/Sources/SwiftTcl_c/include",
+					"$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/SwiftTclDemo_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_TEMP_DIR)/SymlinkLibs/";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Tcl8_6/include/module.modulemap -Xcc -fmodule-map-file=$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				TARGET_NAME = SwiftTclDemo;
+			};
+			name = Debug;
+		};
+		OBJ_49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+					"$(SRCROOT)/Sources/SwiftTcl_c/include",
+					"$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/SwiftTclDemo_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_TEMP_DIR)/SymlinkLibs/";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Tcl8_6/include/module.modulemap -Xcc -fmodule-map-file=$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				TARGET_NAME = SwiftTclDemo;
+			};
+			name = Release;
+		};
+		OBJ_63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = NO;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/Tcl8_6_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Tcl8-6";
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Tcl8_6;
+			};
+			name = Debug;
+		};
+		OBJ_64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = NO;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/Tcl8_6_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Tcl8-6";
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Tcl8_6;
+			};
+			name = Release;
+		};
+		OBJ_70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+					"$(SRCROOT)/Sources/SwiftTcl_c/include",
+					"$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/SwiftTcl_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_TEMP_DIR)/SymlinkLibs/";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Tcl8_6/include/module.modulemap -Xcc -fmodule-map-file=$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = SwiftTcl;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = SwiftTcl;
+			};
+			name = Debug;
+		};
+		OBJ_71 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Sources/Tcl8_6/include",
+					"$(SRCROOT)/Sources/SwiftTcl_c/include",
+					"$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c",
+				);
+				INFOPLIST_FILE = SwiftTcl.xcodeproj/SwiftTcl_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_TEMP_DIR)/SymlinkLibs/";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(SRCROOT)/Sources/Tcl8_6/include/module.modulemap -Xcc -fmodule-map-file=$(SRCROOT)/SwiftTcl.xcodeproj/GeneratedModuleMap/SwiftTcl_c/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = SwiftTcl;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = SwiftTcl;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		OBJ_2 /* Build configuration list for PBXProject "SwiftTcl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_3 /* Debug */,
+				OBJ_4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_36 /* Build configuration list for PBXNativeTarget "SwiftTcl_c" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_37 /* Debug */,
+				OBJ_38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_47 /* Build configuration list for PBXNativeTarget "SwiftTclDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_48 /* Debug */,
+				OBJ_49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_62 /* Build configuration list for PBXNativeTarget "Tcl8_6" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_63 /* Debug */,
+				OBJ_64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_69 /* Build configuration list for PBXNativeTarget "SwiftTcl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_70 /* Debug */,
+				OBJ_71 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = OBJ_1 /* Project object */;
+}
