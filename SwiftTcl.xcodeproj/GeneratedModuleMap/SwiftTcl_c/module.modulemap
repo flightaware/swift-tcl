@@ -1,4 +1,0 @@
-module SwiftTcl_c {
-    umbrella "/Users/peter.dasilva/git/swift3/swift-tcl/Sources/SwiftTcl_c/include"
-    export *
-}
