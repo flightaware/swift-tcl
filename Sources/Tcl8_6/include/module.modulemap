@@ -1,4 +1,0 @@
-module Tcl8_6 [system] {
-  header "shim.h"
-  export *
-}

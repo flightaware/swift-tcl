@@ -1,2 +1,3 @@
-SwiftTcl.xcodeproj
-.build
+.build/*
+Package.pins
+SwiftTcl.xcodeproj/*
