@@ -14,6 +14,7 @@ ifeq ($(UNAME_S),Darwin)
         -Xlinker -L$(TCLLIBPATH) \
         -Xcc -I$(TCLINCPATH)
     TARGET = .build/debug/libSwiftTcl.dylib
+    PROJECT = SwiftTcl.xcodeproj
 endif
 
 default: $(TARGET)
@@ -21,7 +22,9 @@ default: $(TARGET)
 $(TARGET): Package.swift Makefile
 	swift build $(EXTRA_SWIFTLINK)
 
-SwiftTcl.xcodeproj: Package.swift Makefile build
+project: $(PROJECT)
+
+$(PROJECT): Package.swift Makefile $(TARGET)
 	swift package $(EXTRA_SWIFTLINK) generate-xcodeproj
 	@echo "NOTE: You will need to manually set the working directory for the SwiftTclDemo scheme to the root directory of this tree."
 	@echo "Thanks Apple"
