@@ -47,7 +47,7 @@ public enum TclError: Error {
     case error // error already set in interpreter result
 }
 
-enum TclControlFlow: Error {
+public enum TclControlFlow: Error {
     case tcl_return
     case tcl_break
     case tcl_continue
@@ -57,19 +57,19 @@ public struct VariableFlags : OptionSet {
     public let rawValue: Int32;
     public init(rawValue : Int32) { self.rawValue = rawValue }
     
-    static let GlobalOnly         = VariableFlags(rawValue: TCL_GLOBAL_ONLY)
-    static let NamespaceOnly      = VariableFlags(rawValue: TCL_NAMESPACE_ONLY)
-    static let LeaveErroMsg       = VariableFlags(rawValue: TCL_LEAVE_ERR_MSG)
-    static let AppendValue        = VariableFlags(rawValue: TCL_APPEND_VALUE)
-    static let ListElement        = VariableFlags(rawValue: TCL_LIST_ELEMENT)
-    static let TraceReads         = VariableFlags(rawValue: TCL_TRACE_READS)
-    static let TraceWrites        = VariableFlags(rawValue: TCL_TRACE_WRITES)
-    static let TraceUnsets        = VariableFlags(rawValue: TCL_TRACE_UNSETS)
-    static let TraceDestroyed     = VariableFlags(rawValue: TCL_TRACE_DESTROYED)
-    static let InterpDestroyed    = VariableFlags(rawValue: TCL_INTERP_DESTROYED)
-    static let TraceArray         = VariableFlags(rawValue: TCL_TRACE_ARRAY)
-    static let TraceResultDynamic = VariableFlags(rawValue: TCL_TRACE_RESULT_DYNAMIC)
-    static let TraceResultObject  = VariableFlags(rawValue: TCL_TRACE_RESULT_OBJECT)
+    public static let GlobalOnly         = VariableFlags(rawValue: TCL_GLOBAL_ONLY)
+    public static let NamespaceOnly      = VariableFlags(rawValue: TCL_NAMESPACE_ONLY)
+    public static let LeaveErroMsg       = VariableFlags(rawValue: TCL_LEAVE_ERR_MSG)
+    public static let AppendValue        = VariableFlags(rawValue: TCL_APPEND_VALUE)
+    public static let ListElement        = VariableFlags(rawValue: TCL_LIST_ELEMENT)
+    public static let TraceReads         = VariableFlags(rawValue: TCL_TRACE_READS)
+    public static let TraceWrites        = VariableFlags(rawValue: TCL_TRACE_WRITES)
+    public static let TraceUnsets        = VariableFlags(rawValue: TCL_TRACE_UNSETS)
+    public static let TraceDestroyed     = VariableFlags(rawValue: TCL_TRACE_DESTROYED)
+    public static let InterpDestroyed    = VariableFlags(rawValue: TCL_INTERP_DESTROYED)
+    public static let TraceArray         = VariableFlags(rawValue: TCL_TRACE_ARRAY)
+    public static let TraceResultDynamic = VariableFlags(rawValue: TCL_TRACE_RESULT_DYNAMIC)
+    public static let TraceResultObject  = VariableFlags(rawValue: TCL_TRACE_RESULT_OBJECT)
 
     //static let None               = VariableFlags(rawValue: 0)
 }
