@@ -78,10 +78,10 @@ public struct SubstFlags : OptionSet {
     public let rawValue: Int32;
     public init(rawValue : Int32) { self.rawValue = rawValue }
     
-    static let Commands    = SubstFlags(rawValue:TCL_SUBST_COMMANDS)
-    static let Variables   = SubstFlags(rawValue:TCL_SUBST_VARIABLES)
-    static let Backslashes = SubstFlags(rawValue:TCL_SUBST_BACKSLASHES)
-    static let All         = SubstFlags(rawValue:TCL_SUBST_ALL)
+    public static let Commands    = SubstFlags(rawValue:TCL_SUBST_COMMANDS)
+    public static let Variables   = SubstFlags(rawValue:TCL_SUBST_VARIABLES)
+    public static let Backslashes = SubstFlags(rawValue:TCL_SUBST_BACKSLASHES)
+    public static let All         = SubstFlags(rawValue:TCL_SUBST_ALL)
 }
 
 // TclCommandBlock - when creating a Tcl command -> Swift
